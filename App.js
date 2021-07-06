@@ -1,14 +1,19 @@
+import 'react-native-gesture-handler';
 import React from 'react';
 import firebase from 'firebase';
-import {firebaseConfig} from './firebaseConfig';
+import firebaseConfig from './firebaseConfig';
 import {StyleSheet, Text, View} from 'react-native';
-//import {createStackNavigator} from '@react-navigation/stack';
-//import {NavigationContainer} from '@react-navigation/native';
+//import {userContext} from './contexts/userContext';
+import {createStackNavigator} from '@react-navigation/stack';
+import {NavigationContainer} from '@react-navigation/native';
+import SignInScreen from './components/views/SignInScreen';
+import AuthenticatedNav from './components/navigation/AuthenticatedNav';
+import UnauthenticatedNav from './components/navigation/UnauthenticatedNav';
 
 //initialization of firebase
 firebase.initializeApp(firebaseConfig);
 
-//const Stack = createStackNavigator();
+const Stack = createStackNavigator();
 
 class App extends React.Component {
   constructor(props) {
@@ -27,14 +32,16 @@ class App extends React.Component {
   _checkIfLoggedIn() {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {
-        console.log('1');
-        this.isLoading = false;
-        this.state.isSignedIn = true;
-        this.state.user.email = user.email;
+        this.setState({
+          isLoading: false,
+          isSignedIn: true,
+          user: {email: user.email},
+        });
       } else {
-        console.log('2');
-        this.isLoading = false;
-        this.state.isSignedIn = false;
+        this.setState({
+          isLoading: false,
+          isSignedIn: false,
+        });
       }
     });
   }
@@ -48,14 +55,28 @@ class App extends React.Component {
       );
     }
 
-    return this.state.isSignedIn ? (
-      <View>
-        <Text>{this.state.user.email}</Text>
-      </View>
-    ) : (
-      <View>
-        <Text>NON CONNECTE</Text>
-      </View>
+    return (
+      <NavigationContainer>
+        <Stack.Navigator>
+          {this.state.isSignedIn ? (
+            <Stack.Screen
+              name="Authenticated"
+              component={AuthenticatedNav}
+              options={{
+                title: '',
+              }}
+            />
+          ) : (
+            <Stack.Screen
+              name="Unauthenticated"
+              component={UnauthenticatedNav}
+              options={{
+                headerShown: false,
+              }}
+            />
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
     );
   }
 }
