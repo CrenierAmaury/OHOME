@@ -3,7 +3,7 @@ import React from 'react';
 import firebase from 'firebase';
 import firebaseConfig from './firebaseConfig';
 import {StyleSheet, Text, View} from 'react-native';
-//import {userContext} from './contexts/userContext';
+import {UserContext} from './contexts/userContext';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import AuthenticatedNav from './components/navigation/AuthenticatedNav';
@@ -20,6 +20,7 @@ class App extends React.Component {
     this.state = {
       isLoading: true,
       isSignedIn: false,
+      isSignedOut: false,
       user: {},
     };
   }
@@ -55,27 +56,40 @@ class App extends React.Component {
     }
 
     return (
-      <NavigationContainer>
-        <Stack.Navigator>
-          {this.state.isSignedIn ? (
-            <Stack.Screen
-              name="Authenticated"
-              component={AuthenticatedNav}
-              options={{
-                title: '',
-              }}
-            />
-          ) : (
-            <Stack.Screen
-              name="Unauthenticated"
-              component={UnauthenticatedNav}
-              options={{
-                headerShown: false,
-              }}
-            />
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
+      <UserContext.Provider
+        value={{
+          isSignedIn: this.state.isSignedIn,
+          signOut: this.state.isSignedOut,
+          user: this.state.user,
+          setIsSignedIn: value => {
+            this.setState({isSignedIn: value});
+          },
+          setIsSignedOut: value => {
+            this.setState({isSignedOut: value});
+          },
+        }}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            {this.state.isSignedIn ? (
+              <Stack.Screen
+                name="Authenticated"
+                component={AuthenticatedNav}
+                options={{
+                  title: '',
+                }}
+              />
+            ) : (
+              <Stack.Screen
+                name="Unauthenticated"
+                component={UnauthenticatedNav}
+                options={{
+                  headerShown: false,
+                }}
+              />
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </UserContext.Provider>
     );
   }
 }

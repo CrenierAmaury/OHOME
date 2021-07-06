@@ -1,5 +1,11 @@
 import React from 'react';
 
-const userContext = React.createContext({user: {}});
+const UserContext = React.createContext({
+  isSignedIn: false,
+  isSignedOut: false,
+  user: {},
+  setIsSignedIn: () => {},
+  setIsSignedOut: () => {},
+});
 
-export {userContext};
+export {UserContext};

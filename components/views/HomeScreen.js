@@ -1,5 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import {Button} from 'react-native-elements';
+import {UserContext} from '../../contexts/userContext';
 
 class HomeScreen extends React.Component {
   constructor(props) {
@@ -9,9 +11,19 @@ class HomeScreen extends React.Component {
 
   render() {
     return (
-      <View>
-        <Text>HOME</Text>
-      </View>
+      <UserContext.Consumer>
+        {({setIsSignedIn, user}) => (
+          <View>
+            <Text>HOME: {user.email}</Text>
+            <Button
+              title="test context"
+              onPress={() => {
+                setIsSignedIn(false);
+              }}
+            />
+          </View>
+        )}
+      </UserContext.Consumer>
     );
   }
 }
