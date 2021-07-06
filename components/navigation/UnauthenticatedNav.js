@@ -14,7 +14,11 @@ class UnauthenticatedNav extends React.Component {
 
   render() {
     return (
-      <Stack.Navigator initialRouteName="SignIn">
+      <Stack.Navigator
+        initialRouteName="SignIn"
+        screenOptions={{
+          headerShown: false,
+        }}>
         <Stack.Screen name="SignIn" component={SignInScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="PasswordReset" component={PasswordResetScreen} />

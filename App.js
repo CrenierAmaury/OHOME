@@ -6,7 +6,6 @@ import {StyleSheet, Text, View} from 'react-native';
 //import {userContext} from './contexts/userContext';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
-import SignInScreen from './components/views/SignInScreen';
 import AuthenticatedNav from './components/navigation/AuthenticatedNav';
 import UnauthenticatedNav from './components/navigation/UnauthenticatedNav';
 
@@ -35,7 +34,7 @@ class App extends React.Component {
         this.setState({
           isLoading: false,
           isSignedIn: true,
-          user: {email: user.email},
+          user: user,
         });
       } else {
         this.setState({
