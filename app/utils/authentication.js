@@ -14,7 +14,7 @@ export async function signIn(email, password) {
   });
 }
 
-export function checkIfLoggedIn() {
+export async function checkIfLoggedIn() {
   return new Promise((resolve, reject) => {
     firebase.auth().onAuthStateChanged(user => {
       if (user) {

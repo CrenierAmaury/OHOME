@@ -23,12 +23,10 @@ const App = () => {
   useEffect(() => {
     checkIfLoggedIn()
       .then(r => {
-        console.log(r);
         setIsSignedIn(true);
         setIsLoading(false);
       })
       .catch(e => {
-        console.log(e);
         setIsSignedIn(false);
         setIsLoading(false);
       });
