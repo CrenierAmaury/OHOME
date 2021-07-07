@@ -1,98 +1,73 @@
 import 'react-native-gesture-handler';
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import firebase from 'firebase';
 import firebaseConfig from './firebaseConfig';
 import {StyleSheet, Text, View} from 'react-native';
-import {UserContext} from './contexts/userContext';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
-import AuthenticatedNav from './components/navigation/AuthenticatedNav';
-import UnauthenticatedNav from './components/navigation/UnauthenticatedNav';
+import store from './app/store/store';
+import {Provider} from 'react-redux';
+import AuthenticatedNav from './app/components/navigation/AuthenticatedNav';
+import UnauthenticatedNav from './app/components/navigation/UnauthenticatedNav';
+import {checkIfLoggedIn} from './app/utils/authentication';
 
 //initialization of firebase
 firebase.initializeApp(firebaseConfig);
 
 const Stack = createStackNavigator();
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isLoading: true,
-      isSignedIn: false,
-      isSignedOut: false,
-      user: {},
-    };
-  }
+const App = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
-  componentDidMount() {
-    this._checkIfLoggedIn();
-  }
+  useEffect(() => {
+    checkIfLoggedIn()
+      .then(r => {
+        console.log(r);
+        setIsSignedIn(true);
+        setIsLoading(false);
+      })
+      .catch(e => {
+        console.log(e);
+        setIsSignedIn(false);
+        setIsLoading(false);
+      });
+  }, []);
 
-  _checkIfLoggedIn() {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        this.setState({
-          isLoading: false,
-          isSignedIn: true,
-          user: user,
-        });
-      } else {
-        this.setState({
-          isLoading: false,
-          isSignedIn: false,
-        });
-      }
-    });
-  }
-
-  render() {
-    if (this.state.isLoading) {
-      return (
-        <View>
-          <Text>LOADING</Text>
-        </View>
-      );
-    }
-
+  if (isLoading) {
     return (
-      <UserContext.Provider
-        value={{
-          isSignedIn: this.state.isSignedIn,
-          signOut: this.state.isSignedOut,
-          user: this.state.user,
-          setIsSignedIn: value => {
-            this.setState({isSignedIn: value});
-          },
-          setIsSignedOut: value => {
-            this.setState({isSignedOut: value});
-          },
-        }}>
-        <NavigationContainer>
-          <Stack.Navigator>
-            {this.state.isSignedIn ? (
-              <Stack.Screen
-                name="Authenticated"
-                component={AuthenticatedNav}
-                options={{
-                  title: '',
-                }}
-              />
-            ) : (
-              <Stack.Screen
-                name="Unauthenticated"
-                component={UnauthenticatedNav}
-                options={{
-                  headerShown: false,
-                }}
-              />
-            )}
-          </Stack.Navigator>
-        </NavigationContainer>
-      </UserContext.Provider>
+      <View>
+        <Text>LOADING</Text>
+      </View>
     );
   }
-}
+
+  return (
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          {isSignedIn ? (
+            <Stack.Screen
+              name="Authenticated"
+              component={AuthenticatedNav}
+              options={{
+                title: '',
+              }}
+            />
+          ) : (
+            <Stack.Screen
+              name="Unauthenticated"
+              component={UnauthenticatedNav}
+              options={{
+                headerShown: false,
+              }}
+            />
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
+  );
+};
 
 const styles = StyleSheet.create({
   main_container: {
