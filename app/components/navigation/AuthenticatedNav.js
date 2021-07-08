@@ -1,6 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {StyleSheet} from 'react-native';
 import HomeScreen from '../views/HomeScreen';
 import MealsScreen from '../views/MealsScreen';
 import BudgetScreen from '../views/BudgetScreen';
@@ -14,17 +15,31 @@ const AuthenticatedNav = () => {
     <Tab.Navigator
       initialRouteName="Home"
       tabBarOptions={{
+        activeTintColor: '#FCA311',
+        inactiveTintColor: '#8b8b8b',
         showIcon: true,
+        style: {
+          borderTopWidth: 0,
+          borderRadius: 0,
+          backgroundColor: '#FBFBFB',
+          // shadow
+          shadowColor: 'rgba(0,0,0, .7)',
+          shadowOffset: {height: 0, width: 0},
+          shadowOpacity: 0.5,
+          shadowRadius: 2,
+          elevation: 3,
+        },
       }}>
       <Tab.Screen
         name="Repas"
         component={MealsScreen}
         options={{
-          tabBarIcon: tabInfo => (
+          tabBarIcon: ({focused}) => (
             <Icon
               name="dinner-dining"
               size={35}
               style={{
+                color: focused ? '#FCA311' : '#8b8b8b',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -37,11 +52,12 @@ const AuthenticatedNav = () => {
         name="Budget"
         component={BudgetScreen}
         options={{
-          tabBarIcon: tabInfo => (
+          tabBarIcon: ({focused}) => (
             <Icon
               name="account-balance-wallet"
               size={35}
               style={{
+                color: focused ? '#FCA311' : '#8b8b8b',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -54,11 +70,12 @@ const AuthenticatedNav = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: tabInfo => (
+          tabBarIcon: ({focused}) => (
             <Icon
               name="home"
               size={35}
               style={{
+                color: focused ? '#FCA311' : '#8b8b8b',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -71,11 +88,12 @@ const AuthenticatedNav = () => {
         name="Calendrier"
         component={CalendarScreen}
         options={{
-          tabBarIcon: tabInfo => (
+          tabBarIcon: ({focused}) => (
             <Icon
               name="event"
               size={35}
               style={{
+                color: focused ? '#FCA311' : '#8b8b8b',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -88,11 +106,12 @@ const AuthenticatedNav = () => {
         name="Listes"
         component={ListsScreen}
         options={{
-          tabBarIcon: tabInfo => (
+          tabBarIcon: ({focused}) => (
             <Icon
               name="format-list-bulleted"
               size={35}
               style={{
+                color: focused ? '#FCA311' : '#8b8b8b',
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -104,5 +123,11 @@ const AuthenticatedNav = () => {
     </Tab.Navigator>
   );
 };
+
+const styles = StyleSheet.create({
+  main_container: {
+    flex: 1,
+  },
+});
 
 export default AuthenticatedNav;

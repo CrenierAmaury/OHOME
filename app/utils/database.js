@@ -1,10 +1,9 @@
-import firebase from 'firebase';
-
-const db = firebase.firestore();
+import firestore from '@react-native-firebase/firestore';
 
 export async function addCollection(collection, data) {
   return new Promise((resolve, reject) => {
-    db.collection(collection)
+    firestore()
+      .collection(collection)
       .add(data)
       .then(docRef => {
         resolve(docRef);
@@ -17,11 +16,12 @@ export async function addCollection(collection, data) {
 
 export async function readCollection(collection) {
   return new Promise((resolve, reject) => {
-    db.collection(collection)
+    firestore()
+      .collection(collection)
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(doc => {
-          console.log(`${doc.id} => ${doc.data().email}`);
+          console.log(`${doc.id} => ${doc.data()}`);
         });
         resolve(querySnapshot);
       })

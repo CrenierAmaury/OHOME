@@ -1,27 +1,35 @@
-import firebase from 'firebase';
+import auth from '@react-native-firebase/auth';
 
 export async function signIn(email, password) {
   return new Promise((resolve, reject) => {
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(userCredential => {
-        resolve(userCredential.user);
+    if (email && password) {
+      auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          resolve(userCredential);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    } else {
+      reject({code: 'auth/empty-values', message: 'champs vides'});
+    }
+  });
+}
+
+export function checkIfLoggedIn(callback) {
+  return auth().onAuthStateChanged(callback);
+}
+
+export async function signOut() {
+  return new Promise((resolve, reject) => {
+    auth()
+      .signOut()
+      .then(result => {
+        resolve(result);
       })
       .catch(error => {
         reject(error);
       });
-  });
-}
-
-export async function checkIfLoggedIn() {
-  return new Promise((resolve, reject) => {
-    firebase.auth().onAuthStateChanged(user => {
-      if (user) {
-        resolve(user);
-      } else {
-        reject('no user logged in');
-      }
-    });
   });
 }

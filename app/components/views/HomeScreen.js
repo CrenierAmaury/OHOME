@@ -1,33 +1,47 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {useDispatch, useSelector} from 'react-redux';
-import {updateEmail} from '../../store/slices/userSlice';
 import {readCollection} from '../../utils/database';
+import {signOut} from '../../utils/authentication';
 import {Button} from 'react-native-elements';
 
 const HomeScreen = () => {
-  const [utilisateur, setUtilisateur] = useState({});
-  const user = useSelector(state => state.user);
-  const dispatch = useDispatch();
+  const [utilisateur, setUtilisateur] = useState(99);
 
   return (
-    <View>
+    <View style={{flex: 1, backgroundColor: '#FBFBFB'}}>
       <Text>HOME</Text>
-      <Text>{user.email}</Text>
-      <Button
-        title="test email"
-        type="solid"
-        raised={true}
-        onPress={() => {
-          dispatch(updateEmail('test'));
-        }}
-      />
       <Button
         title="test db"
         type="solid"
         raised={true}
         onPress={() => {
-          readCollection('utilisateur')
+          readCollection('users')
+            .then(r => {
+              console.log(r.docs.length);
+              setUtilisateur(r.docs.length);
+            })
+            .catch(e => {
+              console.log(e);
+            });
+        }}
+        containerStyle={{
+          backgroundColor: '#FBFBFB',
+          width: '50%',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          marginTop: 20,
+        }}
+        buttonStyle={{
+          backgroundColor: '#FCA311',
+        }}
+      />
+      <Text>{utilisateur}</Text>
+      <Button
+        title="sign out"
+        type="solid"
+        raised={true}
+        onPress={() => {
+          signOut()
             .then(r => {
               console.log(r);
             })
@@ -35,8 +49,17 @@ const HomeScreen = () => {
               console.log(e);
             });
         }}
+        containerStyle={{
+          backgroundColor: '#FBFBFB',
+          width: '50%',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          marginTop: 20,
+        }}
+        buttonStyle={{
+          backgroundColor: '#FCA311',
+        }}
       />
-      <Text>utilisateur</Text>
     </View>
   );
 };
