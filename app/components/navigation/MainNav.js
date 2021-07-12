@@ -1,19 +1,42 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import AuthenticatedNav from './AuthenticatedNav';
 import UnauthenticatedNav from './UnauthenticatedNav';
 import {checkIfLoggedIn} from '../../utils/authentication';
+import {useDispatch, useSelector} from 'react-redux';
+import {updateUid} from '../../store/slices/userSlice';
+import {getUser} from '../../api/userApi';
+import {
+  updateBudgetId,
+  updateHouseholdId,
+} from '../../store/slices/householdSlice';
+import {getHousehold} from '../../api/householdApi';
 
 const Stack = createStackNavigator();
 
 const MainNav = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState();
 
-  const onAuthStateChanged = u => {
-    setUser(u);
-    if (isLoading) {
+  const uid = useSelector(state => state.user.uid);
+  const dispatch = useDispatch();
+
+  const onAuthStateChanged = user => {
+    if (user) {
+      getUser(user.uid)
+        .then(res => {
+          getHousehold(res.activeHousehold).then(household => {
+            dispatch(updateUid(user.uid));
+            dispatch(updateHouseholdId(res.activeHousehold));
+            dispatch(updateBudgetId(household.budget));
+            setIsLoading(false);
+          });
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    } else {
+      dispatch(updateUid(''));
       setIsLoading(false);
     }
   };
@@ -25,7 +48,11 @@ const MainNav = () => {
   if (isLoading) {
     return (
       <View>
-        <Text>LOADING</Text>
+        <ActivityIndicator
+          style={{marginTop: 150}}
+          size="large"
+          color="#0000ff"
+        />
       </View>
     );
   }
@@ -44,7 +71,7 @@ const MainNav = () => {
           elevation: 4,
         },
       }}>
-      {user ? (
+      {uid ? (
         <Stack.Screen
           name="Authenticated"
           component={AuthenticatedNav}

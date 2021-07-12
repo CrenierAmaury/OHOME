@@ -3,10 +3,10 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StyleSheet} from 'react-native';
 import HomeScreen from '../views/HomeScreen';
-import MealsScreen from '../views/MealsScreen';
-import BudgetScreen from '../views/BudgetScreen';
-import CalendarScreen from '../views/CalendarScreen';
-import ListsScreen from '../views/ListsScreen';
+import MealsScreen from '../views/meals/MealsScreen';
+import BudgetScreen from '../views/budget/BudgetScreen';
+import CalendarScreen from '../views/calendar/CalendarScreen';
+import ListsScreen from '../views/lists/ListsScreen';
 
 const Tab = createBottomTabNavigator();
 

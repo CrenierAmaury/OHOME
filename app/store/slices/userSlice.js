@@ -6,12 +6,12 @@ export const userSlice = createSlice({
     uid: '',
   },
   reducers: {
-    updateUser: (state, action) => {
-      state.user = action.payload;
+    updateUid: (state, action) => {
+      state.uid = action.payload;
     },
   },
 });
 
-export const {updateUser} = userSlice.actions;
+export const {updateUid} = userSlice.actions;
 
 export default userSlice.reducer;

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Input, Button} from 'react-native-elements';
-import {signIn} from '../../utils/authentication';
+import {signIn} from '../../../utils/authentication';
 
 const SignInScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
