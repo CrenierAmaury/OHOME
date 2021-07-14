@@ -8,36 +8,22 @@ import {
 } from 'react-native';
 import {useSelector} from 'react-redux';
 import {
-  addExpense,
   getBalanceIncomeExpense,
   getLastFiveExpenses,
 } from '../../../api/budgetApi';
-import {
-  Card,
-  ListItem,
-  FAB,
-  Overlay,
-  Input,
-  Button,
-} from 'react-native-elements';
+import {Card, ListItem, FAB, Overlay, Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {Picker} from '@react-native-picker/picker';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
+import NewExpenseScreen from './NewExpenseScreen';
 
-const BudgetScreen = () => {
+const BudgetScreen = ({navigation}) => {
   const [history, setHistory] = useState([]);
-  const [resume, setResume] = useState(0);
+  const [budgetOverview, setBudgetOverview] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
-  //Overlay add expense state
-  const [name, setName] = useState('');
-  const [amount, setAmount] = useState('');
-  const [datePickerShow, setDatePickerShow] = useState(false);
-  const [date, setDate] = useState(new Date());
-  const [selectedType, setSelectedType] = useState('');
-
   const budgetId = useSelector(state => state.household.budgetId);
+
+  const childProps = {budgetId, budgetOverview, setIsOverlayVisible};
 
   useEffect(() => {
     getBudgetOverview(budgetId);
@@ -47,7 +33,7 @@ const BudgetScreen = () => {
   const getBudgetOverview = id => {
     getBalanceIncomeExpense(id)
       .then(overview => {
-        setResume(overview);
+        setBudgetOverview(overview);
       })
       .catch(e => {
         console.log(e);
@@ -73,40 +59,6 @@ const BudgetScreen = () => {
     }
   };
 
-  const addNewExpense = () => {
-    const expense = {
-      name: name,
-      amount: Number(amount),
-    };
-    addExpense(budgetId, expense, resume)
-      .then(docId => {
-        console.log('SCREEN: expense added with id: ' + docId);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
-
-  const cancelNewExpense = () => {
-    setDate(new Date());
-    setAmount('');
-    setName('');
-    setSelectedType('');
-    changeOverlayIsVisible();
-  };
-
-  const setPlaceholder = (placeholder, value) => {
-    if (!value) {
-      return placeholder;
-    }
-  };
-
-  const setLabel = (label, value) => {
-    if (value) {
-      return label;
-    }
-  };
-
   if (isLoading) {
     return (
       <View>
@@ -123,21 +75,36 @@ const BudgetScreen = () => {
     <View style={styles.main_container}>
       <Card containerStyle={styles.balance}>
         <Card.Title>Equilibre</Card.Title>
-        <Text>{resume.balance}</Text>
+        <Text>{budgetOverview.balance}</Text>
       </Card>
       <View style={styles.income_expense}>
         <Card containerStyle={styles.income}>
           <Card.Title>Revenu</Card.Title>
-          <Text>{resume.income}</Text>
+          <Text>{budgetOverview.income}</Text>
         </Card>
         <Card containerStyle={styles.expense}>
           <Card.Title>Dépense</Card.Title>
-          <Text>{resume.expense}</Text>
+          <Text>{budgetOverview.expense}</Text>
         </Card>
       </View>
       <ScrollView>
         <Card containerStyle={styles.last_five}>
-          <Card.Title>Dernières entrées</Card.Title>
+          <Card.Title>
+            <Button
+              title="détails"
+              type="solid"
+              raised={true}
+              onPress={() => {
+                navigation.navigate('BudgetHistoryScreen', {...childProps});
+              }}
+              containerStyle={{
+                backgroundColor: '#FBFBFB',
+              }}
+              buttonStyle={{
+                backgroundColor: '#FCA311',
+              }}
+            />
+          </Card.Title>
           <Card.Divider />
           {history.map((h, i) => (
             <ListItem key={i} bottomDivider>
@@ -168,88 +135,7 @@ const BudgetScreen = () => {
           backgroundColor: 'grey',
           opacity: 0.7,
         }}>
-        <View>
-          <Picker
-            selectedValue={selectedType}
-            onValueChange={value => {
-              setSelectedType(value);
-            }}>
-            <Picker.Item label="dépense" value="expense" />
-            <Picker.Item label="rentrée" value="income" />
-          </Picker>
-          <Input
-            label={setLabel('nom', name)}
-            placeholder={setPlaceholder('nom', name)}
-            value={name}
-            onChangeText={value => {
-              setName(value);
-            }}
-            containerStyle={{}}
-          />
-          <Input
-            label={setLabel('montant', amount)}
-            placeholder={setPlaceholder('montant', amount)}
-            value={amount}
-            keyboardType="numeric"
-            onChangeText={value => {
-              setAmount(value);
-            }}
-          />
-          <Input
-            label="date"
-            value={date.toLocaleDateString()}
-            onFocus={() => {
-              setDatePickerShow(true);
-            }}
-            onBlur={() => {
-              setDatePickerShow(false);
-            }}
-          />
-          {datePickerShow && (
-            <RNDateTimePicker
-              value={new Date()}
-              mode={'date'}
-              display="spinner"
-              onChange={(event, selectedDate) => {
-                const currentDate = selectedDate || date;
-                setDate(currentDate);
-              }}
-            />
-          )}
-          <Button
-            title="ajouter"
-            type="solid"
-            raised={true}
-            onPress={addNewExpense}
-            containerStyle={{
-              backgroundColor: '#FBFBFB',
-              width: '90%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: 20,
-            }}
-            buttonStyle={{
-              backgroundColor: '#FCA311',
-            }}
-          />
-          <Button
-            title="annuler"
-            type="solid"
-            raised={true}
-            onPress={cancelNewExpense}
-            containerStyle={{
-              backgroundColor: '#FBFBFB',
-              width: '90%',
-              marginLeft: 'auto',
-              marginRight: 'auto',
-              marginTop: 20,
-            }}
-            buttonStyle={{
-              backgroundColor: '#FBFBFB',
-            }}
-            titleStyle={{color: '#FCA311'}}
-          />
-        </View>
+        <NewExpenseScreen {...childProps} />
       </Overlay>
     </View>
   );

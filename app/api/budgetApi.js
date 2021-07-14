@@ -65,7 +65,7 @@ export async function getLastFiveExpenses(budgetId) {
   });
 }
 
-export async function addExpense(budgetId, expense, overview) {
+export async function addExpense(budgetId, expense, budgetOverview) {
   return new Promise((resolve, reject) => {
     firestore()
       .collection('budgets')
@@ -73,21 +73,24 @@ export async function addExpense(budgetId, expense, overview) {
       .collection('expenses')
       .add(expense)
       .then(docRef => {
-        overview.balance += expense.amount;
+        budgetOverview.balance += expense.amount;
         if (expense.amount < 0) {
-          overview.expense += expense.amount;
+          budgetOverview.expense += expense.amount;
         } else {
-          overview.income += expense.amount;
+          budgetOverview.income += expense.amount;
         }
-        updateBudgetOverview(budgetId, overview)
+        updateBudgetOverview(budgetId, budgetOverview)
           .then(() => {
             console.log('API: expense added with id: ' + docRef.id);
-            console.log('API: new balance: ' + overview.balance);
+            console.log('API: new balance: ' + budgetOverview.balance);
             resolve(docRef.id);
           })
           .catch(error => {
             reject(error);
           });
+      })
+      .catch(error => {
+        reject(error);
       });
   });
 }
@@ -101,29 +104,23 @@ export async function updateExpense(budgetId, expenseId, expense) {
       .doc(expenseId)
       .update(expense)
       .then(() => {
-        updateBudgetOverview(budgetId)
-          .then(() => {
-            getBalanceIncomeExpense(budgetId).then(overview => {
-              overview.balance += expense.amount;
-              if (expense.amount < 0) {
-                overview.expense += expense.amount;
-              } else {
-                overview.income += expense.amount;
-              }
-              updateBudgetOverview(budgetId, overview)
-                .then(() => {
-                  console.log('API: expense updated');
-                  console.log('API: new balance: ' + overview.balance);
-                  resolve();
-                })
-                .catch(error => {
-                  reject(error);
-                });
+        getBalanceIncomeExpense(budgetId).then(overview => {
+          overview.balance += expense.amount;
+          if (expense.amount < 0) {
+            overview.expense += expense.amount;
+          } else {
+            overview.income += expense.amount;
+          }
+          updateBudgetOverview(budgetId, overview)
+            .then(() => {
+              console.log('API: expense updated');
+              console.log('API: new balance: ' + overview.balance);
+              resolve();
+            })
+            .catch(error => {
+              reject(error);
             });
-          })
-          .catch(error => {
-            reject(error);
-          });
+        });
       })
       .catch(error => {
         reject(error);
@@ -140,29 +137,23 @@ export async function removeExpense(budgetId, expenseId, amount) {
       .doc(expenseId)
       .delete()
       .then(() => {
-        updateBudgetOverview(budgetId)
-          .then(() => {
-            getBalanceIncomeExpense(budgetId).then(overview => {
-              overview.balance += amount;
-              if (amount < 0) {
-                overview.expense += amount;
-              } else {
-                overview.income += amount;
-              }
-              updateBudgetOverview(budgetId, overview)
-                .then(() => {
-                  console.log('API: expense removed');
-                  console.log('API: new balance: ' + overview.balance);
-                  resolve();
-                })
-                .catch(error => {
-                  reject(error);
-                });
+        getBalanceIncomeExpense(budgetId).then(overview => {
+          overview.balance += amount;
+          if (amount < 0) {
+            overview.expense += amount;
+          } else {
+            overview.income += amount;
+          }
+          updateBudgetOverview(budgetId, overview)
+            .then(() => {
+              console.log('API: expense removed');
+              console.log('API: new balance: ' + overview.balance);
+              resolve();
+            })
+            .catch(error => {
+              reject(error);
             });
-          })
-          .catch(error => {
-            reject(error);
-          });
+        });
       })
       .catch(error => {
         reject(error);

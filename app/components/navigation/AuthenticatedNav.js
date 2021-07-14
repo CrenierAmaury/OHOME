@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {StyleSheet} from 'react-native';
 import HomeScreen from '../views/HomeScreen';
 import MealsScreen from '../views/meals/MealsScreen';
-import BudgetScreen from '../views/budget/BudgetScreen';
+import BudgetNav from './BudgetNav';
 import CalendarScreen from '../views/calendar/CalendarScreen';
 import ListsScreen from '../views/lists/ListsScreen';
 
@@ -50,7 +50,7 @@ const AuthenticatedNav = () => {
       />
       <Tab.Screen
         name="Budget"
-        component={BudgetScreen}
+        component={BudgetNav}
         options={{
           tabBarIcon: ({focused}) => (
             <Icon
