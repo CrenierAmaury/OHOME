@@ -33,3 +33,20 @@ export async function signOut() {
       });
   });
 }
+
+export async function signUp(email, password) {
+  return new Promise((resolve, reject) => {
+    if (email && password) {
+      auth()
+        .createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          resolve(userCredential);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    } else {
+      reject({code: 'auth/empty-values', message: 'champs vides'});
+    }
+  });
+}

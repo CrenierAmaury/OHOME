@@ -21,6 +21,10 @@ const MainNav = () => {
   const uid = useSelector(state => state.user.uid);
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    checkIfLoggedIn(onAuthStateChanged);
+  });
+
   const onAuthStateChanged = user => {
     if (user) {
       getUser(user.uid)
@@ -40,10 +44,6 @@ const MainNav = () => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    checkIfLoggedIn(onAuthStateChanged);
-  });
 
   if (isLoading) {
     return (
