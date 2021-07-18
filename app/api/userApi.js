@@ -14,3 +14,18 @@ export async function getUser(uid) {
       });
   });
 }
+
+export async function addUser(uid, user) {
+  return new Promise((resolve, reject) => {
+    firestore()
+      .collection('users')
+      .doc(uid)
+      .set(user)
+      .then(docRef => {
+        resolve(docRef);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}

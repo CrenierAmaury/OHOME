@@ -1,9 +1,9 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import {signOut} from '../../utils/authentication';
+import {signOut} from '../../../api/authenticationApi';
 import {Button} from 'react-native-elements';
 import {useDispatch} from 'react-redux';
-import {updateUid} from '../../store/slices/userSlice';
+import {updateUid} from '../../../store/slices/userSlice';
 
 const HomeScreen = () => {
   const dispatch = useDispatch();
@@ -24,16 +24,8 @@ const HomeScreen = () => {
               console.log(e);
             });
         }}
-        containerStyle={{
-          backgroundColor: '#FBFBFB',
-          width: '50%',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          marginTop: 20,
-        }}
-        buttonStyle={{
-          backgroundColor: '#FCA311',
-        }}
+        containerStyle={styles.button_container}
+        buttonStyle={styles.button}
       />
     </View>
   );
@@ -42,6 +34,16 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   main_container: {
     flex: 1,
+  },
+  button_container: {
+    backgroundColor: '#FBFBFB',
+    width: '50%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: '#FCA311',
   },
 });
 

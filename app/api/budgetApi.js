@@ -36,6 +36,33 @@ export async function getBalanceIncomeExpense(budgetId) {
   });
 }
 
+export async function getExpenses(budgetId) {
+  return new Promise((resolve, reject) => {
+    firestore()
+      .collection('budgets')
+      .doc(budgetId)
+      .collection('expenses')
+      .get()
+      .then(querySnapshot => {
+        let overviews = [];
+        querySnapshot.docs.forEach(doc => {
+          const expense = doc.data();
+          const overview = {
+            key: doc.id,
+            name: expense.name,
+            amount: expense.amount,
+            date: expense.date,
+          };
+          overviews.push(overview);
+        });
+        resolve(overviews);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}
+
 export async function getLastFiveExpenses(budgetId) {
   return new Promise((resolve, reject) => {
     firestore()

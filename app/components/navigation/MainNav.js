@@ -3,7 +3,7 @@ import {ActivityIndicator, StyleSheet, View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import AuthenticatedNav from './AuthenticatedNav';
 import UnauthenticatedNav from './UnauthenticatedNav';
-import {checkIfLoggedIn} from '../../utils/authentication';
+import {checkIfLoggedIn} from '../../api/authenticationApi';
 import {useDispatch, useSelector} from 'react-redux';
 import {updateUid} from '../../store/slices/userSlice';
 import {getUser} from '../../api/userApi';
