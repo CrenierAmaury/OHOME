@@ -12,6 +12,7 @@ import {
   updateHouseholdId,
 } from '../../store/slices/householdSlice';
 import {getHousehold} from '../../api/householdApi';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Stack = createStackNavigator();
 
@@ -76,7 +77,7 @@ const MainNav = () => {
           name="Authenticated"
           component={AuthenticatedNav}
           options={{
-            title: '',
+            headerShown: false,
           }}
         />
       ) : (

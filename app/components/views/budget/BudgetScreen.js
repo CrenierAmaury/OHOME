@@ -24,6 +24,7 @@ const BudgetScreen = ({navigation}) => {
   const budgetId = useSelector(state => state.household.budgetId);
 
   const childProps = {budgetId, budgetOverview, setIsOverlayVisible};
+  const navProps = {budgetId, budgetOverview};
 
   useEffect(() => {
     getBudgetOverview(budgetId);
@@ -95,7 +96,7 @@ const BudgetScreen = ({navigation}) => {
               type="solid"
               raised={true}
               onPress={() => {
-                navigation.navigate('BudgetHistoryScreen', {...childProps});
+                navigation.navigate('BudgetDetailsScreen', {...navProps});
               }}
               containerStyle={{
                 backgroundColor: '#FBFBFB',

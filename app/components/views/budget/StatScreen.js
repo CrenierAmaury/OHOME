@@ -1,12 +1,15 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import BudgetWidget from './BudgetWidget';
 
-const HomeScreen = () => {
+const StatScreen = () => {
   return (
-    <View style={styles.main_container}>
-      <Text>HOME</Text>
-      <BudgetWidget />
+    <View>
+      <Text
+        onPress={() => {
+          console.log('hello');
+        }}>
+        STATISTIQUES
+      </Text>
     </View>
   );
 };
@@ -17,4 +20,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default StatScreen;
