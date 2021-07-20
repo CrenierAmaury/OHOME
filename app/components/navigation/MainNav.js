@@ -10,9 +10,9 @@ import {getUser} from '../../api/userApi';
 import {
   updateBudgetId,
   updateHouseholdId,
+  updateListGroupId,
 } from '../../store/slices/householdSlice';
 import {getHousehold} from '../../api/householdApi';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const Stack = createStackNavigator();
 
@@ -28,14 +28,17 @@ const MainNav = () => {
 
   const onAuthStateChanged = user => {
     if (user) {
+      dispatch(updateUid(user.uid));
       getUser(user.uid)
         .then(res => {
-          getHousehold(res.activeHousehold).then(household => {
-            dispatch(updateUid(user.uid));
-            dispatch(updateHouseholdId(res.activeHousehold));
-            dispatch(updateBudgetId(household.budget));
-            setIsLoading(false);
-          });
+          dispatch(updateHouseholdId(res.activeHousehold));
+          if (res.activeHousehold) {
+            getHousehold(res.activeHousehold).then(household => {
+              dispatch(updateBudgetId(household.budget));
+              dispatch(updateListGroupId(household.listGroup));
+              setIsLoading(false);
+            });
+          }
         })
         .catch(e => {
           console.log(e);

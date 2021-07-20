@@ -110,7 +110,7 @@ const BudgetScreen = ({navigation}) => {
           {history.map((h, i) => (
             <ListItem key={i} bottomDivider>
               <ListItem.Content>
-                <ListItem.Title>{h.name}</ListItem.Title>
+                <ListItem.Title>{h.label}</ListItem.Title>
                 <ListItem.Subtitle>{h.amount}</ListItem.Subtitle>
                 <ListItem.Subtitle>
                   {h.date.toDate().toLocaleDateString()}

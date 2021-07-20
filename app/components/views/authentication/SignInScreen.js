@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Input, Button} from 'react-native-elements';
 import {signIn} from '../../../api/authenticationApi';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const SignInScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -11,7 +12,7 @@ const SignInScreen = ({navigation}) => {
 
   const connect = () => {
     setIsLoading(true);
-    signIn(email, password)
+    signIn(email.trim(), password)
       .then(r => {
         setError('');
         setIsLoading(false);
@@ -29,6 +30,17 @@ const SignInScreen = ({navigation}) => {
         onChangeText={value => {
           setEmail(value);
         }}
+        autoCapitalize="none"
+        keyboardType="email-address"
+        leftIcon={
+          <Icon
+            name="email"
+            size={24}
+            style={{
+              color: '#8b8b8b',
+            }}
+          />
+        }
       />
       <Input
         placeholder="mot de passe"
@@ -36,6 +48,17 @@ const SignInScreen = ({navigation}) => {
         onChangeText={value => {
           setPassword(value);
         }}
+        autoCapitalize="none"
+        secureTextEntry={true}
+        leftIcon={
+          <Icon
+            name="lock"
+            size={24}
+            style={{
+              color: '#8b8b8b',
+            }}
+          />
+        }
       />
       <Button
         title="Connexion"
@@ -50,7 +73,6 @@ const SignInScreen = ({navigation}) => {
         title="Inscription"
         type="solid"
         raised={true}
-        loading={isLoading}
         onPress={() => {
           navigation.navigate('SignUp');
         }}

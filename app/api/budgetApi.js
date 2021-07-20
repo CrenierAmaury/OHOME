@@ -49,7 +49,7 @@ export async function getExpenses(budgetId) {
           const expense = doc.data();
           const overview = {
             key: doc.id,
-            name: expense.name,
+            label: expense.label,
             amount: expense.amount,
             date: expense.date,
           };
@@ -78,7 +78,7 @@ export async function getLastFiveExpenses(budgetId) {
           const expense = doc.data();
           const overview = {
             key: doc.id,
-            name: expense.name,
+            label: expense.label,
             amount: expense.amount,
             date: expense.date,
           };

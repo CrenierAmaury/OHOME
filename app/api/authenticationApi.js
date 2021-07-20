@@ -9,10 +9,31 @@ export async function signIn(email, password) {
           resolve(userCredential);
         })
         .catch(error => {
-          reject(error);
+          const code = error.code;
+          if (code === 'auth/invalid-email') {
+            reject({
+              code: code,
+              message: 'veuillez entrer une adresse email valide',
+            });
+          } else if (code === 'auth/wrong-password') {
+            reject({
+              code: code,
+              message: 'le mot de passe entré est incorrect',
+            });
+          } else if (code === 'auth/user-not-found') {
+            reject({
+              code: code,
+              message: 'utilisateur inconnu',
+            });
+          } else {
+            reject(error);
+          }
         });
     } else {
-      reject({code: 'auth/empty-values', message: 'champs vides'});
+      reject({
+        code: 'auth/empty-values',
+        message: 'veuillez remplir tous les champs',
+      });
     }
   });
 }
@@ -46,7 +67,10 @@ export async function signUp(email, password) {
           reject(error);
         });
     } else {
-      reject({code: 'auth/empty-values', message: 'champs vides'});
+      reject({
+        code: 'auth/empty-value',
+        message: 'veuillez remplir tous les champs',
+      });
     }
   });
 }

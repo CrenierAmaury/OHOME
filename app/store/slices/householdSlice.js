@@ -5,6 +5,7 @@ export const householdSlice = createSlice({
   initialState: {
     id: '',
     budgetId: '',
+    listGroupId: '',
   },
   reducers: {
     updateHouseholdId: (state, action) => {
@@ -13,9 +14,13 @@ export const householdSlice = createSlice({
     updateBudgetId: (state, action) => {
       state.budgetId = action.payload;
     },
+    updateListGroupId: (state, action) => {
+      state.listGroupId = action.payload;
+    },
   },
 });
 
-export const {updateHouseholdId, updateBudgetId} = householdSlice.actions;
+export const {updateHouseholdId, updateBudgetId, updateListGroupId} =
+  householdSlice.actions;
 
 export default householdSlice.reducer;

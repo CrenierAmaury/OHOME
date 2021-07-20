@@ -3,6 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import {Input, Button} from 'react-native-elements';
 import {signUp} from '../../../api/authenticationApi';
 import {addUser} from '../../../api/userApi';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const SignUpScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -26,6 +27,8 @@ const SignUpScreen = () => {
             name: name,
             email: email,
             creation: new Date(),
+            activeHousehold: '',
+            households: [],
           };
           addUser(r.uid, user)
             .then(() => {
@@ -51,12 +54,33 @@ const SignUpScreen = () => {
         onChangeText={value => {
           setName(value);
         }}
+        autoCapitalize="none"
+        leftIcon={
+          <Icon
+            name="person"
+            size={24}
+            style={{
+              color: '#8b8b8b',
+            }}
+          />
+        }
       />
       <Input
         placeholder="email"
         onChangeText={value => {
           setEmail(value);
         }}
+        autoCapitalize="none"
+        keyboardType="email-address"
+        leftIcon={
+          <Icon
+            name="email"
+            size={24}
+            style={{
+              color: '#8b8b8b',
+            }}
+          />
+        }
       />
       <Input
         placeholder="mot de passe"
@@ -64,6 +88,17 @@ const SignUpScreen = () => {
         onChangeText={value => {
           setPassword(value);
         }}
+        autoCapitalize="none"
+        secureTextEntry={true}
+        leftIcon={
+          <Icon
+            name="lock"
+            size={24}
+            style={{
+              color: '#8b8b8b',
+            }}
+          />
+        }
       />
       <Input
         placeholder="confirmer le mot de passe"
@@ -71,6 +106,17 @@ const SignUpScreen = () => {
         onChangeText={value => {
           setPasswordCheck(value);
         }}
+        autoCapitalize="none"
+        secureTextEntry={true}
+        leftIcon={
+          <Icon
+            name="lock"
+            size={24}
+            style={{
+              color: '#8b8b8b',
+            }}
+          />
+        }
       />
       <Button
         title="Inscription"

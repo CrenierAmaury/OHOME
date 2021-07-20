@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, ScrollView, Text, View } from "react-native";
+import {StyleSheet, ScrollView, Text, View} from 'react-native';
 import {ListItem} from 'react-native-elements';
 
 const HistoryScreen = props => {
@@ -13,7 +13,7 @@ const HistoryScreen = props => {
       {props.expenses.map((e, i) => (
         <ListItem key={i} bottomDivider>
           <ListItem.Content>
-            <ListItem.Title>{e.name}</ListItem.Title>
+            <ListItem.Title>{e.label}</ListItem.Title>
             <ListItem.Subtitle>{e.amount}</ListItem.Subtitle>
             <ListItem.Subtitle>
               {e.date.toDate().toLocaleDateString()}

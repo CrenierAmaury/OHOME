@@ -14,7 +14,7 @@ const NewExpenseScreen = props => {
 
   const addNewExpense = () => {
     const expense = {
-      name: name,
+      label: name,
       amount: Number(amount),
     };
     addExpense(props.budgetId, expense, props.budgetOverview)
