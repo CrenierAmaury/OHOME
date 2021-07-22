@@ -6,7 +6,7 @@ import HomeScreen from '../views/home/HomeScreen';
 import MealsScreen from '../views/meals/MealsScreen';
 import BudgetNav from './BudgetNav';
 import CalendarScreen from '../views/calendar/CalendarScreen';
-import ListsScreen from '../views/lists/ListsScreen';
+import ListsNav from './ListsNav';
 
 const Tab = createBottomTabNavigator();
 
@@ -104,7 +104,7 @@ const TabNav = () => {
       />
       <Tab.Screen
         name="Lists"
-        component={ListsScreen}
+        component={ListsNav}
         options={{
           tabBarIcon: ({focused}) => (
             <Icon

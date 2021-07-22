@@ -10,7 +10,7 @@ const NewExpenseScreen = props => {
   const [amount, setAmount] = useState('');
   const [datePickerShow, setDatePickerShow] = useState(false);
   const [date, setDate] = useState(new Date());
-  const [selectedType, setSelectedType] = useState('');
+  const [selectedType, setSelectedType] = useState('expense');
 
   const addNewExpense = () => {
     const expense = {
@@ -20,6 +20,7 @@ const NewExpenseScreen = props => {
     addExpense(props.budgetId, expense, props.budgetOverview)
       .then(docId => {
         console.log('SCREEN: expense added with id: ' + docId);
+        props.setIsOverlayVisible(false);
       })
       .catch(e => {
         console.log(e);
@@ -63,7 +64,6 @@ const NewExpenseScreen = props => {
         onChangeText={value => {
           setName(value);
         }}
-        containerStyle={{}}
       />
       <Input
         label={setLabel('montant', amount)}

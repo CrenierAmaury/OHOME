@@ -52,14 +52,6 @@ const BudgetScreen = ({navigation}) => {
       });
   };
 
-  const changeOverlayIsVisible = () => {
-    if (isOverlayVisible) {
-      setIsOverlayVisible(false);
-    } else {
-      setIsOverlayVisible(true);
-    }
-  };
-
   if (isLoading) {
     return (
       <View>
@@ -124,11 +116,15 @@ const BudgetScreen = ({navigation}) => {
         color="#FCA311"
         placement="right"
         icon={<Icon name="add" color="white" />}
-        onPress={changeOverlayIsVisible}
+        onPress={() => {
+          setIsOverlayVisible(true);
+        }}
       />
       <Overlay
         isVisible={isOverlayVisible}
-        onBackdropPress={changeOverlayIsVisible}
+        onBackdropPress={() => {
+          setIsOverlayVisible(false);
+        }}
         overlayStyle={{
           width: '80%',
         }}

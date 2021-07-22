@@ -6,9 +6,9 @@ const HistoryScreen = props => {
   return (
     <ScrollView>
       <View style={styles.options_container}>
-        <Text style={styles.options}> tous</Text>
-        <Text style={styles.options}> dépenses</Text>
-        <Text style={styles.options}> rentrées</Text>
+        <Text style={styles.options}>tous</Text>
+        <Text style={styles.options}>dépenses</Text>
+        <Text style={styles.options}>rentrées</Text>
       </View>
       {props.expenses.map((e, i) => (
         <ListItem key={i} bottomDivider>
@@ -19,6 +19,7 @@ const HistoryScreen = props => {
               {e.date.toDate().toLocaleDateString()}
             </ListItem.Subtitle>
           </ListItem.Content>
+          <ListItem.Chevron />
         </ListItem>
       ))}
     </ScrollView>
