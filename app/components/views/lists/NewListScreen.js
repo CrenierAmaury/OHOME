@@ -8,30 +8,36 @@ import {addList} from '../../../api/listsApi';
 const NewListScreen = props => {
   const [name, setName] = useState('');
   const [type, setType] = useState('shopping');
+  const [error, setError] = useState('');
 
   const uid = useSelector(state => state.user.uid);
 
   const addNewList = () => {
-    const list = {
-      label: name,
-      type: type,
-      elements: [],
-      creation: new Date(),
-      author: uid,
-    };
-    addList(props.listGroupId, list)
-      .then(id => {
-        console.log('list added with id: ' + id);
-        props.setIsOverlayVisible(false);
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    if (name) {
+      const list = {
+        label: name,
+        type: type,
+        elements: [],
+        creation: new Date(),
+        author: uid,
+      };
+      addList(props.listGroupId, list)
+        .then(id => {
+          setError('');
+          props.setIsOverlayVisible(false);
+        })
+        .catch(e => {
+          setError(e.message);
+          console.log(e);
+        });
+    } else {
+      setError('veuillez donner un nom');
+    }
   };
 
   const cancelNewList = () => {
     setName('');
-    setType('');
+    setType('shopping');
     props.setIsOverlayVisible(false);
   };
 
@@ -62,6 +68,7 @@ const NewListScreen = props => {
         label={setLabel('nom', name)}
         placeholder={setPlaceholder('nom', name)}
         value={name}
+        errorMessage={error}
         onChangeText={value => {
           setName(value);
         }}

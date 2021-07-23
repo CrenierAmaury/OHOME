@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, ScrollView, View, Text} from 'react-native';
 import {useSelector} from 'react-redux';
-import {getLists} from '../../../api/listsApi';
 import {FAB, ListItem, Overlay, Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import firestore from '@react-native-firebase/firestore';
 import NewListScreen from './NewListScreen';
+import {removeList} from '../../../api/listsApi';
+import {showSuccessSnackbar} from '../../../utils/snackbar';
 
 const ListsScreen = ({navigation}) => {
   const [lists, setLists] = useState([]);
@@ -15,15 +17,38 @@ const ListsScreen = ({navigation}) => {
   const childProps = {listGroupId, setIsOverlayVisible};
 
   useEffect(() => {
-    getLists(listGroupId)
-      .then(res => {
-        console.log(res);
-        setLists(res);
+    const unsubscribe = firestore()
+      .collection('listGroups')
+      .doc(listGroupId)
+      .collection('lists')
+      .onSnapshot(
+        querySnapshot => {
+          const listsTab = [];
+          querySnapshot.docs.forEach(doc => {
+            const {...list} = doc.data();
+            list.id = doc.id;
+            listsTab.push(list);
+          });
+          setLists(listsTab);
+        },
+        error => {
+          console.log(error);
+        },
+      );
+    return () => {
+      unsubscribe();
+    };
+  }, [listGroupId]);
+
+  const deleteList = (listGroupID, listID) => {
+    removeList(listGroupID, listID)
+      .then(() => {
+        showSuccessSnackbar('liste supprimée avec succès');
       })
       .catch(e => {
         console.log(e);
       });
-  }, [listGroupId]);
+  };
 
   return (
     <View style={styles.main_container}>
@@ -49,10 +74,19 @@ const ListsScreen = ({navigation}) => {
                 title="modifier"
                 icon={{name: 'edit', color: 'white'}}
                 buttonStyle={{minHeight: '100%'}}
+                onPress={() => {
+                  navigation.navigate('ListDetailsScreen', {
+                    listGroupId: listGroupId,
+                    list: h,
+                  });
+                }}
               />
             }
             rightContent={
               <Button
+                onPress={() => {
+                  deleteList(listGroupId, h.id);
+                }}
                 title="supprimer"
                 icon={{name: 'delete', color: 'white'}}
                 buttonStyle={{minHeight: '100%', backgroundColor: 'red'}}
