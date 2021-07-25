@@ -20,12 +20,12 @@ const SignUpScreen = () => {
   const createAccount = () => {
     if (verifyPassword()) {
       setIsLoading(true);
-      signUp(email, password)
+      signUp(email.trim(), password, name.trim())
         .then(r => {
           setError('');
           const user = {
-            name: name,
-            email: email,
+            name: name.trim(),
+            email: email.trim(),
             creation: new Date(),
             activeHousehold: '',
             households: [],
@@ -84,7 +84,6 @@ const SignUpScreen = () => {
       />
       <Input
         placeholder="mot de passe"
-        errorMessage={error}
         onChangeText={value => {
           setPassword(value);
         }}

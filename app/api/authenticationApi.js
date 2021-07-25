@@ -55,16 +55,34 @@ export async function signOut() {
   });
 }
 
-export async function signUp(email, password) {
+export async function signUp(email, password, name) {
   return new Promise((resolve, reject) => {
-    if (email && password) {
+    if (email && password && name) {
       auth()
         .createUserWithEmailAndPassword(email, password)
         .then(userCredential => {
           resolve(userCredential);
         })
         .catch(error => {
-          reject(error);
+          const code = error.code;
+          if (code === 'auth/invalid-email') {
+            reject({
+              code: code,
+              message: 'veuillez entrer une adresse email valide',
+            });
+          } else if (code === 'auth/email-already-in-use') {
+            reject({
+              code: code,
+              message: 'cette adresse email est déjà utilisée',
+            });
+          } else if (code === 'auth/weak-password') {
+            reject({
+              code: code,
+              message: 'le mot de passe doit contenir au moins 6 caractères',
+            });
+          } else {
+            reject(error);
+          }
         });
     } else {
       reject({

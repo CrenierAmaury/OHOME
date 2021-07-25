@@ -77,7 +77,7 @@ const BudgetScreen = ({navigation}) => {
         </Card>
         <Card containerStyle={styles.expense}>
           <Card.Title>Dépense</Card.Title>
-          <Text>{budgetOverview.expense}</Text>
+          <Text>{budgetOverview.expense * -1}</Text>
         </Card>
       </View>
       <ScrollView>
