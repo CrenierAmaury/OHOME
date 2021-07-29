@@ -1,12 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Text,
-  TouchableOpacity,
-} from 'react-native';
-import {Button, ListItem} from 'react-native-elements';
+import {View, StyleSheet, ScrollView, Text, Keyboard} from 'react-native';
+import {Button, Input, ListItem} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import {updateList} from '../../../api/listsApi';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
@@ -15,6 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 const ListDetailsScreen = ({route}) => {
   const [list, setList] = useState({});
   const [elements, setElements] = useState([]);
+  const [newItem, setNewItem] = useState('');
 
   useEffect(() => {
     const unsubscribe = firestore()
@@ -64,16 +59,39 @@ const ListDetailsScreen = ({route}) => {
       });
   };
 
+  const addElement = () => {
+    Keyboard.dismiss();
+    const newElements = [...elements];
+    newElements.push({label: newItem, checked: false});
+    updateList(route.params.listGroupId, route.params.list.id, {
+      elements: newElements,
+    })
+      .then(() => {
+        console.log('checked state changed');
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+
   return (
     <View style={styles.main_container}>
       <Text>{list.label}</Text>
-      <Icon
-        name="add"
-        size={35}
-        style={{
-          color: '#FCA311',
-          marginTop: 0,
+      <Input
+        placeholder="nouvel élement"
+        onChangeText={value => {
+          setNewItem(value);
         }}
+        rightIcon={
+          <Icon
+            name="add"
+            size={30}
+            onPress={addElement}
+            style={{
+              color: '#FCA311',
+            }}
+          />
+        }
       />
       <ScrollView>
         {elements.map((h, i) => (

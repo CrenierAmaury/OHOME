@@ -47,6 +47,7 @@ const AuthenticatedNav = ({navigation}) => {
   return (
     <Stack.Navigator
       initialRouteName="TabNav"
+      headerMode="screen"
       screenOptions={{
         title: '',
         headerLeft: headerLeft,

@@ -71,8 +71,8 @@ const ListsScreen = ({navigation}) => {
             }}
             leftContent={
               <Button
-                title="modifier"
-                icon={{name: 'edit', color: 'white'}}
+                title="détails"
+                icon={{name: 'info', color: 'white'}}
                 buttonStyle={{minHeight: '100%'}}
                 onPress={() => {
                   navigation.navigate('ListDetailsScreen', {
