@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, ScrollView, Text, Keyboard} from 'react-native';
+import React, {useEffect, useRef, useState} from 'react';
+import {View, StyleSheet, ScrollView, Keyboard} from 'react-native';
 import {Button, Input, ListItem} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import {updateList} from '../../../api/listsApi';
@@ -10,6 +10,10 @@ const ListDetailsScreen = ({route}) => {
   const [list, setList] = useState({});
   const [elements, setElements] = useState([]);
   const [newItem, setNewItem] = useState('');
+  const [title, setTitle] = useState('');
+  const [titleEditable, setTitleEditable] = useState(false);
+
+  const title_input = useRef();
 
   useEffect(() => {
     const unsubscribe = firestore()
@@ -74,9 +78,44 @@ const ListDetailsScreen = ({route}) => {
       });
   };
 
+  const strikeOutLabel = checked => {
+    if (checked) {
+      return 'line-through';
+    } else {
+      return 'none';
+    }
+  };
+
+  const changeTitle = () => {
+
+  };
+
+  const openModifyTitle = () => {
+    setTitleEditable(true);
+    title_input.current.focus();
+  };
+
   return (
     <View style={styles.main_container}>
-      <Text>{list.label}</Text>
+      <Input
+        placeholder={list.label}
+        editable={titleEditable}
+        ref={title_input}
+        onChangeText={value => {
+          setTitle(value);
+        }}
+        inputContainerStyle={styles.title}
+        rightIcon={
+          <Icon
+            name="edit"
+            size={24}
+            onPress={openModifyTitle}
+            style={{
+              color: '#8b8b8b',
+            }}
+          />
+        }
+      />
       <Input
         placeholder="nouvel élement"
         onChangeText={value => {
@@ -116,14 +155,19 @@ const ListDetailsScreen = ({route}) => {
               />
             }>
             <ListItem.Content>
-              <ListItem.Title>{h.label}</ListItem.Title>
+              <ListItem.Title
+                style={{textDecorationLine: strikeOutLabel(h.checked)}}>
+                {h.label}
+              </ListItem.Title>
             </ListItem.Content>
-            <ListItem.CheckBox
-              checked={h.checked}
-              onPress={() => {
-                changeChecked(i);
-              }}
-            />
+            {list.type === 'other' ? null : (
+              <ListItem.CheckBox
+                checked={h.checked}
+                onPress={() => {
+                  changeChecked(i);
+                }}
+              />
+            )}
           </ListItem.Swipeable>
         ))}
       </ScrollView>
@@ -134,6 +178,9 @@ const ListDetailsScreen = ({route}) => {
 const styles = StyleSheet.create({
   main_container: {
     flex: 1,
+  },
+  title: {
+    borderBottomWidth: 0,
   },
 });
 

@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import _ from 'lodash';
 import {StyleSheet, ScrollView, View, Text} from 'react-native';
 import {useSelector} from 'react-redux';
 import {FAB, ListItem, Overlay, Button} from 'react-native-elements';
@@ -11,6 +12,11 @@ import {showSuccessSnackbar} from '../../../utils/snackbar';
 const ListsScreen = ({navigation}) => {
   const [lists, setLists] = useState([]);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
+  const [filteredLists, setFilteredLists] = useState([]);
+  const [allColor, setAllColor] = useState('#FCA311');
+  const [shoppingColor, setShoppingColor] = useState('#8b8b8b');
+  const [todoColor, setTodoColor] = useState('#8b8b8b');
+  const [otherColor, setOtherColor] = useState('#8b8b8b');
 
   const listGroupId = useSelector(state => state.household.listGroupId);
 
@@ -30,6 +36,7 @@ const ListsScreen = ({navigation}) => {
             listsTab.push(list);
           });
           setLists(listsTab);
+          setFilteredLists(listsTab);
         },
         error => {
           console.log(error);
@@ -50,16 +57,64 @@ const ListsScreen = ({navigation}) => {
       });
   };
 
+  const sortLists = filter => {
+    if (filter === 'all') {
+      setFilteredLists(lists);
+    } else {
+      setFilteredLists(_.filter(lists, {type: filter}));
+    }
+  };
+
   return (
     <View style={styles.main_container}>
       <View style={styles.options_container}>
-        <Text style={styles.options}>tous</Text>
-        <Text style={styles.options}>courses</Text>
-        <Text style={styles.options}>to do</Text>
-        <Text style={styles.options}>autres</Text>
+        <Text
+          style={[styles.options, {color: allColor}]}
+          onPress={() => {
+            sortLists('all');
+            setAllColor('#FCA311');
+            setOtherColor('#8b8b8b');
+            setShoppingColor('#8b8b8b');
+            setTodoColor('#8b8b8b');
+          }}>
+          tous
+        </Text>
+        <Text
+          style={[styles.options, {color: shoppingColor}]}
+          onPress={() => {
+            sortLists('shopping');
+            setShoppingColor('#FCA311');
+            setOtherColor('#8b8b8b');
+            setAllColor('#8b8b8b');
+            setTodoColor('#8b8b8b');
+          }}>
+          courses
+        </Text>
+        <Text
+          style={[styles.options, {color: todoColor}]}
+          onPress={() => {
+            sortLists('todo');
+            setTodoColor('#FCA311');
+            setOtherColor('#8b8b8b');
+            setShoppingColor('#8b8b8b');
+            setAllColor('#8b8b8b');
+          }}>
+          to do
+        </Text>
+        <Text
+          style={[styles.options, {color: otherColor}]}
+          onPress={() => {
+            sortLists('other');
+            setOtherColor('#FCA311');
+            setAllColor('#8b8b8b');
+            setShoppingColor('#8b8b8b');
+            setTodoColor('#8b8b8b');
+          }}>
+          autres
+        </Text>
       </View>
       <ScrollView>
-        {lists.map((h, i) => (
+        {filteredLists.map((h, i) => (
           <ListItem.Swipeable
             key={i}
             bottomDivider
@@ -139,7 +194,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 5,
     textAlign: 'center',
-    color: '#8b8b8b',
   },
 });
 
