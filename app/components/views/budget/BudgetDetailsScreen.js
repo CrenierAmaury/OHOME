@@ -4,6 +4,7 @@ import {ButtonGroup} from 'react-native-elements';
 import {getExpenses} from '../../../api/budgetApi';
 import HistoryScreen from './HistoryScreen';
 import StatScreen from './StatScreen';
+import BudgetHeader from '../../headers/BudgetHeader';
 
 const BudgetDetailsScreen = ({route}) => {
   const [expenses, setExpenses] = useState([]);
@@ -23,6 +24,7 @@ const BudgetDetailsScreen = ({route}) => {
 
   return (
     <View style={styles.main_container}>
+      <BudgetHeader />
       <ButtonGroup
         onPress={buttonIndex => {
           setSelectedButtonIndex(buttonIndex);

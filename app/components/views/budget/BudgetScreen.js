@@ -14,6 +14,7 @@ import {
 import {Card, ListItem, FAB, Overlay, Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import NewExpenseScreen from './NewExpenseScreen';
+import MainHeader from '../../headers/mainHeader';
 
 const BudgetScreen = ({navigation}) => {
   const [history, setHistory] = useState([]);
@@ -66,6 +67,7 @@ const BudgetScreen = ({navigation}) => {
 
   return (
     <View style={styles.main_container}>
+      <MainHeader />
       <Card containerStyle={styles.balance}>
         <Card.Title>Equilibre</Card.Title>
         <Text>{budgetOverview.balance}</Text>

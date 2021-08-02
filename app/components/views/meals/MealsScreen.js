@@ -1,9 +1,11 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import MainHeader from '../../headers/mainHeader';
 
 const MealsScreen = () => {
   return (
     <View>
+      <MainHeader />
       <Text>REPAS</Text>
     </View>
   );

@@ -1,19 +1,18 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, ScrollView, Keyboard} from 'react-native';
 import {Button, Input, ListItem} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import {updateList} from '../../../api/listsApi';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import ListHeader from '../../headers/listHeader';
 
-const ListDetailsScreen = ({route}) => {
+const ListDetailsScreen = ({route, navigation}) => {
   const [list, setList] = useState({});
   const [elements, setElements] = useState([]);
   const [newItem, setNewItem] = useState('');
-  const [title, setTitle] = useState('');
-  const [titleEditable, setTitleEditable] = useState(false);
 
-  const title_input = useRef();
+  const headerProps = {title: list.label, navigation: navigation};
 
   useEffect(() => {
     const unsubscribe = firestore()
@@ -23,6 +22,7 @@ const ListDetailsScreen = ({route}) => {
       .doc(route.params.list.id)
       .onSnapshot(
         documentSnapshot => {
+          navigation.setOptions({title: documentSnapshot.data().label});
           setList(documentSnapshot.data());
           setElements(documentSnapshot.data().elements);
         },
@@ -33,7 +33,7 @@ const ListDetailsScreen = ({route}) => {
     return () => {
       unsubscribe();
     };
-  }, [route.params.list, route.params.listGroupId]);
+  }, [navigation, route.params.list, route.params.listGroupId]);
 
   const deleteElement = index => {
     const newElements = [...elements];
@@ -86,36 +86,9 @@ const ListDetailsScreen = ({route}) => {
     }
   };
 
-  const changeTitle = () => {
-
-  };
-
-  const openModifyTitle = () => {
-    setTitleEditable(true);
-    title_input.current.focus();
-  };
-
   return (
     <View style={styles.main_container}>
-      <Input
-        placeholder={list.label}
-        editable={titleEditable}
-        ref={title_input}
-        onChangeText={value => {
-          setTitle(value);
-        }}
-        inputContainerStyle={styles.title}
-        rightIcon={
-          <Icon
-            name="edit"
-            size={24}
-            onPress={openModifyTitle}
-            style={{
-              color: '#8b8b8b',
-            }}
-          />
-        }
-      />
+      <ListHeader {...headerProps} />
       <Input
         placeholder="nouvel élement"
         onChangeText={value => {

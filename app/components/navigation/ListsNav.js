@@ -9,9 +9,7 @@ const ListsNav = () => {
   return (
     <Stack.Navigator
       initialRouteName="ListsScreen"
-      screenOptions={{
-        headerShown: false,
-      }}>
+      screenOptions={{headerShown: false}}>
       <Stack.Screen name="ListsScreen" component={ListsScreen} />
       <Stack.Screen name="ListDetailsScreen" component={ListDetailsScreen} />
     </Stack.Navigator>

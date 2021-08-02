@@ -64,7 +64,7 @@ const MainNav = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerTitleAlign: 'center',
+        headerShown: false,
         headerStyle: {
           backgroundColor: '#FBFBFB',
           // shadow
@@ -76,21 +76,9 @@ const MainNav = () => {
         },
       }}>
       {uid ? (
-        <Stack.Screen
-          name="Authenticated"
-          component={AuthenticatedNav}
-          options={{
-            headerShown: false,
-          }}
-        />
+        <Stack.Screen name="Authenticated" component={AuthenticatedNav} />
       ) : (
-        <Stack.Screen
-          name="Unauthenticated"
-          component={UnauthenticatedNav}
-          options={{
-            headerShown: false,
-          }}
-        />
+        <Stack.Screen name="Unauthenticated" component={UnauthenticatedNav} />
       )}
     </Stack.Navigator>
   );

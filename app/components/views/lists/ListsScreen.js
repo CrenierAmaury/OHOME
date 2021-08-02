@@ -8,6 +8,7 @@ import firestore from '@react-native-firebase/firestore';
 import NewListScreen from './NewListScreen';
 import {removeList} from '../../../api/listsApi';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
+import MainHeader from '../../headers/mainHeader';
 
 const ListsScreen = ({navigation}) => {
   const [lists, setLists] = useState([]);
@@ -67,6 +68,7 @@ const ListsScreen = ({navigation}) => {
 
   return (
     <View style={styles.main_container}>
+      <MainHeader />
       <View style={styles.options_container}>
         <Text
           style={[styles.options, {color: allColor}]}

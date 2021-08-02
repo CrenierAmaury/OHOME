@@ -46,6 +46,7 @@ const TabNav = () => {
               }}
             />
           ),
+          tabBarLabel: 'Repas',
         }}
       />
       <Tab.Screen
@@ -64,6 +65,7 @@ const TabNav = () => {
               }}
             />
           ),
+          tabBarLabel: 'Budget',
         }}
       />
       <Tab.Screen
@@ -82,6 +84,7 @@ const TabNav = () => {
               }}
             />
           ),
+          tabBarLabel: 'Acceuil',
         }}
       />
       <Tab.Screen
@@ -100,6 +103,7 @@ const TabNav = () => {
               }}
             />
           ),
+          tabBarLabel: 'Calendrier',
         }}
       />
       <Tab.Screen
@@ -118,6 +122,7 @@ const TabNav = () => {
               }}
             />
           ),
+          tabBarLabel: 'listes',
         }}
       />
     </Tab.Navigator>
