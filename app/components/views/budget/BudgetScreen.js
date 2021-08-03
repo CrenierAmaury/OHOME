@@ -1,11 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  ActivityIndicator,
-  ScrollView,
-} from 'react-native';
+import {Text, View, ActivityIndicator, ScrollView} from 'react-native';
+import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {
   getBalanceIncomeExpense,
@@ -17,6 +12,8 @@ import NewExpenseScreen from './NewExpenseScreen';
 import MainHeader from '../../headers/MainHeader';
 
 const BudgetScreen = ({navigation}) => {
+  const styles = useStyles();
+
   const [history, setHistory] = useState([]);
   const [budgetOverview, setBudgetOverview] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -141,7 +138,7 @@ const BudgetScreen = ({navigation}) => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(theme => ({
   main_container: {
     backgroundColor: '#FBFBFB',
     flex: 1,
@@ -169,6 +166,6 @@ const styles = StyleSheet.create({
     margin: 10,
     borderWidth: 0,
   },
-});
+}));
 
 export default BudgetScreen;

@@ -1,8 +1,11 @@
 import React from 'react';
-import {StyleSheet, ScrollView, Text, View} from 'react-native';
+import {ScrollView, Text, View} from 'react-native';
+import {makeStyles} from 'react-native-elements';
 import {ListItem} from 'react-native-elements';
 
 const HistoryScreen = props => {
+  const styles = useStyles();
+
   return (
     <ScrollView>
       <View style={styles.options_container}>
@@ -26,7 +29,7 @@ const HistoryScreen = props => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
   },
@@ -40,6 +43,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#8b8b8b',
   },
-});
+}));
 
 export default HistoryScreen;

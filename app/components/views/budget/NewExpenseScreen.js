@@ -4,10 +4,13 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {addExpense} from '../../../api/budgetApi';
 import {Button, Input} from 'react-native-elements';
 import {TouchableOpacity, View} from 'react-native';
+import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
 
 const NewExpenseScreen = props => {
+  const styles = useStyles();
+
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
   const [datePickerShow, setDatePickerShow] = useState(false);
@@ -80,7 +83,7 @@ const NewExpenseScreen = props => {
   };
 
   return (
-    <View>
+    <View style={styles.main_container}>
       <Picker
         selectedValue={type}
         onValueChange={value => {
@@ -161,5 +164,9 @@ const NewExpenseScreen = props => {
     </View>
   );
 };
+
+const useStyles = makeStyles(theme => ({
+  main_container: {},
+}));
 
 export default NewExpenseScreen;

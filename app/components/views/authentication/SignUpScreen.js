@@ -1,11 +1,14 @@
 import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
+import {makeStyles} from 'react-native-elements';
 import {Input, Button} from 'react-native-elements';
 import {signUp} from '../../../api/authenticationApi';
 import {addUser} from '../../../api/userApi';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const SignUpScreen = () => {
+  const styles = useStyles();
+
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -130,7 +133,7 @@ const SignUpScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
     padding: 10,
@@ -146,6 +149,6 @@ const styles = StyleSheet.create({
   button: {
     backgroundColor: '#FCA311',
   },
-});
+}));
 
 export default SignUpScreen;

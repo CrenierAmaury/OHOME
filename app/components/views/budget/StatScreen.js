@@ -1,8 +1,11 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
+import {makeStyles} from 'react-native-elements';
 import {PieChart} from 'react-native-svg-charts';
 
 const StatScreen = () => {
+  const styles = useStyles();
+
   const data = [50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80];
 
   const randomColor = () =>
@@ -23,16 +26,16 @@ const StatScreen = () => {
     }));
 
   return (
-    <View>
+    <View style={styles.main_container}>
       <PieChart style={{height: 200}} data={pieData} />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
   },
-});
+}));
 
 export default StatScreen;

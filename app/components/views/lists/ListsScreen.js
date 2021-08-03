@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import _ from 'lodash';
-import {StyleSheet, ScrollView, View, Text} from 'react-native';
+import {ScrollView, View, Text} from 'react-native';
+import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {FAB, ListItem, Overlay, Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -11,6 +12,8 @@ import {showSuccessSnackbar} from '../../../utils/snackbar';
 import MainHeader from '../../headers/MainHeader';
 
 const ListsScreen = ({navigation}) => {
+  const styles = useStyles();
+
   const [lists, setLists] = useState([]);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [filteredLists, setFilteredLists] = useState([]);
@@ -185,7 +188,7 @@ const ListsScreen = ({navigation}) => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
   },
@@ -198,6 +201,6 @@ const styles = StyleSheet.create({
     padding: 5,
     textAlign: 'center',
   },
-});
+}));
 
 export default ListsScreen;

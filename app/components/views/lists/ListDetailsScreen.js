@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, ScrollView, Keyboard} from 'react-native';
+import {View, ScrollView, Keyboard} from 'react-native';
 import {Button, Input, ListItem} from 'react-native-elements';
+import {makeStyles} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import {updateList} from '../../../api/listsApi';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
@@ -8,6 +9,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ListHeader from '../../headers/ListHeader';
 
 const ListDetailsScreen = ({route, navigation}) => {
+  const styles = useStyles();
+
   const [list, setList] = useState({});
   const [elements, setElements] = useState([]);
   const [newItem, setNewItem] = useState('');
@@ -148,13 +151,13 @@ const ListDetailsScreen = ({route, navigation}) => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
   },
   title: {
     borderBottomWidth: 0,
   },
-});
+}));
 
 export default ListDetailsScreen;

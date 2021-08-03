@@ -1,7 +1,10 @@
 import React from 'react';
 import {Header, Icon} from 'react-native-elements';
+import {useTheme} from 'react-native-elements';
 
 const ListHeader = props => {
+  const {theme} = useTheme();
+
   const LeftIcon = () => {
     return (
       <Icon

@@ -1,12 +1,14 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {Text, View} from 'react-native';
 import {signOut} from '../../../api/authenticationApi';
 import {updateUid} from '../../../store/slices/userSlice';
-import {Button} from 'react-native-elements';
+import {Button, makeStyles} from 'react-native-elements';
 import {useDispatch} from 'react-redux';
 import TitleHeader from '../../headers/TitleHeader';
 
 const ProfileScreen = ({navigation}) => {
+  const styles = useStyles();
+
   const dispatch = useDispatch();
 
   const headerProps = {title: 'Profil', navigation};
@@ -35,20 +37,20 @@ const ProfileScreen = ({navigation}) => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
   },
   button_container: {
-    backgroundColor: '#FBFBFB',
+    backgroundColor: theme.colors.background,
     width: '50%',
     marginLeft: 'auto',
     marginRight: 'auto',
     marginTop: 20,
   },
   button: {
-    backgroundColor: '#FCA311',
+    backgroundColor: theme.colors.highlight,
   },
-});
+}));
 
 export default ProfileScreen;

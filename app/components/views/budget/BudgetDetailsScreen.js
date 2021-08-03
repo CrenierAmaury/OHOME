@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {View} from 'react-native';
+import {makeStyles} from 'react-native-elements';
 import {ButtonGroup} from 'react-native-elements';
 import {getExpenses} from '../../../api/budgetApi';
 import HistoryScreen from './HistoryScreen';
@@ -7,6 +8,8 @@ import StatScreen from './StatScreen';
 import BudgetHeader from '../../headers/BudgetHeader';
 
 const BudgetDetailsScreen = ({route, navigation}) => {
+  const styles = useStyles();
+
   const [expenses, setExpenses] = useState([]);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(1);
 
@@ -43,13 +46,13 @@ const BudgetDetailsScreen = ({route, navigation}) => {
   );
 };
 
-const styles = StyleSheet.create({
+const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
   },
   selected_button: {
     backgroundColor: '#FCA311',
   },
-});
+}));
 
 export default BudgetDetailsScreen;

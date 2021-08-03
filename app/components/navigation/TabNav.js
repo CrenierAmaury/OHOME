@@ -1,7 +1,7 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {StyleSheet} from 'react-native';
+import {useTheme} from 'react-native-elements';
 import HomeScreen from '../views/home/HomeScreen';
 import MealsScreen from '../views/meals/MealsScreen';
 import BudgetNav from './BudgetNav';
@@ -11,6 +11,8 @@ import ListsNav from './ListsNav';
 const Tab = createBottomTabNavigator();
 
 const TabNav = () => {
+  const {theme} = useTheme();
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -39,7 +41,7 @@ const TabNav = () => {
               name="dinner-dining"
               size={35}
               style={{
-                color: focused ? '#FCA311' : '#8b8b8b',
+                color: focused ? theme.colors.highlight : theme.colors.text,
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -58,7 +60,7 @@ const TabNav = () => {
               name="account-balance-wallet"
               size={35}
               style={{
-                color: focused ? '#FCA311' : '#8b8b8b',
+                color: focused ? theme.colors.highlight : theme.colors.text,
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -77,7 +79,7 @@ const TabNav = () => {
               name="home"
               size={35}
               style={{
-                color: focused ? '#FCA311' : '#8b8b8b',
+                color: focused ? theme.colors.highlight : theme.colors.text,
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -96,7 +98,7 @@ const TabNav = () => {
               name="event"
               size={35}
               style={{
-                color: focused ? '#FCA311' : '#8b8b8b',
+                color: focused ? theme.colors.highlight : theme.colors.text,
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -115,7 +117,7 @@ const TabNav = () => {
               name="format-list-bulleted"
               size={35}
               style={{
-                color: focused ? '#FCA311' : '#8b8b8b',
+                color: focused ? theme.colors.highlight : theme.colors.text,
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -128,11 +130,5 @@ const TabNav = () => {
     </Tab.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  main_container: {
-    flex: 1,
-  },
-});
 
 export default TabNav;

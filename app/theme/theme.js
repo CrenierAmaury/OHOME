@@ -1,11 +1,17 @@
-import {DefaultTheme} from '@react-navigation/native';
+const palette = {
+  orange: '#FCA311',
+  grey: '#8b8b8b',
+  white: '#FBFBFB',
+  header: '#FAFAFA',
+};
 
-const MyTheme = {
-  ...DefaultTheme,
+const theme = {
   colors: {
-    ...DefaultTheme.colors,
-    primary: 'red',
+    background: palette.white,
+    highlight: palette.orange,
+    text: palette.grey,
+    header: palette.header,
   },
 };
 
-export default MyTheme;
+export default theme;

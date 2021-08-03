@@ -2,10 +2,13 @@ import React, {useState} from 'react';
 import {Picker} from '@react-native-picker/picker';
 import {Button, Input} from 'react-native-elements';
 import {View} from 'react-native';
+import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {addList} from '../../../api/listsApi';
 
 const NewListScreen = props => {
+  const styles = useStyles();
+
   const [name, setName] = useState('');
   const [type, setType] = useState('shopping');
   const [error, setError] = useState('');
@@ -54,7 +57,7 @@ const NewListScreen = props => {
   };
 
   return (
-    <View>
+    <View style={styles.main_container}>
       <Picker
         selectedValue={type}
         onValueChange={value => {
@@ -109,5 +112,9 @@ const NewListScreen = props => {
     </View>
   );
 };
+
+const useStyles = makeStyles(theme => ({
+  main_container: {},
+}));
 
 export default NewListScreen;

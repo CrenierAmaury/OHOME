@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {ActivityIndicator, StyleSheet, View} from 'react-native';
+import {ActivityIndicator, View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import AuthenticatedNav from './AuthenticatedNav';
 import UnauthenticatedNav from './UnauthenticatedNav';
@@ -83,11 +83,5 @@ const MainNav = () => {
     </Stack.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  main_container: {
-    flex: 1,
-  },
-});
 
 export default MainNav;
