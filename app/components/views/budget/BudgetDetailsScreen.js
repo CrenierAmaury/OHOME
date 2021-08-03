@@ -6,11 +6,12 @@ import HistoryScreen from './HistoryScreen';
 import StatScreen from './StatScreen';
 import BudgetHeader from '../../headers/BudgetHeader';
 
-const BudgetDetailsScreen = ({route}) => {
+const BudgetDetailsScreen = ({route, navigation}) => {
   const [expenses, setExpenses] = useState([]);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(1);
 
   const childProps = {expenses};
+  const headerProps = {navigation};
 
   useEffect(() => {
     getExpenses(route.params.budgetId)
@@ -24,7 +25,7 @@ const BudgetDetailsScreen = ({route}) => {
 
   return (
     <View style={styles.main_container}>
-      <BudgetHeader />
+      <BudgetHeader {...headerProps} />
       <ButtonGroup
         onPress={buttonIndex => {
           setSelectedButtonIndex(buttonIndex);

@@ -8,7 +8,7 @@ import firestore from '@react-native-firebase/firestore';
 import NewListScreen from './NewListScreen';
 import {removeList} from '../../../api/listsApi';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
-import MainHeader from '../../headers/mainHeader';
+import MainHeader from '../../headers/MainHeader';
 
 const ListsScreen = ({navigation}) => {
   const [lists, setLists] = useState([]);
@@ -22,6 +22,7 @@ const ListsScreen = ({navigation}) => {
   const listGroupId = useSelector(state => state.household.listGroupId);
 
   const childProps = {listGroupId, setIsOverlayVisible};
+  const headerProps = {navigation};
 
   useEffect(() => {
     const unsubscribe = firestore()
@@ -68,7 +69,7 @@ const ListsScreen = ({navigation}) => {
 
   return (
     <View style={styles.main_container}>
-      <MainHeader />
+      <MainHeader {...headerProps} />
       <View style={styles.options_container}>
         <Text
           style={[styles.options, {color: allColor}]}

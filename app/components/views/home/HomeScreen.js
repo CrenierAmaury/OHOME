@@ -1,12 +1,14 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import BudgetWidget from './BudgetWidget';
-import MainHeader from '../../headers/mainHeader';
+import MainHeader from '../../headers/MainHeader';
 
-const HomeScreen = () => {
+const HomeScreen = ({navigation}) => {
+  const headerProps = {navigation};
+
   return (
     <View style={styles.main_container}>
-      <MainHeader />
+      <MainHeader {...headerProps} />
       <Text>HOME</Text>
       <BudgetWidget />
     </View>

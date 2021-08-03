@@ -4,12 +4,16 @@ import {signOut} from '../../../api/authenticationApi';
 import {updateUid} from '../../../store/slices/userSlice';
 import {Button} from 'react-native-elements';
 import {useDispatch} from 'react-redux';
+import TitleHeader from '../../headers/TitleHeader';
 
-const ProfileScreen = () => {
+const ProfileScreen = ({navigation}) => {
   const dispatch = useDispatch();
 
+  const headerProps = {title: 'Profil', navigation};
+
   return (
-    <View>
+    <View style={styles.main_container}>
+      <TitleHeader {...headerProps} />
       <Text>PROFIL</Text>
       <Button
         title="sign out"

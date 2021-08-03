@@ -6,7 +6,7 @@ import TabNav from './TabNav';
 
 const Stack = createStackNavigator();
 
-const AuthenticatedNav = ({navigation}) => {
+const AuthenticatedNav = () => {
   return (
     <Stack.Navigator
       initialRouteName="TabNav"

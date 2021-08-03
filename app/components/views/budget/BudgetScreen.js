@@ -14,7 +14,7 @@ import {
 import {Card, ListItem, FAB, Overlay, Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import NewExpenseScreen from './NewExpenseScreen';
-import MainHeader from '../../headers/mainHeader';
+import MainHeader from '../../headers/MainHeader';
 
 const BudgetScreen = ({navigation}) => {
   const [history, setHistory] = useState([]);
@@ -26,6 +26,7 @@ const BudgetScreen = ({navigation}) => {
 
   const childProps = {budgetId, budgetOverview, setIsOverlayVisible};
   const navProps = {budgetId, budgetOverview};
+  const headerProps = {navigation};
 
   useEffect(() => {
     getBudgetOverview(budgetId);
@@ -67,7 +68,7 @@ const BudgetScreen = ({navigation}) => {
 
   return (
     <View style={styles.main_container}>
-      <MainHeader />
+      <MainHeader {...headerProps} />
       <Card containerStyle={styles.balance}>
         <Card.Title>Equilibre</Card.Title>
         <Text>{budgetOverview.balance}</Text>

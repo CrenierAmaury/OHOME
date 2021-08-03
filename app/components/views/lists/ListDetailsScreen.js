@@ -5,14 +5,14 @@ import firestore from '@react-native-firebase/firestore';
 import {updateList} from '../../../api/listsApi';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import ListHeader from '../../headers/listHeader';
+import ListHeader from '../../headers/ListHeader';
 
 const ListDetailsScreen = ({route, navigation}) => {
   const [list, setList] = useState({});
   const [elements, setElements] = useState([]);
   const [newItem, setNewItem] = useState('');
 
-  const headerProps = {title: list.label, navigation: navigation};
+  const headerProps = {title: list.label, navigation};
 
   useEffect(() => {
     const unsubscribe = firestore()

@@ -1,14 +1,14 @@
 import React from 'react';
 import {Header, Icon} from 'react-native-elements';
 
-const BudgetHeader = props => {
+const MainHeader = props => {
   const LeftIcon = () => {
     return (
       <Icon
-        name="arrow-back"
+        name="face"
         color="#fff"
         onPress={() => {
-          props.navigation.goBack();
+          props.navigation.navigate('ProfileNav');
         }}
       />
     );
@@ -17,10 +17,10 @@ const BudgetHeader = props => {
   const RightIcon = () => {
     return (
       <Icon
-        name="more-vert"
+        name="settings"
         color="#fff"
         onPress={() => {
-          props.navigation.goBack();
+          props.navigation.navigate('SettingsNav');
         }}
       />
     );
@@ -29,4 +29,4 @@ const BudgetHeader = props => {
   return <Header leftComponent={<LeftIcon />} rightComponent={<RightIcon />} />;
 };
 
-export default BudgetHeader;
+export default MainHeader;

@@ -1,9 +1,13 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import TitleHeader from '../../headers/TitleHeader';
 
-const SettingsScreen = () => {
+const SettingsScreen = ({navigation}) => {
+  const headerProps = {title: 'Paramètres', navigation};
+
   return (
-    <View>
+    <View style={styles.main_container}>
+      <TitleHeader {...headerProps} />
       <Text>SETTINGS</Text>
     </View>
   );

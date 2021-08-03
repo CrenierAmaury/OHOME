@@ -1,11 +1,13 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import MainHeader from '../../headers/mainHeader';
+import MainHeader from '../../headers/MainHeader';
 
-const MealsScreen = () => {
+const MealsScreen = ({navigation}) => {
+  const headerProps = {navigation};
+
   return (
     <View>
-      <MainHeader />
+      <MainHeader {...headerProps} />
       <Text>REPAS</Text>
     </View>
   );
