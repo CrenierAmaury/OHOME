@@ -11,6 +11,7 @@ import {
   updateBudgetId,
   updateHouseholdId,
   updateListGroupId,
+  updateMealGroupId,
 } from '../../store/slices/householdSlice';
 import {getHousehold} from '../../api/householdApi';
 
@@ -36,6 +37,7 @@ const MainNav = () => {
             getHousehold(res.activeHousehold).then(household => {
               dispatch(updateBudgetId(household.budget));
               dispatch(updateListGroupId(household.listGroup));
+              dispatch(updateMealGroupId(household.mealGroup));
               setIsLoading(false);
             });
           }
