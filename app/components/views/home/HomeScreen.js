@@ -13,7 +13,7 @@ const HomeScreen = ({navigation}) => {
     <View style={styles.main_container}>
       <MainHeader {...headerProps} />
       <Text>HOME</Text>
-      <BudgetWidget />
+      <BudgetWidget {...navigation} />
     </View>
   );
 };

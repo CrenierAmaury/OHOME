@@ -31,9 +31,9 @@
     "react-native-screens": "^3.4.0",
     "react-native-snackbar": "^2.4.0",
     "react-native-svg": "^7.2.1",
-    "react-native-svg-charts": "^5.4.0",
     "react-native-vector-icons": "^8.1.0",
-    "react-redux": "^7.2.4"
+    "react-redux": "^7.2.4",
+    "victory-native": "^35.3.3"
   },
   "devDependencies": {
     "@babel/core": "7.14.6",

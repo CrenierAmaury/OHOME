@@ -26,6 +26,7 @@ const NewExpenseScreen = props => {
         label: name,
         amount: setAmountSign(Number(amount)),
         date: date,
+        category: 'unknown',
         creation: new Date(),
         author: uid,
       };

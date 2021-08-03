@@ -1,33 +1,30 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
 import {makeStyles} from 'react-native-elements';
-import {PieChart} from 'react-native-svg-charts';
+import {VictoryPie, VictoryTheme} from 'victory-native';
 
-const StatScreen = () => {
+const StatScreen = props => {
   const styles = useStyles();
 
-  const data = [50, 10, 40, 95, -4, -24, 85, 91, 35, 53, -53, 24, 50, -20, -80];
+  const [expenses, setExpenses] = useState([]);
 
-  const randomColor = () =>
-    ('#' + ((Math.random() * 0xffffff) << 0).toString(16) + '000000').slice(
-      0,
-      7,
-    );
+  const data = [
+    {x: 'Déplacements', y: 30},
+    {x: 'Nourriture', y: 20},
+    {x: 'Assurances', y: 10},
+  ];
 
-  const pieData = data
-    .filter(value => value > 0)
-    .map((value, index) => ({
-      value,
-      svg: {
-        fill: randomColor(),
-        onPress: () => console.log('press', index),
-      },
-      key: `pie-${index}`,
-    }));
+  useEffect(() => {
+    setExpenses(props.expenses);
+  }, [props.expenses]);
 
   return (
     <View style={styles.main_container}>
-      <PieChart style={{height: 200}} data={pieData} />
+      <VictoryPie
+        data={data}
+        theme={VictoryTheme.material}
+        colorScale={['tomato', 'orange', 'gold', 'cyan', 'navy']}
+      />
     </View>
   );
 };
