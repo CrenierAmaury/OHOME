@@ -13,7 +13,7 @@ const BudgetDetailsScreen = ({route, navigation}) => {
   const [expenses, setExpenses] = useState([]);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(1);
 
-  const childProps = {expenses};
+  const childProps = {expenses, navigation};
   const headerProps = {navigation};
 
   useEffect(() => {

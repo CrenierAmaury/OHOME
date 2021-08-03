@@ -1,13 +1,18 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import {makeStyles} from 'react-native-elements';
+import BudgetHeader from '../../headers/BudgetHeader';
 
-const ExpenseDetailsScreen = () => {
+const ExpenseDetailsScreen = ({route, navigation}) => {
   const styles = useStyles();
+
+  const headerProps = {navigation};
 
   return (
     <View style={styles.main_container}>
+      <BudgetHeader {...headerProps} />
       <Text>EXPENSE DETAILS</Text>
+      <Text>{route.params.expense.label}</Text>
     </View>
   );
 };

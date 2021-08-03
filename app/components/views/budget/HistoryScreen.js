@@ -71,7 +71,14 @@ const HistoryScreen = props => {
         </Text>
       </View>
       {filteredHistory.map((e, i) => (
-        <ListItem key={i} bottomDivider>
+        <ListItem
+          key={i}
+          bottomDivider
+          onPress={() => {
+            props.navigation.navigate('ExpenseDetailsScreen', {
+              expense: e,
+            });
+          }}>
           <ListItem.Content>
             <ListItem.Title>{e.label}</ListItem.Title>
             <ListItem.Subtitle>{e.amount}</ListItem.Subtitle>
