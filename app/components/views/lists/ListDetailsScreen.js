@@ -25,7 +25,6 @@ const ListDetailsScreen = ({route, navigation}) => {
       .doc(route.params.list.id)
       .onSnapshot(
         documentSnapshot => {
-          navigation.setOptions({title: documentSnapshot.data().label});
           setList(documentSnapshot.data());
           setElements(documentSnapshot.data().elements);
         },

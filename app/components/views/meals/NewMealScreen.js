@@ -1,26 +1,31 @@
 import React, {useState} from 'react';
-import {Picker} from '@react-native-picker/picker';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {Button, Input} from 'react-native-elements';
-import {View} from 'react-native';
+import {TouchableOpacity, View} from 'react-native';
 import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
-import {addList} from '../../../api/listsApi';
+import {showSuccessSnackbar} from '../../../utils/snackbar';
+import {addMeal} from '../../../api/mealsApi';
+import {renderDate} from '../../../utils/date';
 
-const NewListScreen = props => {
+const NewMealScreen = props => {
   const styles = useStyles();
 
   const [name, setName] = useState('');
-  const [type, setType] = useState('shopping');
+  const [description, setDescription] = useState('');
+  const [datePickerShow, setDatePickerShow] = useState(false);
+  const [date, setDate] = useState(new Date());
   const [error, setError] = useState('');
 
   const uid = useSelector(state => state.user.uid);
 
-  const addNewList = () => {
+  const addNewMeal = () => {
     if (name) {
-      const list = {
+      const meal = {
         label: name,
-        type: type,
-        elements: [],
+        date: date,
+        description: description,
+        ingredients: [],
         creation: new Date(),
         author: uid,
         modified: {
@@ -28,24 +33,31 @@ const NewListScreen = props => {
           when: new Date(),
         },
       };
-      addList(props.listGroupId, list)
-        .then(id => {
-          setError('');
+      addMeal(props.mealGroupId, meal)
+        .then(docId => {
+          console.log('SCREEN: meal added with id: ' + docId);
           props.setIsOverlayVisible(false);
+          showSuccessSnackbar('nouveau repas ajouté avec succès');
         })
         .catch(e => {
-          setError(e.message);
           console.log(e);
         });
     } else {
-      setError('veuillez donner un nom');
+      setError('veuillez indiquer un nom');
     }
   };
 
-  const cancelNewList = () => {
+  const cancelNewMeal = () => {
+    setDate(new Date());
     setName('');
-    setType('shopping');
+    setError('');
     props.setIsOverlayVisible(false);
+  };
+
+  const onChangeDate = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setDate(currentDate);
+    setDatePickerShow(false);
   };
 
   const setPlaceholder = (placeholder, value) => {
@@ -62,29 +74,46 @@ const NewListScreen = props => {
 
   return (
     <View style={styles.main_container}>
-      <Picker
-        selectedValue={type}
-        onValueChange={value => {
-          setType(value);
-        }}>
-        <Picker.Item label="courses" value="shopping" />
-        <Picker.Item label="to do" value="todo" />
-        <Picker.Item label="autre" value="other" />
-      </Picker>
       <Input
         label={setLabel('nom', name)}
         placeholder={setPlaceholder('nom', name)}
         value={name}
-        errorMessage={error}
         onChangeText={value => {
           setName(value);
         }}
       />
+      <Input
+        label={setLabel('description', description)}
+        placeholder={setPlaceholder('description', description)}
+        value={description}
+        onChangeText={value => {
+          setDescription(value);
+        }}
+      />
+      <TouchableOpacity
+        onPress={() => {
+          setDatePickerShow(true);
+        }}>
+        <Input
+          label="date"
+          value={date.toLocaleDateString()}
+          errorMessage={error}
+          editable={false}
+        />
+      </TouchableOpacity>
+      {datePickerShow && (
+        <RNDateTimePicker
+          value={date}
+          mode={'date'}
+          display="spinner"
+          onChange={onChangeDate}
+        />
+      )}
       <Button
         title="ajouter"
         type="solid"
         raised={true}
-        onPress={addNewList}
+        onPress={addNewMeal}
         containerStyle={{
           backgroundColor: '#FBFBFB',
           width: '90%',
@@ -100,7 +129,7 @@ const NewListScreen = props => {
         title="annuler"
         type="solid"
         raised={true}
-        onPress={cancelNewList}
+        onPress={cancelNewMeal}
         containerStyle={{
           backgroundColor: '#FBFBFB',
           width: '90%',
@@ -121,4 +150,4 @@ const useStyles = makeStyles(theme => ({
   main_container: {},
 }));
 
-export default NewListScreen;
+export default NewMealScreen;

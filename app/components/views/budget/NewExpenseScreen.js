@@ -29,6 +29,10 @@ const NewExpenseScreen = props => {
         category: 'unknown',
         creation: new Date(),
         author: uid,
+        modified: {
+          by: uid,
+          when: new Date(),
+        },
       };
       addExpense(props.budgetId, expense, props.budgetOverview)
         .then(docId => {

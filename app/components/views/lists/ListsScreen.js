@@ -159,6 +159,7 @@ const ListsScreen = ({navigation}) => {
                 {h.creation.toDate().toLocaleDateString()}
               </ListItem.Subtitle>
             </ListItem.Content>
+            <ListItem.Chevron />
           </ListItem.Swipeable>
         ))}
       </ScrollView>

@@ -3,10 +3,10 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTheme} from 'react-native-elements';
 import HomeScreen from '../views/home/HomeScreen';
-import MealsScreen from '../views/meals/MealsScreen';
 import BudgetNav from './BudgetNav';
 import CalendarScreen from '../views/calendar/CalendarScreen';
 import ListsNav from './ListsNav';
+import MealsNav from './MealsNav';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,7 +34,7 @@ const TabNav = () => {
       }}>
       <Tab.Screen
         name="Meals"
-        component={MealsScreen}
+        component={MealsNav}
         options={{
           tabBarIcon: ({focused}) => (
             <Icon
