@@ -1,13 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, { useCallback, useEffect, useState } from "react";
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import {Card, FAB, ListItem, makeStyles, Overlay} from 'react-native-elements';
+import {Card, FAB, makeStyles, Overlay} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
 import MainHeader from '../../headers/MainHeader';
 import NewMealScreen from './NewMealScreen';
-import {renderDate, renderWeek} from '../../../utils/date';
-import _ from "lodash";
+import {getWeek, renderDate, renderWeek} from '../../../utils/date';
+import _ from 'lodash';
 
 const MealsScreen = ({navigation}) => {
   const styles = useStyles();
@@ -35,6 +35,7 @@ const MealsScreen = ({navigation}) => {
             mealsTab.push(meal);
           });
           setMeals(mealsTab);
+          getWeekMeals(new Date(), mealsTab);
         },
         error => {
           console.log(error);
@@ -43,25 +44,39 @@ const MealsScreen = ({navigation}) => {
     return () => {
       unsubscribe();
     };
-  }, [mealGroupId]);
+  }, [getWeekMeals, mealGroupId]);
 
-  const renderCards = weekMealsData => {
-    return (
-      <Card>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('MealDetailsScreen');
-          }}>
-          <Card.Title>Mercredi</Card.Title>
-          <Card.Divider />
-          <Text>repas</Text>
-        </TouchableOpacity>
-      </Card>
-    );
-  };
+  const getWeekMeals = useCallback((date, mealsTab) => {
+    let week = getWeek(date);
+    let tempWeekMeals = [];
+    let dayNames = [
+      'Lundi',
+      'Mardi',
+      'Mercredi',
+      'Jeudi',
+      'Vendredi',
+      'Samedi',
+      'Dimanche',
+    ];
+    for (let day of week) {
+      let meal = getDayMeal(mealsTab, day);
+      let cardData = {
+        day: dayNames[week.indexOf(day)],
+        meal: meal,
+      };
+      tempWeekMeals.push(cardData);
+    }
+    setWeekMeals(tempWeekMeals);
+  }, []);
 
-  const getDayMeal = () => {
-
+  const getDayMeal = (mealsTab, date) => {
+    return _.find(mealsTab, e => {
+      return (
+        e.date.toDate().getUTCFullYear() === date.getUTCFullYear() &&
+        e.date.toDate().getUTCMonth() === date.getUTCMonth() &&
+        e.date.toDate().getUTCDate() === date.getUTCDate()
+      );
+    });
   };
 
   return (
@@ -72,103 +87,43 @@ const MealsScreen = ({navigation}) => {
           name="keyboard-arrow-left"
           color="black"
           size={35}
-          onPress={() => {}}
+          onPress={() => {
+            let date = new Date();
+            date.setUTCDate(date.getUTCDate() - 7);
+            console.log(date);
+            getWeekMeals(date, meals);
+          }}
         />
         <Text style={styles.week_change_center}>{renderWeek(new Date())}</Text>
         <Icon
           name="keyboard-arrow-right"
           color="black"
           size={35}
-          onPress={() => {}}
+          onPress={() => {
+            let date = new Date();
+            date.setUTCDate(date.getUTCDate() + 7);
+            console.log(date);
+            getWeekMeals(date, meals);
+          }}
         />
       </View>
       <ScrollView>
-        <Card>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Budget');
-            }}>
-            <Card.Title>Lundi</Card.Title>
-            <Card.Divider />
-            <Text>repas</Text>
-          </TouchableOpacity>
-        </Card>
-        <Card>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Budget');
-            }}>
-            <Card.Title>Mardi</Card.Title>
-            <Card.Divider />
-            <Text>repas</Text>
-          </TouchableOpacity>
-        </Card>
-        <Card>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Budget');
-            }}>
-            <Card.Title>Mercredi</Card.Title>
-            <Card.Divider />
-            <Text>repas</Text>
-          </TouchableOpacity>
-        </Card>
-        <Card>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Budget');
-            }}>
-            <Card.Title>Jeudi</Card.Title>
-            <Card.Divider />
-            <Text>repas</Text>
-          </TouchableOpacity>
-        </Card>
-        <Card>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Budget');
-            }}>
-            <Card.Title>Vendredi</Card.Title>
-            <Card.Divider />
-            <Text>repas</Text>
-          </TouchableOpacity>
-        </Card>
-        <Card>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Budget');
-            }}>
-            <Card.Title>Samedi</Card.Title>
-            <Card.Divider />
-            <Text>repas</Text>
-          </TouchableOpacity>
-        </Card>
-        <Card>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Budget');
-            }}>
-            <Card.Title>Dimanche</Card.Title>
-            <Card.Divider />
-            <Text>repas</Text>
-          </TouchableOpacity>
-        </Card>
-        {meals.map((h, i) => (
-          <ListItem
-            key={i}
-            bottomDivider
-            onPress={() => {
-              navigation.navigate('MealDetailsScreen', {
-                mealGroupId: mealGroupId,
-                meal: h,
-              });
-            }}>
-            <ListItem.Content>
-              <ListItem.Title>{renderDate(h.date.toDate())}</ListItem.Title>
-              <ListItem.Subtitle>{h.label}</ListItem.Subtitle>
-            </ListItem.Content>
-            <ListItem.Chevron />
-          </ListItem>
+        {weekMeals.map((e, i) => (
+          <Card key={i}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('MealDetailsScreen', {
+                  mealGroupId: mealGroupId,
+                  meal: e.meal,
+                });
+              }}>
+              <Card.Title>{e.day}</Card.Title>
+              <Card.Divider />
+              <Text>
+                {e.meal ? e.meal.label : <Text>pas de repas prévu</Text>}
+              </Text>
+            </TouchableOpacity>
+          </Card>
         ))}
       </ScrollView>
       <FAB
