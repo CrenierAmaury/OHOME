@@ -17,7 +17,7 @@ export function renderDate(date) {
 }
 
 export function renderWeek(date) {
-  let monday = new Date();
+  let monday = new Date(date);
   let month = date.getUTCMonth() + 1;
   let weekDay = date.getUTCDay();
   if (weekDay !== 0) {
@@ -42,12 +42,12 @@ export function getWeek(date) {
     subInt = 6;
   }
   for (let i = 1; i <= addInt; i++) {
-    let tempDate = new Date();
+    let tempDate = new Date(date);
     tempDate.setUTCDate(tempDate.getUTCDate() + i);
     week.push(tempDate);
   }
   for (let i = 1; i <= subInt; i++) {
-    let tempDate = new Date();
+    let tempDate = new Date(date);
     tempDate.setUTCDate(tempDate.getUTCDate() - i);
     week.push(tempDate);
   }

@@ -1,8 +1,8 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {View} from 'react-native';
 import {makeStyles} from 'react-native-elements';
-import {Calendar} from 'react-native-calendars';
 import MainHeader from '../../headers/MainHeader';
+import AgendaScreen from './AgendaScreen';
 
 const CalendarScreen = ({navigation}) => {
   const styles = useStyles();
@@ -12,8 +12,7 @@ const CalendarScreen = ({navigation}) => {
   return (
     <View style={styles.main_container}>
       <MainHeader {...headerProps} />
-      <Text>CALENDRIER</Text>
-      <Calendar />
+      <AgendaScreen />
     </View>
   );
 };

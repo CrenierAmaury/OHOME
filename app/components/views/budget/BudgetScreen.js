@@ -6,8 +6,7 @@ import {
   getBalanceIncomeExpense,
   getLastFiveExpenses,
 } from '../../../api/budgetApi';
-import {Card, ListItem, FAB, Overlay, Button} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import {Card, ListItem, FAB, Overlay, Button, Icon} from 'react-native-elements';
 import NewExpenseScreen from './NewExpenseScreen';
 import MainHeader from '../../headers/MainHeader';
 
@@ -80,7 +79,7 @@ const BudgetScreen = ({navigation}) => {
           <Text>{budgetOverview.expense * -1}</Text>
         </Card>
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Card containerStyle={styles.last_five}>
           <Card.Title>
             <Button

@@ -7,6 +7,7 @@ import {useSelector} from 'react-redux';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
 import {addMeal} from '../../../api/mealsApi';
 import {renderDate} from '../../../utils/date';
+import _ from 'lodash';
 
 const NewMealScreen = props => {
   const styles = useStyles();
@@ -20,7 +21,16 @@ const NewMealScreen = props => {
   const uid = useSelector(state => state.user.uid);
 
   const addNewMeal = () => {
-    if (name) {
+    if (
+      !_.find(props.meals, e => {
+        return (
+          e.date.toDate().getUTCFullYear() === date.getUTCFullYear() &&
+          e.date.toDate().getUTCMonth() === date.getUTCMonth() &&
+          e.date.toDate().getUTCDate() === date.getUTCDate()
+        );
+      }) &&
+      name
+    ) {
       const meal = {
         label: name,
         date: date,
@@ -42,6 +52,8 @@ const NewMealScreen = props => {
         .catch(e => {
           console.log(e);
         });
+    } else if (name) {
+      setError('il y a déjà un repas pour cette date');
     } else {
       setError('veuillez indiquer un nom');
     }

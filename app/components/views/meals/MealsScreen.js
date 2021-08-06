@@ -1,7 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, {useCallback, useEffect, useState} from 'react';
 import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
-import {Card, FAB, makeStyles, Overlay} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import {Card, FAB, makeStyles, Overlay, Icon} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
 import MainHeader from '../../headers/MainHeader';
@@ -14,11 +13,14 @@ const MealsScreen = ({navigation}) => {
 
   const [meals, setMeals] = useState([]);
   const [weekMeals, setWeekMeals] = useState([]);
+  const [week, setWeek] = useState('');
+  const [previousDisable, setPreviousDisable] = useState(false);
+  const [nextDisable, setNextDisable] = useState(false);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
   const mealGroupId = useSelector(state => state.household.mealGroupId);
 
-  const childProps = {mealGroupId, setIsOverlayVisible};
+  const childProps = {meals, mealGroupId, setIsOverlayVisible};
   const headerProps = {navigation};
 
   useEffect(() => {
@@ -47,7 +49,7 @@ const MealsScreen = ({navigation}) => {
   }, [getWeekMeals, mealGroupId]);
 
   const getWeekMeals = useCallback((date, mealsTab) => {
-    let week = getWeek(date);
+    let weekTab = getWeek(date);
     let tempWeekMeals = [];
     let dayNames = [
       'Lundi',
@@ -58,14 +60,15 @@ const MealsScreen = ({navigation}) => {
       'Samedi',
       'Dimanche',
     ];
-    for (let day of week) {
+    for (let day of weekTab) {
       let meal = getDayMeal(mealsTab, day);
       let cardData = {
-        day: dayNames[week.indexOf(day)],
+        day: dayNames[weekTab.indexOf(day)],
         meal: meal,
       };
       tempWeekMeals.push(cardData);
     }
+    setWeek(renderWeek(date));
     setWeekMeals(tempWeekMeals);
   }, []);
 
@@ -79,6 +82,30 @@ const MealsScreen = ({navigation}) => {
     });
   };
 
+  const handlePreviousWeek = () => {
+    if (nextDisable) {
+      getWeekMeals(new Date(), meals);
+      setNextDisable(false);
+    } else {
+      let date = new Date();
+      date.setUTCDate(date.getUTCDate() - 7);
+      getWeekMeals(date, meals);
+      setPreviousDisable(true);
+    }
+  };
+
+  const handleNextWeek = () => {
+    if (previousDisable) {
+      getWeekMeals(new Date(), meals);
+      setPreviousDisable(false);
+    } else {
+      let date = new Date();
+      date.setUTCDate(date.getUTCDate() + 7);
+      getWeekMeals(date, meals);
+      setNextDisable(true);
+    }
+  };
+
   return (
     <View style={styles.main_container}>
       <MainHeader {...headerProps} />
@@ -87,24 +114,16 @@ const MealsScreen = ({navigation}) => {
           name="keyboard-arrow-left"
           color="black"
           size={35}
-          onPress={() => {
-            let date = new Date();
-            date.setUTCDate(date.getUTCDate() - 7);
-            console.log(date);
-            getWeekMeals(date, meals);
-          }}
+          onPress={handlePreviousWeek}
+          disabled={previousDisable}
         />
-        <Text style={styles.week_change_center}>{renderWeek(new Date())}</Text>
+        <Text style={styles.week_change_center}>{week}</Text>
         <Icon
           name="keyboard-arrow-right"
           color="black"
           size={35}
-          onPress={() => {
-            let date = new Date();
-            date.setUTCDate(date.getUTCDate() + 7);
-            console.log(date);
-            getWeekMeals(date, meals);
-          }}
+          onPress={handleNextWeek}
+          disabled={nextDisable}
         />
       </View>
       <ScrollView>
@@ -112,10 +131,14 @@ const MealsScreen = ({navigation}) => {
           <Card key={i}>
             <TouchableOpacity
               onPress={() => {
-                navigation.navigate('MealDetailsScreen', {
-                  mealGroupId: mealGroupId,
-                  meal: e.meal,
-                });
+                if (e.meal) {
+                  navigation.navigate('MealDetailsScreen', {
+                    mealGroupId: mealGroupId,
+                    meal: e.meal,
+                  });
+                } else {
+                  setIsOverlayVisible(true);
+                }
               }}>
               <Card.Title>{e.day}</Card.Title>
               <Card.Divider />
