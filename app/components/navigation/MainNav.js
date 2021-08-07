@@ -8,6 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {updateUid} from '../../store/slices/userSlice';
 import {getUser} from '../../api/userApi';
 import {
+  updateCalendarId,
   updateBudgetId,
   updateHouseholdId,
   updateListGroupId,
@@ -35,6 +36,7 @@ const MainNav = () => {
           dispatch(updateHouseholdId(res.activeHousehold));
           if (res.activeHousehold) {
             getHousehold(res.activeHousehold).then(household => {
+              dispatch(updateCalendarId(household.calendar));
               dispatch(updateBudgetId(household.budget));
               dispatch(updateListGroupId(household.listGroup));
               dispatch(updateMealGroupId(household.mealGroup));

@@ -1,10 +1,27 @@
-import React from 'react';
-import {makeStyles, Divider, Card} from 'react-native-elements';
+import React, {useState} from 'react';
+import {Card, Divider, makeStyles} from 'react-native-elements';
 import {Agenda, LocaleConfig} from 'react-native-calendars';
-import {Text, TouchableOpacity} from 'react-native';
+import {Text} from 'react-native';
+import _ from 'lodash';
 
-const AgendaScreen = ({navigation}) => {
+const AgendaScreen = props => {
   const styles = useStyles;
+
+  const [items, setItems] = useState({});
+
+  const loadItems = day => {
+    const newItems = {};
+    for (let i = -15; i < 85; i++) {
+      const date = new Date(day);
+      date.setUTCDate(date.getUTCDate() + i);
+      const dateString = date.toISOString().split('T')[0];
+      newItems[dateString] = _.filter(props.events, e => {
+        return e.date.toDate().toISOString().split('T')[0] === dateString;
+      });
+    }
+    setItems(newItems);
+    console.log(newItems);
+  };
 
   LocaleConfig.locales.fr = {
     monthNames: [
@@ -54,32 +71,22 @@ const AgendaScreen = ({navigation}) => {
       firstDay={1}
       enableSwipeMonths={true}
       showClosingKnob={true}
-      items={{
-        '2021-08-06': [{name: 'test'}],
-        '2021-08-05': [],
-        '2021-08-04': [{name: 'test'}],
-        '2021-08-03': [{name: 'test'}],
-        '2021-08-07': [],
-        '2021-08-08': [],
-        '2021-08-09': [{name: 'test'}],
-        '2021-08-02': [],
-        '2021-08-01': [],
-        '2021-08-10': [],
-        '2021-08-20': [],
+      items={items}
+      loadItemsForMonth={day => {
+        loadItems(day.timestamp);
       }}
       renderItem={item => {
         return (
           <Card>
-            <Card.Title>Event {item.name}</Card.Title>
+            <Card.Title>{item.label}</Card.Title>
             <Card.Divider />
-            <Text>event details</Text>
+            <Text>{item.description}</Text>
+            <Text>{item.address}</Text>
           </Card>
         );
       }}
       renderEmptyDate={() => {
-        return (
-          <Divider style={{paddingTop: 20}} />
-        );
+        return <Divider style={{paddingTop: 55}} />;
       }}
     />
   );
