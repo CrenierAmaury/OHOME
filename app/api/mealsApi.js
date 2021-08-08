@@ -15,3 +15,20 @@ export async function addMeal(mealGroupId, meal) {
       });
   });
 }
+
+export async function updateMeal(mealGroupId, mealId, meal) {
+  return new Promise((resolve, reject) => {
+    firestore()
+      .collection('mealGroups')
+      .doc(mealGroupId)
+      .collection('meals')
+      .doc(mealId)
+      .update(meal)
+      .then(() => {
+        resolve();
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}

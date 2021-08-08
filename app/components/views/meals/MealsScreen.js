@@ -5,7 +5,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
 import MainHeader from '../../headers/MainHeader';
 import NewMealScreen from './NewMealScreen';
-import {getWeek, renderDate, renderWeek} from '../../../utils/date';
+import {getWeek, renderWeek} from '../../../utils/date';
 import _ from 'lodash';
 
 const MealsScreen = ({navigation}) => {

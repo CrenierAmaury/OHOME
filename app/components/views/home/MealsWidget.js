@@ -8,7 +8,7 @@ import _ from 'lodash';
 const MealsWidget = navigation => {
   const styles = useStyles();
 
-  const [meal, setMeal] = useState(0);
+  const [meal, setMeal] = useState({});
 
   const mealGroupId = useSelector(state => state.household.mealGroupId);
 

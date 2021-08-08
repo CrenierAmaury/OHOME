@@ -73,7 +73,7 @@ const ListDetailsScreen = ({route, navigation}) => {
       elements: newElements,
     })
       .then(() => {
-        console.log('checked state changed');
+        console.log('new element added');
       })
       .catch(e => {
         console.log(e);

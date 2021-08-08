@@ -13,6 +13,7 @@ import {
   updateHouseholdId,
   updateListGroupId,
   updateMealGroupId,
+  updateMembers,
 } from '../../store/slices/householdSlice';
 import {getHousehold} from '../../api/householdApi';
 
@@ -36,6 +37,15 @@ const MainNav = () => {
           dispatch(updateHouseholdId(res.activeHousehold));
           if (res.activeHousehold) {
             getHousehold(res.activeHousehold).then(household => {
+              household.members.forEach(memberId => {
+                getUser(memberId)
+                  .then(member => {
+                    dispatch(updateMembers({id: memberId, name: member.name}));
+                  })
+                  .catch(e => {
+                    console.log(e);
+                  });
+              });
               dispatch(updateCalendarId(household.calendar));
               dispatch(updateBudgetId(household.budget));
               dispatch(updateListGroupId(household.listGroup));
