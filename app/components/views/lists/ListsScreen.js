@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import _ from 'lodash';
-import {ScrollView, View, Text} from 'react-native';
+import { ScrollView, View, Text, ActivityIndicator } from "react-native";
 import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {FAB, ListItem, Overlay, Button, Icon} from 'react-native-elements';
@@ -13,6 +13,7 @@ import MainHeader from '../../headers/MainHeader';
 const ListsScreen = ({navigation}) => {
   const styles = useStyles();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [lists, setLists] = useState([]);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [filteredLists, setFilteredLists] = useState([]);
@@ -41,6 +42,7 @@ const ListsScreen = ({navigation}) => {
           });
           setLists(listsTab);
           setFilteredLists(listsTab);
+          setIsLoading(false);
         },
         error => {
           console.log(error);
@@ -68,6 +70,19 @@ const ListsScreen = ({navigation}) => {
       setFilteredLists(_.filter(lists, {type: filter}));
     }
   };
+
+  if (isLoading) {
+    return (
+      <View>
+        <MainHeader {...headerProps} />
+        <ActivityIndicator
+          style={{marginTop: 150}}
+          size="large"
+          color="#0000ff"
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.main_container}>

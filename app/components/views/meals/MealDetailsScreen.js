@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {updateMeal} from '../../../api/mealsApi';
 import {renderDate} from '../../../utils/date';
 import {useSelector} from 'react-redux';
-import { renderMemberName } from "../../../utils/members";
+import {renderMemberName} from '../../../utils/members';
 
 const MealDetailsScreen = ({route, navigation}) => {
   const styles = useStyles();
@@ -18,7 +18,12 @@ const MealDetailsScreen = ({route, navigation}) => {
 
   const members = useSelector(state => state.household.members);
 
-  const headerProps = {title: meal.label, navigation};
+  const headerProps = {
+    title: meal.label,
+    navigation,
+    meal,
+    meals: route.params.meals,
+  };
 
   useEffect(() => {
     const unsubscribe = firestore()
@@ -28,8 +33,10 @@ const MealDetailsScreen = ({route, navigation}) => {
       .doc(route.params.meal.id)
       .onSnapshot(
         documentSnapshot => {
-          setMeal(documentSnapshot.data());
-          setIngredients(documentSnapshot.data().ingredients);
+          const {...currentMeal} = documentSnapshot.data();
+          currentMeal.id = documentSnapshot.id;
+          setMeal(currentMeal);
+          setIngredients(currentMeal.ingredients);
         },
         error => {
           console.log(error);
@@ -81,13 +88,15 @@ const MealDetailsScreen = ({route, navigation}) => {
               />
             }
           />
-          {ingredients.map((h, i) => (
-            <ListItem key={i} bottomDivider>
-              <ListItem.Content>
-                <ListItem.Title>{h}</ListItem.Title>
-              </ListItem.Content>
-            </ListItem>
-          ))}
+          {meal.ingredients
+            ? ingredients.map((h, i) => (
+                <ListItem key={i} bottomDivider>
+                  <ListItem.Content>
+                    <ListItem.Title>{h}</ListItem.Title>
+                  </ListItem.Content>
+                </ListItem>
+              ))
+            : null}
         </Card>
         <Card>
           {meal.creation ? (

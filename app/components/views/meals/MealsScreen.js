@@ -1,5 +1,11 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
+import {
+  ActivityIndicator,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {Card, FAB, makeStyles, Overlay, Icon} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
@@ -11,6 +17,7 @@ import _ from 'lodash';
 const MealsScreen = ({navigation}) => {
   const styles = useStyles();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [meals, setMeals] = useState([]);
   const [weekMeals, setWeekMeals] = useState([]);
   const [week, setWeek] = useState('');
@@ -38,6 +45,7 @@ const MealsScreen = ({navigation}) => {
           });
           setMeals(mealsTab);
           getWeekMeals(new Date(), mealsTab);
+          setIsLoading(false);
         },
         error => {
           console.log(error);
@@ -106,6 +114,19 @@ const MealsScreen = ({navigation}) => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <View>
+        <MainHeader {...headerProps} />
+        <ActivityIndicator
+          style={{marginTop: 150}}
+          size="large"
+          color="#0000ff"
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.main_container}>
       <MainHeader {...headerProps} />
@@ -135,6 +156,7 @@ const MealsScreen = ({navigation}) => {
                   navigation.navigate('MealDetailsScreen', {
                     mealGroupId: mealGroupId,
                     meal: e.meal,
+                    meals: meals,
                   });
                 } else {
                   setIsOverlayVisible(true);

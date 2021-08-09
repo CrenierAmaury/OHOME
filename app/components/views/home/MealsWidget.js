@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
 import {makeStyles, Card} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import _ from 'lodash';
@@ -8,6 +8,7 @@ import _ from 'lodash';
 const MealsWidget = navigation => {
   const styles = useStyles();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [meal, setMeal] = useState({});
 
   const mealGroupId = useSelector(state => state.household.mealGroupId);
@@ -32,6 +33,7 @@ const MealsWidget = navigation => {
             );
           });
           setMeal(todayMeal);
+          setIsLoading(false);
         },
         error => {
           console.log(error);
@@ -44,16 +46,20 @@ const MealsWidget = navigation => {
 
   return (
     <View style={styles.main_container}>
-      <Card>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('Meals');
-          }}>
-          <Card.Title>Repas du jour</Card.Title>
-          <Card.Divider />
-          <Text>{meal.label}</Text>
-        </TouchableOpacity>
-      </Card>
+      {isLoading ? (
+        <ActivityIndicator />
+      ) : (
+        <Card>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Meals');
+            }}>
+            <Card.Title>Repas du jour</Card.Title>
+            <Card.Divider />
+            {meal ? <Text>{meal.label}</Text> : <Text>pas de repas prévu</Text>}
+          </TouchableOpacity>
+        </Card>
+      )}
     </View>
   );
 };

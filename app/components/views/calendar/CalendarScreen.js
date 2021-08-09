@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {ActivityIndicator, View} from 'react-native';
 import {FAB, Icon, makeStyles, Overlay} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import MainHeader from '../../headers/MainHeader';
@@ -10,6 +10,7 @@ import NewEventScreen from './NewEventScreen';
 const CalendarScreen = ({navigation}) => {
   const styles = useStyles();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [events, setEvents] = useState([]);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
@@ -33,6 +34,7 @@ const CalendarScreen = ({navigation}) => {
             eventsTab.push(event);
           });
           setEvents(eventsTab);
+          setIsLoading(false);
         },
         error => {
           console.log(error);
@@ -42,6 +44,19 @@ const CalendarScreen = ({navigation}) => {
       unsubscribe();
     };
   }, [calendarId]);
+
+  if (isLoading) {
+    return (
+      <View>
+        <MainHeader {...headerProps} />
+        <ActivityIndicator
+          style={{marginTop: 150}}
+          size="large"
+          color="#0000ff"
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.main_container}>

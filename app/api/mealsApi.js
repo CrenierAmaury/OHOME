@@ -32,3 +32,20 @@ export async function updateMeal(mealGroupId, mealId, meal) {
       });
   });
 }
+
+export async function removeMeal(mealGroupId, mealId) {
+  return new Promise((resolve, reject) => {
+    firestore()
+      .collection('mealGroups')
+      .doc(mealGroupId)
+      .collection('meals')
+      .doc(mealId)
+      .delete()
+      .then(() => {
+        resolve();
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}

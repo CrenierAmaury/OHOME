@@ -20,7 +20,6 @@ const AgendaScreen = props => {
       });
     }
     setItems(newItems);
-    console.log(newItems);
   };
 
   LocaleConfig.locales.fr = {

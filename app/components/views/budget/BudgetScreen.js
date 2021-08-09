@@ -6,16 +6,23 @@ import {
   getBalanceIncomeExpense,
   getLastFiveExpenses,
 } from '../../../api/budgetApi';
-import {Card, ListItem, FAB, Overlay, Button, Icon} from 'react-native-elements';
+import {
+  Card,
+  ListItem,
+  FAB,
+  Overlay,
+  Button,
+  Icon,
+} from 'react-native-elements';
 import NewExpenseScreen from './NewExpenseScreen';
 import MainHeader from '../../headers/MainHeader';
 
 const BudgetScreen = ({navigation}) => {
   const styles = useStyles();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [history, setHistory] = useState([]);
   const [budgetOverview, setBudgetOverview] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
   const budgetId = useSelector(state => state.household.budgetId);
@@ -53,6 +60,7 @@ const BudgetScreen = ({navigation}) => {
   if (isLoading) {
     return (
       <View>
+        <MainHeader {...headerProps} />
         <ActivityIndicator
           style={{marginTop: 150}}
           size="large"

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
 import {makeStyles, Card} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {getBalanceIncomeExpense} from '../../../api/budgetApi';
@@ -7,6 +7,7 @@ import {getBalanceIncomeExpense} from '../../../api/budgetApi';
 const BudgetWidget = navigation => {
   const styles = useStyles();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [budgetOverview, setBudgetOverview] = useState(0);
 
   const budgetId = useSelector(state => state.household.budgetId);
@@ -19,6 +20,7 @@ const BudgetWidget = navigation => {
     getBalanceIncomeExpense(id)
       .then(overview => {
         setBudgetOverview(overview);
+        setIsLoading(false);
       })
       .catch(e => {
         console.log(e);
@@ -28,14 +30,18 @@ const BudgetWidget = navigation => {
   return (
     <View style={styles.main_container}>
       <Card>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('Budget');
-          }}>
-          <Card.Title>Budget</Card.Title>
-          <Card.Divider />
-          <Text>Equilibre: {budgetOverview.balance} euros</Text>
-        </TouchableOpacity>
+        {isLoading ? (
+          <ActivityIndicator />
+        ) : (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('Budget');
+            }}>
+            <Card.Title>Budget</Card.Title>
+            <Card.Divider />
+            <Text>Equilibre: {budgetOverview.balance} euros</Text>
+          </TouchableOpacity>
+        )}
       </Card>
     </View>
   );
