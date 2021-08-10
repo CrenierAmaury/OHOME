@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import {Button, Input} from 'react-native-elements';
+import {Button, Input, makeStyles} from 'react-native-elements';
 import {TouchableOpacity, View} from 'react-native';
-import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {updateMeal} from '../../../api/mealsApi';
 import _ from 'lodash';
@@ -38,15 +37,14 @@ const MealModifyScreen = ({route, navigation}) => {
       initialDate.getUTCDate() === date.getUTCDate() &&
       name
     ) {
-      const meal = {
+      updateMeal(mealGroupId, route.params.meal.id, {
         label: name,
         description: description,
         modified: {
           by: uid,
           when: new Date(),
         },
-      };
-      updateMeal(mealGroupId, route.params.meal.id, meal)
+      })
         .then(() => {
           navigation.goBack();
         })
@@ -63,7 +61,7 @@ const MealModifyScreen = ({route, navigation}) => {
       }) &&
       name
     ) {
-      const meal = {
+      updateMeal(mealGroupId, route.params.meal.id, {
         label: name,
         date: date,
         description: description,
@@ -71,8 +69,7 @@ const MealModifyScreen = ({route, navigation}) => {
           by: uid,
           when: new Date(),
         },
-      };
-      updateMeal(mealGroupId, route.params.meal.id, meal)
+      })
         .then(() => {
           navigation.goBack();
         })

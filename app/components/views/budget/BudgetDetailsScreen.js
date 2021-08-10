@@ -3,8 +3,8 @@ import {View} from 'react-native';
 import {makeStyles} from 'react-native-elements';
 import {ButtonGroup} from 'react-native-elements';
 import {getExpenses} from '../../../api/budgetApi';
-import HistoryScreen from './HistoryScreen';
-import StatScreen from './StatScreen';
+import BudgetHistoryScreen from './BudgetHistoryScreen';
+import BudgetStatScreen from './BudgetStatScreen';
 import BudgetHeader from '../../headers/BudgetHeader';
 
 const BudgetDetailsScreen = ({route, navigation}) => {
@@ -38,9 +38,9 @@ const BudgetDetailsScreen = ({route, navigation}) => {
         selectedButtonStyle={styles.selected_button}
       />
       {selectedButtonIndex === 1 ? (
-        <HistoryScreen {...childProps} />
+        <BudgetHistoryScreen {...childProps} />
       ) : (
-        <StatScreen {...childProps} />
+        <BudgetStatScreen {...childProps} />
       )}
     </View>
   );

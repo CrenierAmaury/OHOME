@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {makeStyles} from 'react-native-elements';
 import {VictoryPie, VictoryTheme} from 'victory-native';
 
-const StatScreen = props => {
+const BudgetStatScreen = props => {
   const styles = useStyles();
 
   const [expenses, setExpenses] = useState([]);
@@ -35,4 +35,4 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default StatScreen;
+export default BudgetStatScreen;

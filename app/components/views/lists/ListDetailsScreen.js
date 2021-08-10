@@ -112,13 +112,7 @@ const ListDetailsScreen = ({route, navigation}) => {
           <ListItem.Swipeable
             key={i}
             bottomDivider
-            leftContent={
-              <Button
-                title="modifier"
-                icon={{name: 'edit', color: 'white'}}
-                buttonStyle={{minHeight: '100%'}}
-              />
-            }
+            leftStyle={{width: 0}}
             rightContent={
               <Button
                 onPress={() => {

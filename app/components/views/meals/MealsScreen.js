@@ -6,7 +6,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {Card, FAB, makeStyles, Overlay, Icon} from 'react-native-elements';
+import {
+  Card,
+  FAB,
+  makeStyles,
+  Overlay,
+  Icon,
+  Button,
+} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
 import MainHeader from '../../headers/MainHeader';
@@ -147,7 +154,7 @@ const MealsScreen = ({navigation}) => {
           disabled={nextDisable}
         />
       </View>
-      <ScrollView>
+      <ScrollView showsVerticalScrollIndicator={false}>
         {weekMeals.map((e, i) => (
           <Card key={i}>
             <TouchableOpacity
@@ -170,6 +177,25 @@ const MealsScreen = ({navigation}) => {
             </TouchableOpacity>
           </Card>
         ))}
+        <Button
+          title="historique complet"
+          type="solid"
+          raised={true}
+          onPress={() => {
+            navigation.navigate('MealsHistoryScreen', {
+              mealGroupId: mealGroupId,
+              meals: meals,
+            });
+          }}
+          titleStyle={{color: '#FCA311'}}
+          containerStyle={{
+            width: '100%',
+            marginTop: 10,
+          }}
+          buttonStyle={{
+            backgroundColor: '#FBFBFB',
+          }}
+        />
       </ScrollView>
       <FAB
         color="#FCA311"
@@ -189,7 +215,6 @@ const MealsScreen = ({navigation}) => {
         }}
         backdropStyle={{
           backgroundColor: 'grey',
-          opacity: 0.7,
         }}>
         <NewMealScreen {...childProps} />
       </Overlay>

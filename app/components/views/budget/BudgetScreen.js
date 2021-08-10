@@ -93,16 +93,13 @@ const BudgetScreen = ({navigation}) => {
             <Button
               title="détails"
               type="solid"
-              raised={true}
               onPress={() => {
                 navigation.navigate('BudgetDetailsScreen', {...navProps});
               }}
-              containerStyle={{
+              buttonStyle={{
                 backgroundColor: '#FBFBFB',
               }}
-              buttonStyle={{
-                backgroundColor: '#FCA311',
-              }}
+              titleStyle={{color: '#FCA311'}}
             />
           </Card.Title>
           <Card.Divider />

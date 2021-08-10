@@ -21,7 +21,7 @@ const MealHeader = props => {
     menuRef.current.hide();
   };
 
-  const handleModify = () => {
+  const handleEdit = () => {
     props.navigation.navigate('MealModifyScreen', {
       meal: props.meal,
       meals: props.meals,
@@ -69,7 +69,7 @@ const MealHeader = props => {
       <Menu
         ref={menuRef}
         button={<Icon name="more-vert" color="#fff" onPress={showMenu} />}>
-        <MenuItem onPress={handleModify}>modifier</MenuItem>
+        <MenuItem onPress={handleEdit}>modifier</MenuItem>
         <MenuDivider />
         <MenuItem onPress={openDeleteAlert}>supprimer</MenuItem>
       </Menu>

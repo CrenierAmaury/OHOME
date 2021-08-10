@@ -1,13 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import {Keyboard, ScrollView, View, Text} from 'react-native';
-import {Card, Input, ListItem, makeStyles} from 'react-native-elements';
+import {Keyboard, ScrollView, View, Text, TextInput} from 'react-native';
+import {
+  Card,
+  Input,
+  ListItem,
+  Icon,
+  makeStyles,
+  Button,
+} from 'react-native-elements';
 import MealHeader from '../../headers/MealHeader';
 import firestore from '@react-native-firebase/firestore';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import {updateMeal} from '../../../api/mealsApi';
 import {renderDate} from '../../../utils/date';
 import {useSelector} from 'react-redux';
 import {renderMemberName} from '../../../utils/members';
+import {showSuccessSnackbar} from '../../../utils/snackbar';
 
 const MealDetailsScreen = ({route, navigation}) => {
   const styles = useStyles();
@@ -55,7 +62,22 @@ const MealDetailsScreen = ({route, navigation}) => {
       ingredients: newIngredients,
     })
       .then(() => {
+        setNewIngredient('');
         console.log('new ingredient added');
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+
+  const deleteIngredient = index => {
+    const newIngredients = [...ingredients];
+    newIngredients.splice(index, 1);
+    updateMeal(route.params.mealGroupId, route.params.meal.id, {
+      ingredients: newIngredients,
+    })
+      .then(() => {
+        showSuccessSnackbar('élément supprimé avec succès');
       })
       .catch(e => {
         console.log(e);
@@ -77,24 +99,37 @@ const MealDetailsScreen = ({route, navigation}) => {
             onChangeText={value => {
               setNewIngredient(value);
             }}
+            onSubmitEditing={addIngredient}
+            value={newIngredient}
             rightIcon={
               <Icon
                 name="add"
                 size={30}
                 onPress={addIngredient}
-                style={{
-                  color: '#FCA311',
-                }}
+                color="#FCA311"
               />
             }
           />
           {meal.ingredients
             ? ingredients.map((h, i) => (
-                <ListItem key={i} bottomDivider>
+                <ListItem.Swipeable
+                  key={i}
+                  bottomDivider
+                  leftStyle={{width: 0}}
+                  rightContent={
+                    <Button
+                      onPress={() => {
+                        deleteIngredient(i);
+                      }}
+                      title="supprimer"
+                      icon={{name: 'delete', color: 'white'}}
+                      buttonStyle={{minHeight: '100%', backgroundColor: 'red'}}
+                    />
+                  }>
                   <ListItem.Content>
                     <ListItem.Title>{h}</ListItem.Title>
                   </ListItem.Content>
-                </ListItem>
+                </ListItem.Swipeable>
               ))
             : null}
         </Card>

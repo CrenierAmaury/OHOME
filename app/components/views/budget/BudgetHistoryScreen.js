@@ -4,7 +4,7 @@ import {makeStyles} from 'react-native-elements';
 import {ListItem} from 'react-native-elements';
 import _ from 'lodash';
 
-const HistoryScreen = props => {
+const BudgetHistoryScreen = props => {
   const styles = useStyles();
 
   const [history, setHistory] = useState([]);
@@ -109,4 +109,4 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default HistoryScreen;
+export default BudgetHistoryScreen;
