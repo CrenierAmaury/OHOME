@@ -3,7 +3,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import MealsScreen from '../views/meals/MealsScreen';
 import MealDetailsScreen from '../views/meals/MealDetailsScreen';
 import MealModifyScreen from '../views/meals/MealModifyScreen';
-import MealsHistoryScreen from '../views/meals/MealsHistory';
+import MealsHistoryScreen from '../views/meals/MealsHistoryScreen';
 
 const Stack = createStackNavigator();
 

@@ -1,34 +1,55 @@
 import React, {useEffect, useState} from 'react';
 import {View} from 'react-native';
-import {makeStyles} from 'react-native-elements';
-import {ButtonGroup} from 'react-native-elements';
-import {getExpenses} from '../../../api/budgetApi';
+import {ButtonGroup, makeStyles} from 'react-native-elements';
+import firestore from '@react-native-firebase/firestore';
 import BudgetHistoryScreen from './BudgetHistoryScreen';
 import BudgetStatScreen from './BudgetStatScreen';
-import BudgetHeader from '../../headers/BudgetHeader';
+import TitleHeader from '../../headers/TitleHeader';
 
 const BudgetDetailsScreen = ({route, navigation}) => {
   const styles = useStyles();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [expenses, setExpenses] = useState([]);
   const [selectedButtonIndex, setSelectedButtonIndex] = useState(1);
 
-  const childProps = {expenses, navigation};
-  const headerProps = {navigation};
+  const childProps = {
+    isLoading,
+    expenses,
+    budgetId: route.params.budgetId,
+    budgetOverview: route.params.budgetOverview,
+    navigation,
+  };
+  const headerProps = {title: 'Détails du budget', navigation};
 
   useEffect(() => {
-    getExpenses(route.params.budgetId)
-      .then(res => {
-        setExpenses(res);
-      })
-      .catch(e => {
-        console.log(e);
-      });
+    const unsubscribe = firestore()
+      .collection('budgets')
+      .doc(route.params.budgetId)
+      .collection('expenses')
+      .onSnapshot(
+        querySnapshot => {
+          const expensesTab = [];
+          querySnapshot.docs.forEach(doc => {
+            const {...expense} = doc.data();
+            expense.id = doc.id;
+            expensesTab.push(expense);
+          });
+          setExpenses(expensesTab);
+          setIsLoading(false);
+        },
+        error => {
+          console.log(error);
+        },
+      );
+    return () => {
+      unsubscribe();
+    };
   }, [route.params.budgetId]);
 
   return (
     <View style={styles.main_container}>
-      <BudgetHeader {...headerProps} />
+      <TitleHeader {...headerProps} />
       <ButtonGroup
         onPress={buttonIndex => {
           setSelectedButtonIndex(buttonIndex);

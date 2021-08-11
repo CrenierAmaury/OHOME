@@ -4,9 +4,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTheme} from 'react-native-elements';
 import HomeScreen from '../views/home/HomeScreen';
 import BudgetNav from './BudgetNav';
-import CalendarScreen from '../views/calendar/CalendarScreen';
 import ListsNav from './ListsNav';
 import MealsNav from './MealsNav';
+import CalendarNav from './CalendarNav';
 
 const Tab = createBottomTabNavigator();
 
@@ -91,7 +91,7 @@ const TabNav = () => {
       />
       <Tab.Screen
         name="Calendar"
-        component={CalendarScreen}
+        component={CalendarNav}
         options={{
           tabBarIcon: ({focused}) => (
             <Icon

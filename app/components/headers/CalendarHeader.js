@@ -2,13 +2,13 @@ import React, {useRef} from 'react';
 import {Alert} from 'react-native';
 import {Header, Icon, useTheme} from 'react-native-elements';
 import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
-import {removeMeal} from '../../api/mealsApi';
 import {useSelector} from 'react-redux';
+import {removeEvent} from '../../api/calendarApi';
 
-const MealHeader = props => {
+const CalendarHeader = props => {
   const {theme} = useTheme();
 
-  const mealGroupId = useSelector(state => state.household.mealGroupId);
+  const calendarId = useSelector(state => state.household.calendarId);
 
   const menuRef = useRef();
 
@@ -21,15 +21,14 @@ const MealHeader = props => {
   };
 
   const handleEdit = () => {
-    props.navigation.navigate('MealModifyScreen', {
-      meal: props.meal,
-      meals: props.meals,
+    props.navigation.navigate('EventModifyScreen', {
+      event: props.event,
     });
     hideMenu();
   };
 
   const handleDelete = () => {
-    removeMeal(mealGroupId, props.meal.id)
+    removeEvent(calendarId, props.event.id)
       .then(() => {
         props.navigation.goBack();
       })
@@ -84,4 +83,4 @@ const MealHeader = props => {
   );
 };
 
-export default MealHeader;
+export default CalendarHeader;

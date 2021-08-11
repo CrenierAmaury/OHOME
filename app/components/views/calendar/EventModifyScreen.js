@@ -1,14 +1,13 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import {Button, Input, ListItem} from 'react-native-elements';
+import {Button, Input, ListItem, makeStyles} from 'react-native-elements';
 import {Text, TouchableOpacity, View} from 'react-native';
-import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
-import {showSuccessSnackbar} from '../../../utils/snackbar';
-import {addEvent} from '../../../api/calendarApi';
+import TitleHeader from '../../headers/TitleHeader';
+import {updateEvent} from '../../../api/calendarApi';
 import {renderMemberName} from '../../../utils/members';
 
-const NewEventScreen = props => {
+const EventModifyScreen = ({route, navigation}) => {
   const styles = useStyles();
 
   const [name, setName] = useState('');
@@ -21,27 +20,34 @@ const NewEventScreen = props => {
 
   const uid = useSelector(state => state.user.uid);
   const members = useSelector(state => state.household.members);
+  const calendarId = useSelector(state => state.household.calendarId);
 
-  const addNewEvent = () => {
+  const headerProps = {title: "Modifier l'évènement", navigation};
+
+  useEffect(() => {
+    const event = route.params.event;
+    setName(event.label);
+    setDescription(event.description);
+    setAddress(event.address);
+    setDate(event.date.toDate());
+    setParticipants(event.participants);
+  }, [route.params.event]);
+
+  const updateCurrentEvent = () => {
     if (name) {
-      const event = {
+      updateEvent(calendarId, route.params.event.id, {
         label: name,
-        date: date,
-        address: address,
         description: description,
+        address: address,
+        date: date,
         participants: participants,
-        creation: new Date(),
-        author: uid,
         modified: {
           by: uid,
           when: new Date(),
         },
-      };
-      addEvent(props.calendarId, event)
-        .then(docId => {
-          console.log('SCREEN: event added with id: ' + docId);
-          props.setIsOverlayVisible(false);
-          showSuccessSnackbar('nouvel évènement ajouté avec succès');
+      })
+        .then(() => {
+          navigation.goBack();
         })
         .catch(e => {
           console.log(e);
@@ -49,16 +55,6 @@ const NewEventScreen = props => {
     } else {
       setError('veuillez indiquer un nom');
     }
-  };
-
-  const cancelNewEvent = () => {
-    setDate(new Date());
-    setName('');
-    setDescription('');
-    setAddress('');
-    setParticipants([]);
-    setError('');
-    props.setIsOverlayVisible(false);
   };
 
   const handleParticipants = memberId => {
@@ -95,6 +91,7 @@ const NewEventScreen = props => {
 
   return (
     <View style={styles.main_container}>
+      <TitleHeader {...headerProps} />
       <Input
         label={setLabel('nom', name)}
         placeholder={setPlaceholder('nom', name)}
@@ -116,6 +113,7 @@ const NewEventScreen = props => {
         label={setLabel('adresse', address)}
         placeholder={setPlaceholder('adresse', address)}
         value={address}
+        multiline={true}
         onChangeText={value => {
           setAddress(value);
         }}
@@ -154,37 +152,19 @@ const NewEventScreen = props => {
         </ListItem>
       ))}
       <Button
-        title="ajouter"
+        title="valider"
         type="solid"
         raised={true}
-        onPress={addNewEvent}
+        onPress={updateCurrentEvent}
         containerStyle={{
           backgroundColor: '#FBFBFB',
-          width: '90%',
-          marginLeft: 'auto',
+          width: '75%',
           marginRight: 'auto',
-          marginTop: 20,
+          marginLeft: 'auto',
         }}
         buttonStyle={{
           backgroundColor: '#FCA311',
         }}
-      />
-      <Button
-        title="annuler"
-        type="solid"
-        raised={true}
-        onPress={cancelNewEvent}
-        containerStyle={{
-          backgroundColor: '#FBFBFB',
-          width: '90%',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          marginTop: 20,
-        }}
-        buttonStyle={{
-          backgroundColor: '#FBFBFB',
-        }}
-        titleStyle={{color: '#FCA311'}}
       />
     </View>
   );
@@ -194,4 +174,4 @@ const useStyles = makeStyles(theme => ({
   main_container: {},
 }));
 
-export default NewEventScreen;
+export default EventModifyScreen;

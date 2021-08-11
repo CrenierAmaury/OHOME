@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ScrollView, Text, View} from 'react-native';
+import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
 import {makeStyles} from 'react-native-elements';
 import {ListItem} from 'react-native-elements';
 import _ from 'lodash';
@@ -35,6 +35,18 @@ const BudgetHistoryScreen = props => {
       );
     }
   };
+
+  if (props.isLoading) {
+    return (
+      <View>
+        <ActivityIndicator
+          style={{marginTop: 150}}
+          size="large"
+          color="#0000ff"
+        />
+      </View>
+    );
+  }
 
   return (
     <ScrollView>
@@ -76,7 +88,9 @@ const BudgetHistoryScreen = props => {
           bottomDivider
           onPress={() => {
             props.navigation.navigate('ExpenseDetailsScreen', {
+              budgetId: props.budgetId,
               expense: e,
+              budgetOverview: props.budgetOverview,
             });
           }}>
           <ListItem.Content>

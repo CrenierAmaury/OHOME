@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Keyboard, ScrollView, View, Text, TextInput} from 'react-native';
+import {Keyboard, ScrollView, View, Text} from 'react-native';
 import {
   Card,
   Input,
@@ -89,9 +89,9 @@ const MealDetailsScreen = ({route, navigation}) => {
       <MealHeader {...headerProps} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <Card>
+          <Card.Title>Description</Card.Title>
+          <Card.Divider />
           <Text>{meal.description}</Text>
-        </Card>
-        <Card>
           <Card.Title>Ingrédients</Card.Title>
           <Card.Divider />
           <Input
@@ -132,24 +132,18 @@ const MealDetailsScreen = ({route, navigation}) => {
                 </ListItem.Swipeable>
               ))
             : null}
-        </Card>
-        <Card>
           {meal.creation ? (
             <Text>
               créé par {renderMemberName(members, meal.author)} le{' '}
               {renderDate(meal.creation.toDate())}
             </Text>
-          ) : (
-            <Text>loading</Text>
-          )}
+          ) : null}
           {meal.modified ? (
             <Text>
               modifié par {renderMemberName(members, meal.modified.by)} le{' '}
               {renderDate(meal.modified.when.toDate())}
             </Text>
-          ) : (
-            <Text>loading</Text>
-          )}
+          ) : null}
         </Card>
       </ScrollView>
     </View>

@@ -1,4 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
+import _ from 'lodash';
 
 export const householdSlice = createSlice({
   name: 'household',
@@ -27,7 +28,13 @@ export const householdSlice = createSlice({
       state.mealGroupId = action.payload;
     },
     updateMembers: (state, action) => {
-      state.members.push(action.payload);
+      if (
+        !_.find(state.members, e => {
+          return e.id === action.payload.id;
+        })
+      ) {
+        state.members.push(action.payload);
+      }
     },
   },
 });

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {ActivityIndicator, View} from 'react-native';
 import {makeStyles} from 'react-native-elements';
 import {VictoryPie, VictoryTheme} from 'victory-native';
 
@@ -17,6 +17,18 @@ const BudgetStatScreen = props => {
   useEffect(() => {
     setExpenses(props.expenses);
   }, [props.expenses]);
+
+  if (props.isLoading) {
+    return (
+      <View>
+        <ActivityIndicator
+          style={{marginTop: 150}}
+          size="large"
+          color="#0000ff"
+        />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.main_container}>

@@ -4,6 +4,7 @@ import {makeStyles} from 'react-native-elements';
 import BudgetWidget from './BudgetWidget';
 import MainHeader from '../../headers/MainHeader';
 import MealsWidget from './MealsWidget';
+import CalendarWidget from './CalendarWidget';
 
 const HomeScreen = ({navigation}) => {
   const styles = useStyles();
@@ -15,6 +16,7 @@ const HomeScreen = ({navigation}) => {
       <MainHeader {...headerProps} />
       <BudgetWidget {...navigation} />
       <MealsWidget {...navigation} />
+      <CalendarWidget {...navigation} />
     </View>
   );
 };

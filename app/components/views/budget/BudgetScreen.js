@@ -2,10 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {Text, View, ActivityIndicator, ScrollView} from 'react-native';
 import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
-import {
-  getBalanceIncomeExpense,
-  getLastFiveExpenses,
-} from '../../../api/budgetApi';
+import {getLastFiveExpenses} from '../../../api/budgetApi';
 import {
   Card,
   ListItem,
@@ -14,6 +11,7 @@ import {
   Button,
   Icon,
 } from 'react-native-elements';
+import firestore from '@react-native-firebase/firestore';
 import NewExpenseScreen from './NewExpenseScreen';
 import MainHeader from '../../headers/MainHeader';
 
@@ -21,7 +19,7 @@ const BudgetScreen = ({navigation}) => {
   const styles = useStyles();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [history, setHistory] = useState([]);
+  const [lastHistory, setLastHistory] = useState([]);
   const [budgetOverview, setBudgetOverview] = useState(0);
   const [isOverlayVisible, setIsOverlayVisible] = useState(false);
 
@@ -32,30 +30,30 @@ const BudgetScreen = ({navigation}) => {
   const headerProps = {navigation};
 
   useEffect(() => {
-    getBudgetOverview(budgetId);
-    getExpensesOverview(budgetId);
+    const unsubscribe = firestore()
+      .collection('budgets')
+      .doc(budgetId)
+      .onSnapshot(
+        documentSnapshot => {
+          const {...overview} = documentSnapshot.data();
+          setBudgetOverview(overview);
+          getLastFiveExpenses(budgetId)
+            .then(overviews => {
+              setLastHistory(overviews);
+              setIsLoading(false);
+            })
+            .catch(e => {
+              console.log(e);
+            });
+        },
+        error => {
+          console.log(error);
+        },
+      );
+    return () => {
+      unsubscribe();
+    };
   }, [budgetId]);
-
-  const getBudgetOverview = id => {
-    getBalanceIncomeExpense(id)
-      .then(overview => {
-        setBudgetOverview(overview);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
-
-  const getExpensesOverview = id => {
-    getLastFiveExpenses(id)
-      .then(overviews => {
-        setHistory(overviews);
-        setIsLoading(false);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
 
   if (isLoading) {
     return (
@@ -89,21 +87,9 @@ const BudgetScreen = ({navigation}) => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Card containerStyle={styles.last_five}>
-          <Card.Title>
-            <Button
-              title="détails"
-              type="solid"
-              onPress={() => {
-                navigation.navigate('BudgetDetailsScreen', {...navProps});
-              }}
-              buttonStyle={{
-                backgroundColor: '#FBFBFB',
-              }}
-              titleStyle={{color: '#FCA311'}}
-            />
-          </Card.Title>
+          <Card.Title>derniers ajouts</Card.Title>
           <Card.Divider />
-          {history.map((h, i) => (
+          {lastHistory.map((h, i) => (
             <ListItem key={i} bottomDivider>
               <ListItem.Content>
                 <ListItem.Title>{h.label}</ListItem.Title>
@@ -115,6 +101,22 @@ const BudgetScreen = ({navigation}) => {
             </ListItem>
           ))}
         </Card>
+        <Button
+          title="détails"
+          type="solid"
+          raised={true}
+          onPress={() => {
+            navigation.navigate('BudgetDetailsScreen', {...navProps});
+          }}
+          titleStyle={{color: '#FCA311'}}
+          containerStyle={{
+            width: '100%',
+            marginTop: 10,
+          }}
+          buttonStyle={{
+            backgroundColor: '#FBFBFB',
+          }}
+        />
       </ScrollView>
       <FAB
         color="#FCA311"

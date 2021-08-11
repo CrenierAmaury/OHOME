@@ -1,30 +1,31 @@
 import React, {useEffect, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
-import {makeStyles, Card} from 'react-native-elements';
+import {makeStyles, Card, ListItem} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import _ from 'lodash';
+import {renderMemberName} from '../../../utils/members';
 
-const MealsWidget = navigation => {
+const CalendarWidget = navigation => {
   const styles = useStyles();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [meal, setMeal] = useState({});
+  const [events, setEvents] = useState([]);
 
-  const mealGroupId = useSelector(state => state.household.mealGroupId);
+  const calendarId = useSelector(state => state.household.calendarId);
 
   useEffect(() => {
     const unsubscribe = firestore()
-      .collection('mealGroups')
-      .doc(mealGroupId)
-      .collection('meals')
+      .collection('calendars')
+      .doc(calendarId)
+      .collection('events')
       .onSnapshot(
         querySnapshot => {
-          const meals = [];
+          const eventsTab = [];
           querySnapshot.docs.forEach(doc => {
-            meals.push(doc.data());
+            eventsTab.push(doc.data());
           });
-          const todayMeal = _.find(meals, e => {
+          const todayEvents = _.filter(eventsTab, e => {
             const date = new Date();
             return (
               e.date.toDate().getUTCFullYear() === date.getUTCFullYear() &&
@@ -32,7 +33,7 @@ const MealsWidget = navigation => {
               e.date.toDate().getUTCDate() === date.getUTCDate()
             );
           });
-          setMeal(todayMeal);
+          setEvents(todayEvents);
           setIsLoading(false);
         },
         error => {
@@ -42,7 +43,7 @@ const MealsWidget = navigation => {
     return () => {
       unsubscribe();
     };
-  }, [mealGroupId]);
+  }, [calendarId]);
 
   return (
     <View style={styles.main_container}>
@@ -52,14 +53,20 @@ const MealsWidget = navigation => {
         <Card>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Meals');
+              navigation.navigate('Calendar');
             }}>
-            <Card.Title>Repas du jour</Card.Title>
+            <Card.Title>Agenda</Card.Title>
             <Card.Divider />
-            {meal ? (
-              <Text>{meal.label}</Text>
+            {events.length ? (
+              events.map((h, i) => (
+                <ListItem key={i}>
+                  <ListItem.Content>
+                    <ListItem.Title>{h.label}</ListItem.Title>
+                  </ListItem.Content>
+                </ListItem>
+              ))
             ) : (
-              <Text>pas de repas prévu aujourd'hui</Text>
+              <Text>rien de prévu aujourd'hui</Text>
             )}
           </TouchableOpacity>
         </Card>
@@ -74,4 +81,4 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default MealsWidget;
+export default CalendarWidget;

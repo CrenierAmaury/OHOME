@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {Card, Divider, makeStyles} from 'react-native-elements';
 import {Agenda, LocaleConfig} from 'react-native-calendars';
-import {Text} from 'react-native';
+import {Text, TouchableOpacity} from 'react-native';
 import _ from 'lodash';
 
 const AgendaScreen = props => {
@@ -76,12 +76,20 @@ const AgendaScreen = props => {
       }}
       renderItem={item => {
         return (
-          <Card>
-            <Card.Title>{item.label}</Card.Title>
-            <Card.Divider />
-            <Text>{item.description}</Text>
-            <Text>{item.address}</Text>
-          </Card>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate('EventDetailsScreen', {
+                calendarId: props.calendarId,
+                event: item,
+              });
+            }}>
+            <Card>
+              <Card.Title>{item.label}</Card.Title>
+              <Card.Divider />
+              <Text>{item.description}</Text>
+              <Text>{item.address}</Text>
+            </Card>
+          </TouchableOpacity>
         );
       }}
       renderEmptyDate={() => {

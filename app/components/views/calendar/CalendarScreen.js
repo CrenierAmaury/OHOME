@@ -16,7 +16,7 @@ const CalendarScreen = ({navigation}) => {
 
   const calendarId = useSelector(state => state.household.calendarId);
 
-  const agendaProps = {events};
+  const agendaProps = {events, calendarId, navigation};
   const childProps = {calendarId, setIsOverlayVisible};
   const headerProps = {navigation};
 
