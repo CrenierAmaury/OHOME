@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Input, makeStyles} from 'react-native-elements';
-import {View} from 'react-native';
+import {Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import TitleHeader from '../../headers/TitleHeader';
 import {updateList} from '../../../api/listsApi';
@@ -69,7 +69,9 @@ const ListModifyScreen = ({route, navigation}) => {
           setName(value);
         }}
       />
+      <Text>Type</Text>
       <Picker
+        mode="dropdown"
         selectedValue={type.label}
         onValueChange={value => {
           if (value === 'other') {

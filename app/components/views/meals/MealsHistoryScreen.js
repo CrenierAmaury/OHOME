@@ -9,7 +9,6 @@ import {removeMeal} from '../../../api/mealsApi';
 const MealsHistoryScreen = ({route, navigation}) => {
   const styles = useStyles();
 
-  const [history, setHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
   const [dateDescColor, setDateDescColor] = useState('#FCA311');
   const [dateAscColor, setDateAscColor] = useState('#8b8b8b');
@@ -17,7 +16,6 @@ const MealsHistoryScreen = ({route, navigation}) => {
   const headerProps = {title: 'Historique des repas', navigation};
 
   useEffect(() => {
-    setHistory(route.params.meals);
     setFilteredHistory(
       _.reverse(
         _.sortBy(route.params.meals, e => {
@@ -40,14 +38,14 @@ const MealsHistoryScreen = ({route, navigation}) => {
   const sortLists = filter => {
     if (filter === 'dateAsc') {
       setFilteredHistory(
-        _.sortBy(history, e => {
+        _.sortBy(route.params.meals, e => {
           return e.date;
         }),
       );
     } else {
       setFilteredHistory(
         _.reverse(
-          _.sortBy(history, e => {
+          _.sortBy(route.params.meals, e => {
             return e.date;
           }),
         ),

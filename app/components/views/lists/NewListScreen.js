@@ -10,7 +10,7 @@ const NewListScreen = props => {
   const styles = useStyles();
 
   const [name, setName] = useState('');
-  const [type, setType] = useState({label: 'shopping', checkbox: true});
+  const [type, setType] = useState({label: 'other', checkbox: false});
   const [error, setError] = useState('');
 
   const uid = useSelector(state => state.user.uid);
@@ -63,6 +63,7 @@ const NewListScreen = props => {
   return (
     <View style={styles.main_container}>
       <Picker
+        mode="dropdown"
         selectedValue={type.label}
         onValueChange={value => {
           if (value === 'other') {

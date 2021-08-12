@@ -8,14 +8,12 @@ import {removeExpense} from '../../../api/budgetApi';
 const BudgetHistoryScreen = props => {
   const styles = useStyles();
 
-  const [history, setHistory] = useState([]);
   const [filteredHistory, setFilteredHistory] = useState([]);
   const [allColor, setAllColor] = useState('#FCA311');
   const [expenseColor, setExpenseColor] = useState('#8b8b8b');
   const [incomeColor, setIncomeColor] = useState('#8b8b8b');
 
   useEffect(() => {
-    setHistory(props.expenses);
     setFilteredHistory(props.expenses);
   }, [props.expenses]);
 
@@ -31,16 +29,16 @@ const BudgetHistoryScreen = props => {
 
   const sortLists = filter => {
     if (filter === 'all') {
-      setFilteredHistory(history);
+      setFilteredHistory(props.expenses);
     } else if (filter === 'expense') {
       setFilteredHistory(
-        _.filter(history, e => {
+        _.filter(props.expenses, e => {
           return e.amount < 0;
         }),
       );
     } else {
       setFilteredHistory(
-        _.filter(history, e => {
+        _.filter(props.expenses, e => {
           return e.amount >= 0;
         }),
       );

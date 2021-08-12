@@ -1,6 +1,6 @@
 import firestore from '@react-native-firebase/firestore';
 
-async function updateBudgetOverview(budgetId, budgetOverview) {
+export async function updateBudgetOverview(budgetId, budgetOverview) {
   return new Promise((resolve, reject) => {
     firestore()
       .collection('budgets')
@@ -8,27 +8,6 @@ async function updateBudgetOverview(budgetId, budgetOverview) {
       .update(budgetOverview)
       .then(() => {
         resolve();
-      })
-      .catch(error => {
-        reject(error);
-      });
-  });
-}
-
-export async function getBalanceIncomeExpense(budgetId) {
-  return new Promise((resolve, reject) => {
-    firestore()
-      .collection('budgets')
-      .doc(budgetId)
-      .get()
-      .then(docSnapshot => {
-        const data = docSnapshot.data();
-        const overview = {
-          balance: data.balance,
-          income: data.income,
-          expense: data.expense,
-        };
-        resolve(overview);
       })
       .catch(error => {
         reject(error);

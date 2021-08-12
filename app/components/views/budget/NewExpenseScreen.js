@@ -1,9 +1,9 @@
 import React, {useState} from 'react';
 import {Picker} from '@react-native-picker/picker';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import {addExpense} from '../../../api/budgetApi';
-import {Button, Input} from 'react-native-elements';
-import {TouchableOpacity, View} from 'react-native';
+import {addExpense, updateBudgetOverview} from '../../../api/budgetApi';
+import {Button, Input, Overlay} from 'react-native-elements';
+import {Text, TouchableOpacity, View} from 'react-native';
 import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
@@ -16,7 +16,29 @@ const NewExpenseScreen = props => {
   const [datePickerShow, setDatePickerShow] = useState(false);
   const [date, setDate] = useState(new Date());
   const [type, setType] = useState('expense');
+  const [category, setCategory] = useState('aucune');
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryColor, setNewCategoryColor] = useState('');
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [error, setError] = useState('');
+  const [newCategoryError, setNewCategoryError] = useState('');
+
+  const categoryColors1 = [
+    'red',
+    'green',
+    'yellow',
+    'blue',
+    'purple',
+    'orange',
+  ];
+  const categoryColors2 = [
+    'pink',
+    'salmon',
+    'tomato',
+    'violet',
+    'magenta',
+    'grey',
+  ];
 
   const uid = useSelector(state => state.user.uid);
 
@@ -26,7 +48,7 @@ const NewExpenseScreen = props => {
         label: name,
         amount: setAmountSign(Number(amount)),
         date: date,
-        category: 'unknown',
+        category: category,
         creation: new Date(),
         author: uid,
         modified: {
@@ -52,6 +74,25 @@ const NewExpenseScreen = props => {
     }
   };
 
+  const addNewCategory = () => {
+    if (newCategoryName && newCategoryColor) {
+      const newCategories = [...props.budgetOverview.categories];
+      newCategories.push({label: newCategoryName, color: newCategoryColor});
+      updateBudgetOverview(props.budgetId, {
+        categories: newCategories,
+      })
+        .then(() => {
+          setIsOverlayVisible(false);
+          console.log('new category added');
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    } else {
+      setNewCategoryError('veuillez donner un nom et une couleur');
+    }
+  };
+
   const setAmountSign = value => {
     if (type === 'expense') {
       return value * -1;
@@ -67,6 +108,13 @@ const NewExpenseScreen = props => {
     setType('');
     setError('');
     props.setIsOverlayVisible(false);
+  };
+
+  const cancelNewCategory = () => {
+    setNewCategoryName('');
+    setNewCategoryColor('');
+    setNewCategoryError('');
+    setIsOverlayVisible(false);
   };
 
   const onChangeDate = (event, selectedDate) => {
@@ -90,6 +138,7 @@ const NewExpenseScreen = props => {
   return (
     <View style={styles.main_container}>
       <Picker
+        mode="dropdown"
         selectedValue={type}
         onValueChange={value => {
           setType(value);
@@ -133,6 +182,101 @@ const NewExpenseScreen = props => {
           onChange={onChangeDate}
         />
       )}
+      <Text>Catégories</Text>
+      <Picker
+        mode="dropdown"
+        selectedValue={category}
+        onValueChange={value => {
+          if (value !== 'ohome_category_add') {
+            setCategory(value);
+          } else {
+            setIsOverlayVisible(true);
+          }
+        }}>
+        {props.budgetOverview.categories.map((h, i) => (
+          <Picker.Item
+            key={i}
+            label={h.label}
+            value={h.label}
+            color={h.color}
+          />
+        ))}
+        <Picker.Item label="+ ajouter" value="ohome_category_add" />
+      </Picker>
+      <Overlay
+        isVisible={isOverlayVisible}
+        onBackdropPress={cancelNewCategory}
+        overlayStyle={{
+          width: '80%',
+        }}
+        backdropStyle={{
+          backgroundColor: 'grey',
+          opacity: 0.9,
+        }}>
+        <Text>Nouvelle catégorie</Text>
+        <Input
+          label={setLabel('nom', newCategoryName)}
+          placeholder={setPlaceholder('nom', newCategoryName)}
+          value={newCategoryName}
+          errorMessage={newCategoryError}
+          onChangeText={value => {
+            setNewCategoryName(value);
+          }}
+        />
+        <Text>Couleur</Text>
+        <View style={styles.colors_container}>
+          {categoryColors1.map((e, i) => (
+            <TouchableOpacity
+              key={i}
+              style={[
+                styles.colors,
+                {
+                  backgroundColor: e,
+                  borderWidth: e === newCategoryColor ? 2 : 0,
+                },
+              ]}
+              onPress={() => {
+                setNewCategoryColor(e);
+              }}>
+              <Text> </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.colors_container}>
+          {categoryColors2.map((e, i) => (
+            <TouchableOpacity
+              key={i}
+              style={[
+                styles.colors,
+                {
+                  backgroundColor: e,
+                  borderWidth: e === newCategoryColor ? 2 : 0,
+                },
+              ]}
+              onPress={() => {
+                setNewCategoryColor(e);
+              }}>
+              <Text> </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <Button
+          title="ajouter"
+          type="solid"
+          raised={true}
+          onPress={addNewCategory}
+          containerStyle={{
+            backgroundColor: '#FBFBFB',
+            width: '90%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginTop: 20,
+          }}
+          buttonStyle={{
+            backgroundColor: '#FCA311',
+          }}
+        />
+      </Overlay>
       <Button
         title="ajouter"
         type="solid"
@@ -172,6 +316,16 @@ const NewExpenseScreen = props => {
 
 const useStyles = makeStyles(theme => ({
   main_container: {},
+  colors_container: {
+    margin: 10,
+    flexDirection: 'row',
+  },
+  colors: {
+    flex: 1,
+    padding: 5,
+    margin: 5,
+    textAlign: 'center',
+  },
 }));
 
 export default NewExpenseScreen;

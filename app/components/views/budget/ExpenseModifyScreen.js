@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import {Button, Input, makeStyles} from 'react-native-elements';
-import {TouchableOpacity, View} from 'react-native';
+import {Button, Input, makeStyles, Overlay} from 'react-native-elements';
+import {Text, TouchableOpacity, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import TitleHeader from '../../headers/TitleHeader';
-import {updateExpense} from '../../../api/budgetApi';
+import {updateBudgetOverview, updateExpense} from '../../../api/budgetApi';
 import {Picker} from '@react-native-picker/picker';
 
 const ExpenseModifyScreen = ({route, navigation}) => {
@@ -15,12 +15,34 @@ const ExpenseModifyScreen = ({route, navigation}) => {
   const [datePickerShow, setDatePickerShow] = useState(false);
   const [date, setDate] = useState(new Date());
   const [type, setType] = useState('expense');
+  const [category, setCategory] = useState('aucune');
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const [newCategoryColor, setNewCategoryColor] = useState('');
+  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [error, setError] = useState('');
+  const [newCategoryError, setNewCategoryError] = useState('');
 
   const uid = useSelector(state => state.user.uid);
   const budgetId = useSelector(state => state.household.budgetId);
 
   const headerProps = {title: 'Modifier la rentrée', navigation};
+
+  const categoryColors1 = [
+    'red',
+    'green',
+    'yellow',
+    'blue',
+    'purple',
+    'orange',
+  ];
+  const categoryColors2 = [
+    'pink',
+    'salmon',
+    'tomato',
+    'violet',
+    'magenta',
+    'grey',
+  ];
 
   useEffect(() => {
     const expense = route.params.expense;
@@ -33,6 +55,7 @@ const ExpenseModifyScreen = ({route, navigation}) => {
       setType('income');
     }
     setDate(expense.date.toDate());
+    setCategory(expense.category);
   }, [route.params.expense]);
 
   const updateCurrentExpense = () => {
@@ -45,6 +68,7 @@ const ExpenseModifyScreen = ({route, navigation}) => {
           label: name,
           amount: setAmountSign(Number(amount)),
           date: date,
+          category: category,
           modified: {
             by: uid,
             when: new Date(),
@@ -63,6 +87,32 @@ const ExpenseModifyScreen = ({route, navigation}) => {
     } else {
       setError('veuillez indiquer un nom');
     }
+  };
+
+  const addNewCategory = () => {
+    if (newCategoryName && newCategoryColor) {
+      const newCategories = [...route.params.budgetOverview.categories];
+      newCategories.push({label: newCategoryName, color: newCategoryColor});
+      updateBudgetOverview(budgetId, {
+        categories: newCategories,
+      })
+        .then(() => {
+          setIsOverlayVisible(false);
+          console.log('new category added');
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    } else {
+      setNewCategoryError('veuillez donner un nom et une couleur');
+    }
+  };
+
+  const cancelNewCategory = () => {
+    setNewCategoryName('');
+    setNewCategoryColor('');
+    setNewCategoryError('');
+    setIsOverlayVisible(false);
   };
 
   const setAmountSign = value => {
@@ -137,6 +187,101 @@ const ExpenseModifyScreen = ({route, navigation}) => {
           onChange={onChangeDate}
         />
       )}
+      <Text>Catégories</Text>
+      <Picker
+        mode="dropdown"
+        selectedValue={category}
+        onValueChange={value => {
+          if (value !== 'ohome_category_add') {
+            setCategory(value);
+          } else {
+            setIsOverlayVisible(true);
+          }
+        }}>
+        {route.params.budgetOverview.categories.map((h, i) => (
+          <Picker.Item
+            key={i}
+            label={h.label}
+            value={h.label}
+            color={h.color}
+          />
+        ))}
+        <Picker.Item label="+ ajouter" value="ohome_category_add" />
+      </Picker>
+      <Overlay
+        isVisible={isOverlayVisible}
+        onBackdropPress={cancelNewCategory}
+        overlayStyle={{
+          width: '80%',
+        }}
+        backdropStyle={{
+          backgroundColor: 'grey',
+          opacity: 0.9,
+        }}>
+        <Text>Nouvelle catégorie</Text>
+        <Input
+          label={setLabel('nom', newCategoryName)}
+          placeholder={setPlaceholder('nom', newCategoryName)}
+          value={newCategoryName}
+          errorMessage={newCategoryError}
+          onChangeText={value => {
+            setNewCategoryName(value);
+          }}
+        />
+        <Text>Couleur</Text>
+        <View style={styles.colors_container}>
+          {categoryColors1.map((e, i) => (
+            <TouchableOpacity
+              key={i}
+              style={[
+                styles.colors,
+                {
+                  backgroundColor: e,
+                  borderWidth: e === newCategoryColor ? 2 : 0,
+                },
+              ]}
+              onPress={() => {
+                setNewCategoryColor(e);
+              }}>
+              <Text> </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <View style={styles.colors_container}>
+          {categoryColors2.map((e, i) => (
+            <TouchableOpacity
+              key={i}
+              style={[
+                styles.colors,
+                {
+                  backgroundColor: e,
+                  borderWidth: e === newCategoryColor ? 2 : 0,
+                },
+              ]}
+              onPress={() => {
+                setNewCategoryColor(e);
+              }}>
+              <Text> </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+        <Button
+          title="ajouter"
+          type="solid"
+          raised={true}
+          onPress={addNewCategory}
+          containerStyle={{
+            backgroundColor: '#FBFBFB',
+            width: '90%',
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            marginTop: 20,
+          }}
+          buttonStyle={{
+            backgroundColor: '#FCA311',
+          }}
+        />
+      </Overlay>
       <Button
         title="valider"
         type="solid"
@@ -158,6 +303,16 @@ const ExpenseModifyScreen = ({route, navigation}) => {
 
 const useStyles = makeStyles(theme => ({
   main_container: {},
+  colors_container: {
+    margin: 10,
+    flexDirection: 'row',
+  },
+  colors: {
+    flex: 1,
+    padding: 5,
+    margin: 5,
+    textAlign: 'center',
+  },
 }));
 
 export default ExpenseModifyScreen;
