@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {ScrollView, Text, View} from 'react-native';
-import {makeStyles} from 'react-native-elements';
+import {Button, makeStyles} from 'react-native-elements';
 import {ListItem} from 'react-native-elements';
 import _ from 'lodash';
 import TitleHeader from '../../headers/TitleHeader';
+import {removeMeal} from '../../../api/mealsApi';
 
 const MealsHistoryScreen = ({route, navigation}) => {
   const styles = useStyles();
@@ -25,6 +26,16 @@ const MealsHistoryScreen = ({route, navigation}) => {
       ),
     );
   }, [route.params.meals]);
+
+  const deleteMeal = (mealGroupID, mealID, index) => {
+    removeMeal(mealGroupID, mealID)
+      .then(() => {
+        console.log('meal deleted');
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
 
   const sortLists = filter => {
     if (filter === 'dateAsc') {
@@ -69,7 +80,7 @@ const MealsHistoryScreen = ({route, navigation}) => {
           </Text>
         </View>
         {filteredHistory.map((e, i) => (
-          <ListItem
+          <ListItem.Swipeable
             key={i}
             bottomDivider
             onPress={() => {
@@ -78,7 +89,31 @@ const MealsHistoryScreen = ({route, navigation}) => {
                 meal: e,
                 meals: route.params.meals,
               });
-            }}>
+            }}
+            leftContent={
+              <Button
+                title="détails"
+                icon={{name: 'info', color: 'white'}}
+                buttonStyle={{minHeight: '100%'}}
+                onPress={() => {
+                  navigation.navigate('MealDetailsScreen', {
+                    mealGroupId: route.params.mealGroupId,
+                    meal: e,
+                    meals: route.params.meals,
+                  });
+                }}
+              />
+            }
+            rightContent={
+              <Button
+                onPress={() => {
+                  deleteMeal(route.params.mealGroupId, e.id, i);
+                }}
+                title="supprimer"
+                icon={{name: 'delete', color: 'white'}}
+                buttonStyle={{minHeight: '100%', backgroundColor: 'red'}}
+              />
+            }>
             <ListItem.Content>
               <ListItem.Title>{e.label}</ListItem.Title>
               <ListItem.Subtitle>{e.description}</ListItem.Subtitle>
@@ -87,7 +122,7 @@ const MealsHistoryScreen = ({route, navigation}) => {
               </ListItem.Subtitle>
             </ListItem.Content>
             <ListItem.Chevron />
-          </ListItem>
+          </ListItem.Swipeable>
         ))}
       </ScrollView>
     </View>

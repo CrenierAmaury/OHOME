@@ -10,13 +10,14 @@ const HomeScreen = ({navigation}) => {
   const styles = useStyles();
 
   const headerProps = {navigation};
+  const childsProps = {navigation};
 
   return (
     <View style={styles.main_container}>
       <MainHeader {...headerProps} />
-      <BudgetWidget {...navigation} />
-      <MealsWidget {...navigation} />
-      <CalendarWidget {...navigation} />
+      <BudgetWidget {...childsProps} />
+      <MealsWidget {...childsProps} />
+      <CalendarWidget {...childsProps} />
     </View>
   );
 };

@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, ScrollView, Text, View} from 'react-native';
-import {makeStyles} from 'react-native-elements';
+import {Button, makeStyles} from 'react-native-elements';
 import {ListItem} from 'react-native-elements';
 import _ from 'lodash';
+import {removeExpense} from '../../../api/budgetApi';
 
 const BudgetHistoryScreen = props => {
   const styles = useStyles();
@@ -17,6 +18,16 @@ const BudgetHistoryScreen = props => {
     setHistory(props.expenses);
     setFilteredHistory(props.expenses);
   }, [props.expenses]);
+
+  const deleteExpense = (budgetID, expenseID, amount, budgetOverview) => {
+    removeExpense(budgetID, expenseID, amount, budgetOverview)
+      .then(() => {
+        console.log('expense deleted');
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
 
   const sortLists = filter => {
     if (filter === 'all') {
@@ -83,7 +94,7 @@ const BudgetHistoryScreen = props => {
         </Text>
       </View>
       {filteredHistory.map((e, i) => (
-        <ListItem
+        <ListItem.Swipeable
           key={i}
           bottomDivider
           onPress={() => {
@@ -92,7 +103,36 @@ const BudgetHistoryScreen = props => {
               expense: e,
               budgetOverview: props.budgetOverview,
             });
-          }}>
+          }}
+          leftContent={
+            <Button
+              title="détails"
+              icon={{name: 'info', color: 'white'}}
+              buttonStyle={{minHeight: '100%'}}
+              onPress={() => {
+                props.navigation.navigate('ExpenseDetailsScreen', {
+                  budgetId: props.budgetId,
+                  expense: e,
+                  budgetOverview: props.budgetOverview,
+                });
+              }}
+            />
+          }
+          rightContent={
+            <Button
+              onPress={() => {
+                deleteExpense(
+                  props.budgetId,
+                  e.id,
+                  e.amount,
+                  props.budgetOverview,
+                );
+              }}
+              title="supprimer"
+              icon={{name: 'delete', color: 'white'}}
+              buttonStyle={{minHeight: '100%', backgroundColor: 'red'}}
+            />
+          }>
           <ListItem.Content>
             <ListItem.Title>{e.label}</ListItem.Title>
             <ListItem.Subtitle>{e.amount}</ListItem.Subtitle>
@@ -101,7 +141,7 @@ const BudgetHistoryScreen = props => {
             </ListItem.Subtitle>
           </ListItem.Content>
           <ListItem.Chevron />
-        </ListItem>
+        </ListItem.Swipeable>
       ))}
     </ScrollView>
   );

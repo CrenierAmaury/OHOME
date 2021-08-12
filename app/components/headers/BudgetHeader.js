@@ -29,7 +29,6 @@ const BudgetHeader = props => {
   };
 
   const handleDelete = () => {
-    console.log(props.expense);
     removeExpense(
       budgetId,
       props.expense.id,

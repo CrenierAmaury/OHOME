@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
 import {makeStyles, Card} from 'react-native-elements';
 import {useSelector} from 'react-redux';
-import {getBalanceIncomeExpense} from '../../../api/budgetApi';
+import firestore from '@react-native-firebase/firestore';
 
 const BudgetWidget = navigation => {
   const styles = useStyles();
@@ -13,19 +13,23 @@ const BudgetWidget = navigation => {
   const budgetId = useSelector(state => state.household.budgetId);
 
   useEffect(() => {
-    getBudgetOverview(budgetId);
+    const unsubscribe = firestore()
+      .collection('budgets')
+      .doc(budgetId)
+      .onSnapshot(
+        documentSnapshot => {
+          const {...overview} = documentSnapshot.data();
+          setBudgetOverview(overview);
+          setIsLoading(false);
+        },
+        error => {
+          console.log(error);
+        },
+      );
+    return () => {
+      unsubscribe();
+    };
   }, [budgetId]);
-
-  const getBudgetOverview = id => {
-    getBalanceIncomeExpense(id)
-      .then(overview => {
-        setBudgetOverview(overview);
-        setIsLoading(false);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  };
 
   return (
     <View style={styles.main_container}>
