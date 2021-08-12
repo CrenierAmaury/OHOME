@@ -10,7 +10,7 @@ const NewListScreen = props => {
   const styles = useStyles();
 
   const [name, setName] = useState('');
-  const [type, setType] = useState('shopping');
+  const [type, setType] = useState({label: 'shopping', checkbox: true});
   const [error, setError] = useState('');
 
   const uid = useSelector(state => state.user.uid);
@@ -44,7 +44,7 @@ const NewListScreen = props => {
 
   const cancelNewList = () => {
     setName('');
-    setType('shopping');
+    setType({label: 'shopping', checkbox: true});
     props.setIsOverlayVisible(false);
   };
 
@@ -63,9 +63,13 @@ const NewListScreen = props => {
   return (
     <View style={styles.main_container}>
       <Picker
-        selectedValue={type}
+        selectedValue={type.label}
         onValueChange={value => {
-          setType(value);
+          if (value === 'other') {
+            setType({label: value, checkbox: false});
+          } else {
+            setType({label: value, checkbox: true});
+          }
         }}>
         <Picker.Item label="courses" value="shopping" />
         <Picker.Item label="to do" value="todo" />

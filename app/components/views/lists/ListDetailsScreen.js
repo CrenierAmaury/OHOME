@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, ScrollView, Keyboard} from 'react-native';
+import {View, ScrollView, Keyboard, Text} from 'react-native';
 import {Button, Input, ListItem} from 'react-native-elements';
 import {makeStyles} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
@@ -7,15 +7,19 @@ import {updateList} from '../../../api/listsApi';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ListHeader from '../../headers/ListHeader';
+import {renderMemberName} from '../../../utils/members';
+import {renderDate} from '../../../utils/date';
+import {useSelector} from 'react-redux';
 
 const ListDetailsScreen = ({route, navigation}) => {
   const styles = useStyles();
 
   const [list, setList] = useState({});
-  const [elements, setElements] = useState([]);
   const [newItem, setNewItem] = useState('');
 
-  const headerProps = {title: list.label, navigation};
+  const members = useSelector(state => state.household.members);
+
+  const headerProps = {title: list.label, list, navigation};
 
   useEffect(() => {
     const unsubscribe = firestore()
@@ -25,8 +29,9 @@ const ListDetailsScreen = ({route, navigation}) => {
       .doc(route.params.list.id)
       .onSnapshot(
         documentSnapshot => {
-          setList(documentSnapshot.data());
-          setElements(documentSnapshot.data().elements);
+          const {...currentList} = documentSnapshot.data();
+          currentList.id = documentSnapshot.id;
+          setList(currentList);
         },
         error => {
           console.log(error);
@@ -38,7 +43,7 @@ const ListDetailsScreen = ({route, navigation}) => {
   }, [navigation, route.params.list, route.params.listGroupId]);
 
   const deleteElement = index => {
-    const newElements = [...elements];
+    const newElements = [...list.elements];
     newElements.splice(index, 1);
     updateList(route.params.listGroupId, route.params.list.id, {
       elements: newElements,
@@ -52,7 +57,7 @@ const ListDetailsScreen = ({route, navigation}) => {
   };
 
   const changeChecked = index => {
-    const newElements = [...elements];
+    const newElements = [...list.elements];
     newElements[index].checked = !newElements[index].checked;
     updateList(route.params.listGroupId, route.params.list.id, {
       elements: newElements,
@@ -67,7 +72,7 @@ const ListDetailsScreen = ({route, navigation}) => {
 
   const addElement = () => {
     Keyboard.dismiss();
-    const newElements = [...elements];
+    const newElements = [...list.elements];
     newElements.push({label: newItem, checked: false});
     updateList(route.params.listGroupId, route.params.list.id, {
       elements: newElements,
@@ -108,37 +113,51 @@ const ListDetailsScreen = ({route, navigation}) => {
         }
       />
       <ScrollView>
-        {elements.map((h, i) => (
-          <ListItem.Swipeable
-            key={i}
-            bottomDivider
-            leftStyle={{width: 0}}
-            rightContent={
-              <Button
-                onPress={() => {
-                  deleteElement(i);
-                }}
-                title="supprimer"
-                icon={{name: 'delete', color: 'white'}}
-                buttonStyle={{minHeight: '100%', backgroundColor: 'red'}}
-              />
-            }>
-            <ListItem.Content>
-              <ListItem.Title
-                style={{textDecorationLine: strikeOutLabel(h.checked)}}>
-                {h.label}
-              </ListItem.Title>
-            </ListItem.Content>
-            {list.type === 'other' ? null : (
-              <ListItem.CheckBox
-                checked={h.checked}
-                onPress={() => {
-                  changeChecked(i);
-                }}
-              />
-            )}
-          </ListItem.Swipeable>
-        ))}
+        {list.elements
+          ? list.elements.map((h, i) => (
+              <ListItem.Swipeable
+                key={i}
+                bottomDivider
+                leftStyle={{width: 0}}
+                rightContent={
+                  <Button
+                    onPress={() => {
+                      deleteElement(i);
+                    }}
+                    title="supprimer"
+                    icon={{name: 'delete', color: 'white'}}
+                    buttonStyle={{minHeight: '100%', backgroundColor: 'red'}}
+                  />
+                }>
+                <ListItem.Content>
+                  <ListItem.Title
+                    style={{textDecorationLine: strikeOutLabel(h.checked)}}>
+                    {h.label}
+                  </ListItem.Title>
+                </ListItem.Content>
+                {list.type.checkbox ? (
+                  <ListItem.CheckBox
+                    checked={h.checked}
+                    onPress={() => {
+                      changeChecked(i);
+                    }}
+                  />
+                ) : null}
+              </ListItem.Swipeable>
+            ))
+          : null}
+        {list.creation ? (
+          <Text>
+            créé par {renderMemberName(members, list.author)} le{' '}
+            {renderDate(list.creation.toDate())}
+          </Text>
+        ) : null}
+        {list.modified ? (
+          <Text>
+            modifié par {renderMemberName(members, list.modified.by)} le{' '}
+            {renderDate(list.modified.when.toDate())}
+          </Text>
+        ) : null}
       </ScrollView>
     </View>
   );
