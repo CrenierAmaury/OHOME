@@ -29,3 +29,18 @@ export async function addUser(uid, user) {
       });
   });
 }
+
+export async function updateUser(uid, user) {
+  return new Promise((resolve, reject) => {
+    firestore()
+      .collection('users')
+      .doc(uid)
+      .update(user)
+      .then(() => {
+        resolve();
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}

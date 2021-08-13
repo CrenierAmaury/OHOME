@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import _ from 'lodash';
-import { ScrollView, View, Text, ActivityIndicator } from "react-native";
+import {ScrollView, View, Text, ActivityIndicator} from 'react-native';
 import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {FAB, ListItem, Overlay, Button, Icon} from 'react-native-elements';

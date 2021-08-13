@@ -5,7 +5,12 @@ import AuthenticatedNav from './AuthenticatedNav';
 import UnauthenticatedNav from './UnauthenticatedNav';
 import {checkIfLoggedIn} from '../../api/authenticationApi';
 import {useDispatch, useSelector} from 'react-redux';
-import {updateUid} from '../../store/slices/userSlice';
+import {
+  updateAvatar,
+  updateEmail,
+  updateName,
+  updateUid,
+} from '../../store/slices/userSlice';
 import {getUser} from '../../api/userApi';
 import {
   updateCalendarId,
@@ -16,6 +21,7 @@ import {
   updateMembers,
 } from '../../store/slices/householdSlice';
 import {getHousehold} from '../../api/householdApi';
+import {getUserAvatar} from '../../utils/avatar';
 
 const Stack = createStackNavigator();
 
@@ -35,6 +41,8 @@ const MainNav = () => {
       getUser(user.uid)
         .then(res => {
           dispatch(updateHouseholdId(res.activeHousehold));
+          dispatch(updateName(res.name));
+          dispatch(updateEmail(res.email));
           if (res.activeHousehold) {
             getHousehold(res.activeHousehold).then(household => {
               household.members.forEach(memberId => {
@@ -46,6 +54,15 @@ const MainNav = () => {
                     console.log(e);
                   });
               });
+              getUserAvatar(user.uid)
+                .then(res => {
+                  res
+                    ? dispatch(updateAvatar(res))
+                    : dispatch(updateAvatar('default'));
+                })
+                .catch(e => {
+                  console.log(e);
+                });
               dispatch(updateCalendarId(household.calendar));
               dispatch(updateBudgetId(household.budget));
               dispatch(updateListGroupId(household.listGroup));

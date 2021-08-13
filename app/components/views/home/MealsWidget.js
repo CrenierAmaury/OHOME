@@ -5,7 +5,7 @@ import {makeStyles, Card} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import _ from 'lodash';
 
-const MealsWidget = navigation => {
+const MealsWidget = props => {
   const styles = useStyles();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -52,7 +52,7 @@ const MealsWidget = navigation => {
         <Card>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Meals');
+              props.navigation.navigate('Meals');
             }}>
             <Card.Title>Repas du jour</Card.Title>
             <Card.Divider />

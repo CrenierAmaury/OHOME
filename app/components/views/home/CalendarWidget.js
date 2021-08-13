@@ -6,7 +6,7 @@ import {useSelector} from 'react-redux';
 import _ from 'lodash';
 import {renderMemberName} from '../../../utils/members';
 
-const CalendarWidget = navigation => {
+const CalendarWidget = props => {
   const styles = useStyles();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -53,7 +53,7 @@ const CalendarWidget = navigation => {
         <Card>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Calendar');
+              props.navigation.navigate('Calendar');
             }}>
             <Card.Title>Agenda</Card.Title>
             <Card.Divider />

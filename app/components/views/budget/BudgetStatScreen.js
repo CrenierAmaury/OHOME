@@ -34,6 +34,10 @@ const BudgetStatScreen = props => {
     <View style={styles.main_container}>
       <VictoryPie
         data={data}
+        width={300}
+        labelPlacement="parallel"
+        labelRadius={15}
+        padAngle={5}
         theme={VictoryTheme.material}
         colorScale={['tomato', 'orange', 'gold', 'cyan', 'navy']}
       />
@@ -44,6 +48,8 @@ const BudgetStatScreen = props => {
 const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 }));
 

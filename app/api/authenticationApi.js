@@ -1,4 +1,4 @@
-import auth from '@react-native-firebase/auth';
+import auth, { firebase } from "@react-native-firebase/auth";
 
 export async function signIn(email, password) {
   return new Promise((resolve, reject) => {
@@ -90,5 +90,46 @@ export async function signUp(email, password, name) {
         message: 'veuillez remplir tous les champs',
       });
     }
+  });
+}
+
+export async function updateAuthEmail(email) {
+  return new Promise((resolve, reject) => {
+    auth()
+      .currentUser.updateEmail(email)
+      .then(result => {
+        resolve(result);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}
+
+export async function updateAuthPassword(password) {
+  return new Promise((resolve, reject) => {
+    auth()
+      .currentUser.updatePassword(password)
+      .then(result => {
+        resolve(result);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}
+
+export async function reauthenticate(email, password) {
+  const provider = firebase.auth.EmailAuthProvider();
+  const credentials = provider.credential(email, password);
+  return new Promise((resolve, reject) => {
+    auth()
+      .currentUser.reauthenticateWithCredential(credentials)
+      .then(result => {
+        resolve(result);
+      })
+      .catch(error => {
+        reject(error);
+      });
   });
 }

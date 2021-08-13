@@ -4,7 +4,7 @@ import {makeStyles, Card} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 
-const BudgetWidget = navigation => {
+const BudgetWidget = props => {
   const styles = useStyles();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -39,7 +39,7 @@ const BudgetWidget = navigation => {
         ) : (
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('Budget');
+              props.navigation.navigate('Budget');
             }}>
             <Card.Title>Budget</Card.Title>
             <Card.Divider />
