@@ -7,6 +7,7 @@ export const userSlice = createSlice({
     name: '',
     email: '',
     avatar: 'default',
+    households: [],
   },
   reducers: {
     updateUid: (state, action) => {
@@ -21,10 +22,18 @@ export const userSlice = createSlice({
     updateAvatar: (state, action) => {
       state.avatar = action.payload;
     },
+    updateHouseholds: (state, action) => {
+      state.households.push(action.payload);
+    },
   },
 });
 
-export const {updateUid, updateName, updateEmail, updateAvatar} =
-  userSlice.actions;
+export const {
+  updateUid,
+  updateName,
+  updateEmail,
+  updateAvatar,
+  updateHouseholds,
+} = userSlice.actions;
 
 export default userSlice.reducer;

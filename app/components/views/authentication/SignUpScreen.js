@@ -6,7 +6,7 @@ import {signUp} from '../../../api/authenticationApi';
 import {addUser} from '../../../api/userApi';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const SignUpScreen = () => {
+const SignUpScreen = ({navigation}) => {
   const styles = useStyles();
 
   const [isLoading, setIsLoading] = useState(false);
@@ -33,11 +33,13 @@ const SignUpScreen = () => {
             activeHousehold: '',
             households: [],
           };
-          addUser(r.uid, user)
+          addUser(r.user.uid, user)
             .then(() => {
               setIsLoading(false);
+              navigation.navigate('NoHouseholdScreen');
             })
-            .catch(() => {
+            .catch(e => {
+              setError(e.message);
               setIsLoading(false);
             });
         })
