@@ -1,19 +1,25 @@
 import storage from '@react-native-firebase/storage';
 
+function createRef(uid) {
+  return storage().ref('/' + uid + '/avatar');
+}
+
 export async function uploadAvatar(uid, file) {
-  const avatarRef = storage().ref('/avatars/' + uid + '.avatar');
-  avatarRef
-    .putFile(file)
-    .then(res => {
-      return res;
-    })
-    .catch(error => {
-      return error;
-    });
+  const avatarRef = createRef(uid);
+  return new Promise((resolve, reject) => {
+    avatarRef
+      .putFile(file)
+      .then(res => {
+        resolve(res);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
 }
 
 export async function getUserAvatar(uid) {
-  const avatarRef = storage().ref('/avatars/' + uid + '.avatar');
+  const avatarRef = createRef(uid);
   return new Promise((resolve, reject) => {
     avatarRef
       .getDownloadURL()

@@ -6,13 +6,13 @@ import firestore from '@react-native-firebase/firestore';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import TitleHeader from '../../headers/TitleHeader';
 import {getUserAvatar, uploadAvatar} from '../../../utils/avatar';
-import {updateAvatar, updateUid} from '../../../store/slices/userSlice';
+import {updateAvatar} from '../../../store/slices/userSlice';
 import {
   reauthenticate,
-  signOut,
   updateAuthPassword,
 } from '../../../api/authenticationApi';
 import Dialog from 'react-native-dialog';
+import ProfilAvatar from './ProfilAvatar';
 
 const ProfileScreen = ({navigation}) => {
   const styles = useStyles();
@@ -31,7 +31,6 @@ const ProfileScreen = ({navigation}) => {
   const uid = useSelector(state => state.user.uid);
   const name = useSelector(state => state.user.name);
   const email = useSelector(state => state.user.email);
-  const avatar = useSelector(state => state.user.avatar);
 
   useEffect(() => {
     const unsubscribe = firestore()
@@ -39,7 +38,6 @@ const ProfileScreen = ({navigation}) => {
       .doc(uid)
       .onSnapshot(
         documentSnapshot => {
-          console.log(documentSnapshot.data());
           setUser(documentSnapshot.data());
         },
         error => {
@@ -55,8 +53,14 @@ const ProfileScreen = ({navigation}) => {
     launchCamera({}, res => {
       if (res.assets) {
         uploadAvatar(uid, res.assets[res.assets.length - 1].uri)
-          .then(res => {
-            console.log(res);
+          .then(() => {
+            getUserAvatar(uid)
+              .then(link => {
+                dispatch(updateAvatar(link));
+              })
+              .catch(e => {
+                console.log(e);
+              });
           })
           .catch(e => {
             console.log(e);
@@ -90,30 +94,12 @@ const ProfileScreen = ({navigation}) => {
     }
   };
 
-  const accessoryProps = {name: 'edit', size: 40, onPress: takePhotoAvatar};
+  const avatarProps = {size: 'xlarge', takePhotoAvatar};
 
   return (
     <View style={styles.main_container}>
       <TitleHeader {...headerProps} />
-      {avatar !== 'default' ? (
-        <Avatar
-          rounded
-          size="xlarge"
-          source={{
-            uri: avatar,
-          }}
-          containerStyle={styles.avatar_container}>
-          <Avatar.Accessory {...accessoryProps} />
-        </Avatar>
-      ) : (
-        <Avatar
-          rounded
-          size="xlarge"
-          title={name.length === 1 ? name[0] : name[0] + name[1]}
-          containerStyle={styles.avatar_container}>
-          <Avatar.Accessory {...accessoryProps} />
-        </Avatar>
-      )}
+      <ProfilAvatar {...avatarProps} />
       <View style={styles.user_info}>
         <Text>{name}</Text>
         <Text>{email}</Text>
@@ -181,10 +167,6 @@ const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
     alignItems: 'center',
-  },
-  avatar_container: {
-    margin: 25,
-    backgroundColor: 'red',
   },
   user_info: {
     margin: 25,
