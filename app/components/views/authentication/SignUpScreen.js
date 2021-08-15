@@ -55,7 +55,7 @@ const SignUpScreen = ({navigation}) => {
   return (
     <View style={styles.main_container}>
       <Input
-        placeholder="nom"
+        placeholder="Nom"
         onChangeText={value => {
           setName(value);
         }}
@@ -71,7 +71,7 @@ const SignUpScreen = ({navigation}) => {
         }
       />
       <Input
-        placeholder="email"
+        placeholder="Email"
         onChangeText={value => {
           setEmail(value);
         }}
@@ -88,7 +88,7 @@ const SignUpScreen = ({navigation}) => {
         }
       />
       <Input
-        placeholder="mot de passe"
+        placeholder="Mot de passe"
         onChangeText={value => {
           setPassword(value);
         }}
@@ -105,7 +105,7 @@ const SignUpScreen = ({navigation}) => {
         }
       />
       <Input
-        placeholder="confirmer le mot de passe"
+        placeholder="Confirmer le mot de passe"
         errorMessage={error}
         onChangeText={value => {
           setPasswordCheck(value);
@@ -138,15 +138,14 @@ const SignUpScreen = ({navigation}) => {
 const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
-    padding: 10,
-    paddingTop: 30,
+    padding: '5%',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   button_container: {
     backgroundColor: '#FBFBFB',
     width: '50%',
-    marginLeft: 'auto',
-    marginRight: 'auto',
-    marginTop: 20,
+    marginTop: '10%',
   },
   button: {
     backgroundColor: '#FCA311',

@@ -41,7 +41,7 @@ const TabNav = () => {
               name="dinner-dining"
               size={35}
               style={{
-                color: focused ? theme.colors.highlight : theme.colors.text,
+                color: focused ? theme.colors.highlight : theme.colors.grey,
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -60,7 +60,7 @@ const TabNav = () => {
               name="account-balance-wallet"
               size={35}
               style={{
-                color: focused ? theme.colors.highlight : theme.colors.text,
+                color: focused ? theme.colors.highlight : theme.colors.grey,
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -79,7 +79,7 @@ const TabNav = () => {
               name="home"
               size={35}
               style={{
-                color: focused ? theme.colors.highlight : theme.colors.text,
+                color: focused ? theme.colors.highlight : theme.colors.grey,
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -98,7 +98,7 @@ const TabNav = () => {
               name="event"
               size={35}
               style={{
-                color: focused ? theme.colors.highlight : theme.colors.text,
+                color: focused ? theme.colors.highlight : theme.colors.grey,
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,
@@ -117,7 +117,7 @@ const TabNav = () => {
               name="format-list-bulleted"
               size={35}
               style={{
-                color: focused ? theme.colors.highlight : theme.colors.text,
+                color: focused ? theme.colors.highlight : theme.colors.grey,
                 justifyContent: 'center',
                 alignItems: 'center',
                 marginTop: 0,

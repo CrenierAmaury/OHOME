@@ -4,6 +4,7 @@ import {getUser} from '../../api/userApi';
 import {
   updateAvatar,
   updateEmail,
+  updateHouseholds,
   updateName,
 } from '../../store/slices/userSlice';
 import {
@@ -38,6 +39,15 @@ const AuthenticatedNav = () => {
           dispatch(updateName(res.name));
           dispatch(updateEmail(res.email));
           dispatch(updateHouseholdId(res.activeHousehold));
+          res.households.forEach(e => {
+            getHousehold(e)
+              .then(hh => {
+                dispatch(updateHouseholds({id: e, name: hh.name}));
+              })
+              .catch(e => {
+                console.log(e);
+              });
+          });
           getHousehold(res.activeHousehold).then(household => {
             household.members.forEach(memberId => {
               getUser(memberId)

@@ -21,7 +21,7 @@ export async function removeInvitation(email, invitationId) {
     firestore()
       .collection('invitationGroups')
       .doc(email)
-      .collection('meals')
+      .collection('invitations')
       .doc(invitationId)
       .delete()
       .then(() => {

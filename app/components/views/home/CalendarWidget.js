@@ -66,7 +66,7 @@ const CalendarWidget = props => {
                 </ListItem>
               ))
             ) : (
-              <Text>rien de prévu aujourd'hui</Text>
+              <Text>Rien de prévu aujourd'hui</Text>
             )}
           </TouchableOpacity>
         </Card>
@@ -76,9 +76,7 @@ const CalendarWidget = props => {
 };
 
 const useStyles = makeStyles(theme => ({
-  main_container: {
-    flex: 1,
-  },
+  main_container: {},
 }));
 
 export default CalendarWidget;

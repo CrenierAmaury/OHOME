@@ -51,6 +51,19 @@ export async function signOut() {
   });
 }
 
+export async function sendResetPasswordEmail(email) {
+  return new Promise((resolve, reject) => {
+    auth()
+      .sendPasswordResetEmail(email)
+      .then(result => {
+        resolve(result);
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}
+
 export async function signUp(email, password, name) {
   return new Promise((resolve, reject) => {
     if (email && password && name) {

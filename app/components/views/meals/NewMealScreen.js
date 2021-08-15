@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {Button, Input} from 'react-native-elements';
-import {TouchableOpacity, View} from 'react-native';
+import {ScrollView, TouchableOpacity, View} from 'react-native';
 import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
@@ -85,80 +85,92 @@ const NewMealScreen = props => {
 
   return (
     <View style={styles.main_container}>
-      <Input
-        label={setLabel('nom', name)}
-        placeholder={setPlaceholder('nom', name)}
-        value={name}
-        onChangeText={value => {
-          setName(value);
-        }}
-      />
-      <Input
-        label={setLabel('description', description)}
-        placeholder={setPlaceholder('description', description)}
-        value={description}
-        onChangeText={value => {
-          setDescription(value);
-        }}
-      />
-      <TouchableOpacity
-        onPress={() => {
-          setDatePickerShow(true);
-        }}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Input
-          label="date"
-          value={date.toLocaleDateString()}
-          errorMessage={error}
-          editable={false}
+          label={setLabel('Nom', name)}
+          placeholder={setPlaceholder('Nom', name)}
+          value={name}
+          onChangeText={value => {
+            setName(value);
+          }}
         />
-      </TouchableOpacity>
-      {datePickerShow && (
-        <RNDateTimePicker
-          value={date}
-          mode={'date'}
-          display="spinner"
-          onChange={onChangeDate}
+        <Input
+          label={setLabel('Description', description)}
+          placeholder={setPlaceholder('Description', description)}
+          value={description}
+          onChangeText={value => {
+            setDescription(value);
+          }}
         />
-      )}
-      <Button
-        title="ajouter"
-        type="solid"
-        raised={true}
-        onPress={addNewMeal}
-        containerStyle={{
-          backgroundColor: '#FBFBFB',
-          width: '90%',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          marginTop: 20,
-        }}
-        buttonStyle={{
-          backgroundColor: '#FCA311',
-        }}
-      />
-      <Button
-        title="annuler"
-        type="solid"
-        raised={true}
-        onPress={cancelNewMeal}
-        containerStyle={{
-          backgroundColor: '#FBFBFB',
-          width: '90%',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          marginTop: 20,
-        }}
-        buttonStyle={{
-          backgroundColor: '#FBFBFB',
-        }}
-        titleStyle={{color: '#FCA311'}}
-      />
+        <TouchableOpacity
+          onPress={() => {
+            setDatePickerShow(true);
+          }}>
+          <Input
+            label="Date"
+            value={date.toLocaleDateString()}
+            errorMessage={error}
+            editable={false}
+          />
+        </TouchableOpacity>
+        {datePickerShow && (
+          <RNDateTimePicker
+            value={date}
+            mode={'date'}
+            display="spinner"
+            onChange={onChangeDate}
+          />
+        )}
+        <Button
+          title="Ajouter"
+          type="solid"
+          raised={true}
+          onPress={addNewMeal}
+          containerStyle={styles.add_button_container}
+          buttonStyle={styles.add_button}
+        />
+        <Button
+          title="Annuler"
+          type="solid"
+          raised={true}
+          onPress={cancelNewMeal}
+          containerStyle={styles.cancel_button_container}
+          buttonStyle={styles.cancel_button}
+          titleStyle={styles.cancel_button_title}
+        />
+      </ScrollView>
     </View>
   );
 };
 
 const useStyles = makeStyles(theme => ({
-  main_container: {},
+  main_container: {
+    marginTop: '5%',
+    marginBottom: '5%',
+  },
+  add_button_container: {
+    backgroundColor: theme.colors.white,
+    width: '90%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: '10%',
+  },
+  add_button: {
+    backgroundColor: theme.colors.highlight,
+  },
+  cancel_button_container: {
+    backgroundColor: theme.colors.white,
+    width: '90%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: '10%',
+  },
+  cancel_button: {
+    backgroundColor: theme.colors.white,
+  },
+  cancel_button_title: {
+    color: theme.colors.highlight,
+  },
 }));
 
 export default NewMealScreen;

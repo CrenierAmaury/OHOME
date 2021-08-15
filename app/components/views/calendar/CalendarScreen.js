@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, View} from 'react-native';
-import {FAB, Icon, makeStyles, Overlay} from 'react-native-elements';
+import {FAB, Icon, makeStyles, Overlay, useTheme} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import MainHeader from '../../headers/MainHeader';
 import AgendaScreen from './AgendaScreen';
@@ -9,6 +9,7 @@ import NewEventScreen from './NewEventScreen';
 
 const CalendarScreen = ({navigation}) => {
   const styles = useStyles();
+  const {theme} = useTheme();
 
   const [isLoading, setIsLoading] = useState(true);
   const [events, setEvents] = useState([]);
@@ -63,9 +64,9 @@ const CalendarScreen = ({navigation}) => {
       <MainHeader {...headerProps} />
       <AgendaScreen {...agendaProps} />
       <FAB
-        color="#FCA311"
+        color={theme.colors.highlight}
         placement="right"
-        icon={<Icon name="add" color="white" />}
+        icon={<Icon name="add" color={theme.colors.white} />}
         onPress={() => {
           setIsOverlayVisible(true);
         }}
@@ -75,13 +76,8 @@ const CalendarScreen = ({navigation}) => {
         onBackdropPress={() => {
           setIsOverlayVisible(false);
         }}
-        overlayStyle={{
-          width: '80%',
-        }}
-        backdropStyle={{
-          backgroundColor: 'grey',
-          opacity: 0.7,
-        }}>
+        overlayStyle={styles.overlay}
+        backdropStyle={styles.overlay_back}>
         <NewEventScreen {...childProps} />
       </Overlay>
     </View>
@@ -91,6 +87,13 @@ const CalendarScreen = ({navigation}) => {
 const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
+  },
+  overlay: {
+    width: '80%',
+  },
+  overlay_back: {
+    backgroundColor: theme.colors.grey,
+    opacity: 0.7,
   },
 }));
 

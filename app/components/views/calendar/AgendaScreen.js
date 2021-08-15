@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import {Card, Divider, makeStyles} from 'react-native-elements';
+import {Card, Divider, useTheme} from 'react-native-elements';
 import {Agenda, LocaleConfig} from 'react-native-calendars';
 import {Text, TouchableOpacity} from 'react-native';
 import _ from 'lodash';
 
 const AgendaScreen = props => {
-  const styles = useStyles;
+  const {theme} = useTheme();
 
   const [items, setItems] = useState({});
 
@@ -86,7 +86,13 @@ const AgendaScreen = props => {
             <Card>
               <Card.Title>{item.label}</Card.Title>
               <Card.Divider />
-              <Text>{item.description}</Text>
+              <Text>
+                {_.truncate(item.description, {
+                  length: 50,
+                  separator: ' ',
+                })}
+              </Text>
+              <Text style={{textDecorationLine: 'underline'}}>Lieu:</Text>
               <Text>{item.address}</Text>
             </Card>
           </TouchableOpacity>
@@ -98,11 +104,5 @@ const AgendaScreen = props => {
     />
   );
 };
-
-const useStyles = makeStyles(theme => ({
-  main_container: {
-    flex: 1,
-  },
-}));
 
 export default AgendaScreen;

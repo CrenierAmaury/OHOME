@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import _ from 'lodash';
 import {ScrollView, View, Text, ActivityIndicator} from 'react-native';
-import {makeStyles} from 'react-native-elements';
+import {makeStyles, useTheme} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {FAB, ListItem, Overlay, Button, Icon} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
@@ -12,6 +12,7 @@ import MainHeader from '../../headers/MainHeader';
 
 const ListsScreen = ({navigation}) => {
   const styles = useStyles();
+  const {theme} = useTheme();
 
   const [isLoading, setIsLoading] = useState(true);
   const [lists, setLists] = useState([]);
@@ -67,7 +68,11 @@ const ListsScreen = ({navigation}) => {
     if (filter === 'all') {
       setFilteredLists(lists);
     } else {
-      setFilteredLists(_.filter(lists, {type: filter}));
+      setFilteredLists(
+        _.filter(lists, e => {
+          return e.type.label === filter;
+        }),
+      );
     }
   };
 
@@ -92,45 +97,45 @@ const ListsScreen = ({navigation}) => {
           style={[styles.options, {color: allColor}]}
           onPress={() => {
             sortLists('all');
-            setAllColor('#FCA311');
-            setOtherColor('#8b8b8b');
-            setShoppingColor('#8b8b8b');
-            setTodoColor('#8b8b8b');
+            setAllColor(theme.colors.highlight);
+            setOtherColor(theme.colors.grey);
+            setShoppingColor(theme.colors.grey);
+            setTodoColor(theme.colors.grey);
           }}>
-          tous
+          Tous
         </Text>
         <Text
           style={[styles.options, {color: shoppingColor}]}
           onPress={() => {
             sortLists('shopping');
-            setShoppingColor('#FCA311');
-            setOtherColor('#8b8b8b');
-            setAllColor('#8b8b8b');
-            setTodoColor('#8b8b8b');
+            setShoppingColor(theme.colors.highlight);
+            setOtherColor(theme.colors.grey);
+            setAllColor(theme.colors.grey);
+            setTodoColor(theme.colors.grey);
           }}>
-          courses
+          Courses
         </Text>
         <Text
           style={[styles.options, {color: todoColor}]}
           onPress={() => {
             sortLists('todo');
-            setTodoColor('#FCA311');
-            setOtherColor('#8b8b8b');
-            setShoppingColor('#8b8b8b');
-            setAllColor('#8b8b8b');
+            setTodoColor(theme.colors.highlight);
+            setOtherColor(theme.colors.grey);
+            setShoppingColor(theme.colors.grey);
+            setAllColor(theme.colors.grey);
           }}>
-          to do
+          To do
         </Text>
         <Text
           style={[styles.options, {color: otherColor}]}
           onPress={() => {
             sortLists('other');
-            setOtherColor('#FCA311');
-            setAllColor('#8b8b8b');
-            setShoppingColor('#8b8b8b');
-            setTodoColor('#8b8b8b');
+            setOtherColor(theme.colors.highlight);
+            setAllColor(theme.colors.grey);
+            setShoppingColor(theme.colors.grey);
+            setTodoColor(theme.colors.grey);
           }}>
-          autres
+          Autres
         </Text>
       </View>
       <ScrollView>
@@ -178,9 +183,9 @@ const ListsScreen = ({navigation}) => {
         ))}
       </ScrollView>
       <FAB
-        color="#FCA311"
+        color={theme.colors.highlight}
         placement="right"
-        icon={<Icon name="add" color="white" />}
+        icon={<Icon name="add" color={theme.colors.white} />}
         onPress={() => {
           setIsOverlayVisible(true);
         }}
@@ -190,13 +195,8 @@ const ListsScreen = ({navigation}) => {
         onBackdropPress={() => {
           setIsOverlayVisible(false);
         }}
-        overlayStyle={{
-          width: '80%',
-        }}
-        backdropStyle={{
-          backgroundColor: 'grey',
-          opacity: 0.7,
-        }}>
+        overlayStyle={styles.overlay}
+        backdropStyle={styles.overlay_back}>
         <NewListScreen {...childProps} />
       </Overlay>
     </View>
@@ -215,6 +215,13 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     padding: 5,
     textAlign: 'center',
+  },
+  overlay: {
+    width: '80%',
+  },
+  overlay_back: {
+    backgroundColor: theme.colors.grey,
+    opacity: 0.7,
   },
 }));
 

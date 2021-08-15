@@ -43,7 +43,11 @@ const BudgetWidget = props => {
             }}>
             <Card.Title>Budget</Card.Title>
             <Card.Divider />
-            <Text>Equilibre: {budgetOverview.balance} euros</Text>
+            <Text style={styles.balance_title}>Equilibre:</Text>
+            <Text
+              style={{color: budgetOverview.balance >= 0 ? 'green' : 'red'}}>
+              {budgetOverview.balance} {'\u20AC'}
+            </Text>
           </TouchableOpacity>
         )}
       </Card>
@@ -52,8 +56,10 @@ const BudgetWidget = props => {
 };
 
 const useStyles = makeStyles(theme => ({
-  main_container: {
-    flex: 1,
+  main_container: {},
+  balance_title: {
+    textDecorationLine: 'underline',
+    marginBottom: 5,
   },
 }));
 

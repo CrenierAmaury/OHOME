@@ -3,7 +3,7 @@ import {Picker} from '@react-native-picker/picker';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {addExpense, updateBudgetOverview} from '../../../api/budgetApi';
 import {Button, Input, Overlay} from 'react-native-elements';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
@@ -137,185 +137,187 @@ const NewExpenseScreen = props => {
 
   return (
     <View style={styles.main_container}>
-      <Picker
-        mode="dropdown"
-        selectedValue={type}
-        onValueChange={value => {
-          setType(value);
-        }}>
-        <Picker.Item label="dépense" value="expense" />
-        <Picker.Item label="rentrée" value="income" />
-      </Picker>
-      <Input
-        label={setLabel('nom', name)}
-        placeholder={setPlaceholder('nom', name)}
-        value={name}
-        onChangeText={value => {
-          setName(value);
-        }}
-      />
-      <Input
-        label={setLabel('montant', amount)}
-        placeholder={setPlaceholder('montant', amount)}
-        value={amount}
-        keyboardType="numeric"
-        onChangeText={value => {
-          setAmount(value.replace(/[^0-9.]+/g, ''));
-        }}
-      />
-      <TouchableOpacity
-        onPress={() => {
-          setDatePickerShow(true);
-        }}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Picker
+          mode="dropdown"
+          selectedValue={type}
+          onValueChange={value => {
+            setType(value);
+          }}>
+          <Picker.Item label="dépense" value="expense" />
+          <Picker.Item label="revenu" value="income" />
+        </Picker>
         <Input
-          label="date"
-          value={date.toLocaleDateString()}
-          errorMessage={error}
-          editable={false}
-        />
-      </TouchableOpacity>
-      {datePickerShow && (
-        <RNDateTimePicker
-          value={date}
-          mode={'date'}
-          display="spinner"
-          onChange={onChangeDate}
-        />
-      )}
-      <Text>Catégories</Text>
-      <Picker
-        mode="dropdown"
-        selectedValue={category}
-        onValueChange={value => {
-          if (value !== 'ohome_category_add') {
-            setCategory(value);
-          } else {
-            setIsOverlayVisible(true);
-          }
-        }}>
-        {props.budgetOverview.categories.map((h, i) => (
-          <Picker.Item
-            key={i}
-            label={h.label}
-            value={h.label}
-            color={h.color}
-          />
-        ))}
-        <Picker.Item label="+ ajouter" value="ohome_category_add" />
-      </Picker>
-      <Overlay
-        isVisible={isOverlayVisible}
-        onBackdropPress={cancelNewCategory}
-        overlayStyle={{
-          width: '80%',
-        }}
-        backdropStyle={{
-          backgroundColor: 'grey',
-          opacity: 0.9,
-        }}>
-        <Text>Nouvelle catégorie</Text>
-        <Input
-          label={setLabel('nom', newCategoryName)}
-          placeholder={setPlaceholder('nom', newCategoryName)}
-          value={newCategoryName}
-          errorMessage={newCategoryError}
+          label={setLabel('Nom', name)}
+          placeholder={setPlaceholder('Nom', name)}
+          value={name}
           onChangeText={value => {
-            setNewCategoryName(value);
+            setName(value);
           }}
         />
-        <Text>Couleur</Text>
-        <View style={styles.colors_container}>
-          {categoryColors1.map((e, i) => (
-            <TouchableOpacity
+        <Input
+          label={setLabel('Montant', amount)}
+          placeholder={setPlaceholder('Montant', amount)}
+          value={amount}
+          keyboardType="numeric"
+          onChangeText={value => {
+            setAmount(value.replace(/[^0-9.]+/g, ''));
+          }}
+        />
+        <TouchableOpacity
+          onPress={() => {
+            setDatePickerShow(true);
+          }}>
+          <Input
+            label="Date"
+            value={date.toLocaleDateString()}
+            errorMessage={error}
+            editable={false}
+          />
+        </TouchableOpacity>
+        {datePickerShow && (
+          <RNDateTimePicker
+            value={date}
+            mode={'date'}
+            display="spinner"
+            onChange={onChangeDate}
+          />
+        )}
+        <Text style={styles.categories_title}>Catégories</Text>
+        <Picker
+          mode="dropdown"
+          selectedValue={category}
+          onValueChange={value => {
+            if (value !== 'ohome_category_add') {
+              setCategory(value);
+            } else {
+              setIsOverlayVisible(true);
+            }
+          }}>
+          {props.budgetOverview.categories.map((h, i) => (
+            <Picker.Item
               key={i}
-              style={[
-                styles.colors,
-                {
-                  backgroundColor: e,
-                  borderWidth: e === newCategoryColor ? 2 : 0,
-                },
-              ]}
-              onPress={() => {
-                setNewCategoryColor(e);
-              }}>
-              <Text> </Text>
-            </TouchableOpacity>
+              label={h.label}
+              value={h.label}
+              color={h.color}
+            />
           ))}
-        </View>
-        <View style={styles.colors_container}>
-          {categoryColors2.map((e, i) => (
-            <TouchableOpacity
-              key={i}
-              style={[
-                styles.colors,
-                {
-                  backgroundColor: e,
-                  borderWidth: e === newCategoryColor ? 2 : 0,
-                },
-              ]}
-              onPress={() => {
-                setNewCategoryColor(e);
-              }}>
-              <Text> </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+          <Picker.Item label="+ ajouter" value="ohome_category_add" />
+        </Picker>
+        <Overlay
+          isVisible={isOverlayVisible}
+          onBackdropPress={cancelNewCategory}
+          overlayStyle={styles.colors_overlay}
+          backdropStyle={styles.colors_overlay_back}>
+          <Text style={styles.categories_title}>Nouvelle catégorie</Text>
+          <Input
+            label={setLabel('Nom', newCategoryName)}
+            placeholder={setPlaceholder('Nom', newCategoryName)}
+            value={newCategoryName}
+            errorMessage={newCategoryError}
+            onChangeText={value => {
+              setNewCategoryName(value);
+            }}
+          />
+          <Text style={styles.categories_title}>Couleur</Text>
+          <View style={styles.colors_container}>
+            {categoryColors1.map((e, i) => (
+              <TouchableOpacity
+                key={i}
+                style={[
+                  styles.colors,
+                  {
+                    backgroundColor: e,
+                    borderWidth: e === newCategoryColor ? 2 : 0,
+                  },
+                ]}
+                onPress={() => {
+                  setNewCategoryColor(e);
+                }}>
+                <Text> </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <View style={styles.colors_container}>
+            {categoryColors2.map((e, i) => (
+              <TouchableOpacity
+                key={i}
+                style={[
+                  styles.colors,
+                  {
+                    backgroundColor: e,
+                    borderWidth: e === newCategoryColor ? 2 : 0,
+                  },
+                ]}
+                onPress={() => {
+                  setNewCategoryColor(e);
+                }}>
+                <Text> </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Button
+            title="Ajouter"
+            type="solid"
+            raised={true}
+            onPress={addNewCategory}
+            containerStyle={styles.add_button_container}
+            buttonStyle={styles.add_button}
+          />
+        </Overlay>
         <Button
-          title="ajouter"
+          title="Ajouter"
           type="solid"
           raised={true}
-          onPress={addNewCategory}
-          containerStyle={{
-            backgroundColor: '#FBFBFB',
-            width: '90%',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            marginTop: 20,
-          }}
-          buttonStyle={{
-            backgroundColor: '#FCA311',
-          }}
+          onPress={addNewExpense}
+          containerStyle={styles.add_button_container}
+          buttonStyle={styles.add_button}
         />
-      </Overlay>
-      <Button
-        title="ajouter"
-        type="solid"
-        raised={true}
-        onPress={addNewExpense}
-        containerStyle={{
-          backgroundColor: '#FBFBFB',
-          width: '90%',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          marginTop: 20,
-        }}
-        buttonStyle={{
-          backgroundColor: '#FCA311',
-        }}
-      />
-      <Button
-        title="annuler"
-        type="solid"
-        raised={true}
-        onPress={cancelNewExpense}
-        containerStyle={{
-          backgroundColor: '#FBFBFB',
-          width: '90%',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-          marginTop: 20,
-        }}
-        buttonStyle={{
-          backgroundColor: '#FBFBFB',
-        }}
-        titleStyle={{color: '#FCA311'}}
-      />
+        <Button
+          title="Annuler"
+          type="solid"
+          raised={true}
+          onPress={cancelNewExpense}
+          containerStyle={styles.cancel_button_container}
+          buttonStyle={styles.cancel_button}
+          titleStyle={styles.cancel_button_title}
+        />
+      </ScrollView>
     </View>
   );
 };
 
 const useStyles = makeStyles(theme => ({
-  main_container: {},
+  main_container: {
+    marginTop: '5%',
+    marginBottom: '5%',
+  },
+  categories_title: {
+    marginLeft: 10,
+  },
+  add_button_container: {
+    backgroundColor: theme.colors.white,
+    width: '90%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: '10%',
+  },
+  add_button: {
+    backgroundColor: theme.colors.highlight,
+  },
+  cancel_button_container: {
+    backgroundColor: theme.colors.white,
+    width: '90%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: '10%',
+  },
+  cancel_button: {
+    backgroundColor: theme.colors.white,
+  },
+  cancel_button_title: {
+    color: theme.colors.highlight,
+  },
   colors_container: {
     margin: 10,
     flexDirection: 'row',
@@ -325,6 +327,13 @@ const useStyles = makeStyles(theme => ({
     padding: 5,
     margin: 5,
     textAlign: 'center',
+  },
+  colors_overlay: {
+    width: '80%',
+  },
+  colors_overlay_back: {
+    backgroundColor: 'grey',
+    opacity: 0.9,
   },
 }));
 

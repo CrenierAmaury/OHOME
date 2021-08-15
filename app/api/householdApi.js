@@ -58,3 +58,18 @@ export async function createHousehold(uid, name) {
       });
   });
 }
+
+export async function updateHousehold(householdId, household) {
+  return new Promise((resolve, reject) => {
+    firestore()
+      .collection('households')
+      .doc(householdId)
+      .update(household)
+      .then(() => {
+        resolve();
+      })
+      .catch(error => {
+        reject(error);
+      });
+  });
+}

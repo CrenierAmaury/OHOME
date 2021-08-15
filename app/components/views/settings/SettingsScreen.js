@@ -1,28 +1,57 @@
-import React, {useState} from 'react';
-import {Alert, Text, View} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {ActivityIndicator, Alert, View} from 'react-native';
 import TitleHeader from '../../headers/TitleHeader';
-import {Button, makeStyles} from 'react-native-elements';
+import {Button, Card, ListItem, makeStyles} from 'react-native-elements';
+import firestore from '@react-native-firebase/firestore';
 import Dialog from 'react-native-dialog';
 import {
   deleteAuthAccount,
   reauthenticate,
   signOut,
 } from '../../../api/authenticationApi';
-import {updateUid} from '../../../store/slices/userSlice';
 import {useDispatch, useSelector} from 'react-redux';
+import {renderHouseholdName} from '../../../utils/households';
+import {removeUser} from '../../../api/userApi';
+import {updateHousehold} from '../../../api/householdApi';
+import {updateUid} from '../../../store/slices/userSlice';
+import _ from 'lodash';
 
 const SettingsScreen = ({navigation}) => {
   const styles = useStyles();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [accountDeleteVisible, setAccountDeleteVisible] = useState(false);
+  const [user, setUser] = useState(true);
 
   const dispatch = useDispatch();
 
   const email = useSelector(state => state.user.email);
+  const uid = useSelector(state => state.user.uid);
+  const households = useSelector(state => state.user.households);
+  const householdId = useSelector(state => state.household.id);
+  const members = useSelector(state => state.household.members);
 
   const headerProps = {title: 'Paramètres', navigation};
+
+  useEffect(() => {
+    const unsubscribe = firestore()
+      .collection('users')
+      .doc(uid)
+      .onSnapshot(
+        documentSnapshot => {
+          setUser(documentSnapshot.data());
+          setIsLoading(false);
+        },
+        e => {
+          console.log(e);
+        },
+      );
+    return () => {
+      unsubscribe();
+    };
+  }, [uid]);
 
   const openSignOutAlert = () => {
     Alert.alert(
@@ -49,10 +78,26 @@ const SettingsScreen = ({navigation}) => {
         .then(() => {
           deleteAuthAccount()
             .then(() => {
-              setAccountDeleteVisible(false);
-              dispatch(updateUid(''));
-              setError('');
-              console.log('account deleted');
+              removeUser(uid)
+                .then(() => {
+                  const index = _.findIndex(members, e => {
+                    return e.id === uid;
+                  });
+                  updateHousehold(householdId, {
+                    members: [...members].splice(index, 1),
+                  })
+                    .then(() => {
+                      console.log('account deleted');
+                      setAccountDeleteVisible(false);
+                      dispatch(updateUid(''));
+                    })
+                    .catch(e => {
+                      setError(e.message);
+                    });
+                })
+                .catch(e => {
+                  setError(e.message);
+                });
             })
             .catch(e => {
               setError(e.message);
@@ -66,9 +111,35 @@ const SettingsScreen = ({navigation}) => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <View>
+        <TitleHeader {...headerProps} />
+        <ActivityIndicator
+          style={{marginTop: 150}}
+          size="large"
+          color="#0000ff"
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.main_container}>
       <TitleHeader {...headerProps} />
+      <Card>
+        <Card.Title>Mes ménages</Card.Title>
+        <Card.Divider />
+        {user.households.map((h, i) => (
+          <ListItem key={i} bottomDivider>
+            <ListItem.Content>
+              <ListItem.Title>
+                {renderHouseholdName(households, h)}
+              </ListItem.Title>
+            </ListItem.Content>
+          </ListItem>
+        ))}
+      </Card>
       <Button
         title="Déconnexion"
         type="solid"
@@ -127,7 +198,6 @@ const SettingsScreen = ({navigation}) => {
 const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
-    alignItems: 'center',
   },
   button_container: {
     backgroundColor: theme.colors.background,

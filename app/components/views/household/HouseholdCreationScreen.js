@@ -14,7 +14,7 @@ const HouseholdCreationScreen = ({navigation}) => {
   const uid = useSelector(state => state.user.uid);
   const households = useSelector(state => state.user.households);
 
-  const createNewHousehold = ({navigation}) => {
+  const createNewHousehold = () => {
     if (name) {
       createHousehold(uid, name)
         .then(newHousehold => {

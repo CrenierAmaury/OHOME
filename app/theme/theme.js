@@ -3,14 +3,16 @@ const palette = {
   grey: '#8b8b8b',
   white: '#FBFBFB',
   header: '#FAFAFA',
+  blue: '#000080',
 };
 
 const theme = {
   colors: {
-    background: palette.white,
+    white: palette.white,
     highlight: palette.orange,
-    text: palette.grey,
+    grey: palette.grey,
     header: palette.header,
+    blue: palette.blue,
   },
 };
 

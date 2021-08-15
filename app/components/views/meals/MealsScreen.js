@@ -13,6 +13,7 @@ import {
   Overlay,
   Icon,
   Button,
+  useTheme,
 } from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import {useSelector} from 'react-redux';
@@ -23,6 +24,7 @@ import _ from 'lodash';
 
 const MealsScreen = ({navigation}) => {
   const styles = useStyles();
+  const {theme} = useTheme();
 
   const [isLoading, setIsLoading] = useState(true);
   const [meals, setMeals] = useState([]);
@@ -140,16 +142,16 @@ const MealsScreen = ({navigation}) => {
       <View style={styles.week_change_container}>
         <Icon
           name="keyboard-arrow-left"
-          color="black"
-          size={35}
+          color={theme.colors.highlight}
+          size={37}
           onPress={handlePreviousWeek}
           disabled={previousDisable}
         />
         <Text style={styles.week_change_center}>{week}</Text>
         <Icon
           name="keyboard-arrow-right"
-          color="black"
-          size={35}
+          color={theme.colors.highlight}
+          size={37}
           onPress={handleNextWeek}
           disabled={nextDisable}
         />
@@ -170,9 +172,18 @@ const MealsScreen = ({navigation}) => {
                 }
               }}>
               <Card.Title>{e.day}</Card.Title>
-              <Card.Divider />
-              <Text>
-                {e.meal ? e.meal.label : <Text>pas de repas prévu</Text>}
+              <Card.Divider
+                color={e.meal ? theme.colors.highlight : theme.colors.grey}
+              />
+              <Text style={styles.meal_text}>
+                {e.meal ? (
+                  e.meal.label
+                ) : (
+                  <View style={styles.no_meal_container}>
+                    <Icon name="add" color={theme.colors.grey} />
+                    <Text style={styles.no_meal_text}> Ajouter un repas</Text>
+                  </View>
+                )}
               </Text>
             </TouchableOpacity>
           </Card>
@@ -187,20 +198,15 @@ const MealsScreen = ({navigation}) => {
               meals: meals,
             });
           }}
-          titleStyle={{color: '#FCA311'}}
-          containerStyle={{
-            width: '100%',
-            marginTop: 10,
-          }}
-          buttonStyle={{
-            backgroundColor: '#FBFBFB',
-          }}
+          titleStyle={styles.button_title}
+          containerStyle={styles.button_container}
+          buttonStyle={styles.button}
         />
       </ScrollView>
       <FAB
-        color="#FCA311"
+        color={theme.colors.highlight}
         placement="right"
-        icon={<Icon name="add" color="white" />}
+        icon={<Icon name="add" color={theme.colors.white} />}
         onPress={() => {
           setIsOverlayVisible(true);
         }}
@@ -210,12 +216,8 @@ const MealsScreen = ({navigation}) => {
         onBackdropPress={() => {
           setIsOverlayVisible(false);
         }}
-        overlayStyle={{
-          width: '80%',
-        }}
-        backdropStyle={{
-          backgroundColor: 'grey',
-        }}>
+        overlayStyle={styles.overlay}
+        backdropStyle={styles.overlay_back}>
         <NewMealScreen {...childProps} />
       </Overlay>
     </View>
@@ -227,13 +229,41 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   week_change_container: {
+    margin: 15,
+    flexDirection: 'row',
+  },
+  meal_text: {
+    color: theme.colors.blue,
+  },
+  no_meal_container: {
     margin: 10,
     flexDirection: 'row',
   },
+  no_meal_text: {
+    color: theme.colors.grey,
+  },
   week_change_center: {
     flex: 1,
-    padding: 5,
     textAlign: 'center',
+    fontSize: 19,
+  },
+  button_container: {
+    width: '100%',
+    height: 100,
+    marginTop: 10,
+  },
+  button_title: {
+    color: theme.colors.highlight,
+  },
+  button: {
+    backgroundColor: theme.colors.white,
+  },
+  overlay: {
+    width: '80%',
+  },
+  overlay_back: {
+    backgroundColor: theme.colors.grey,
+    opacity: 0.7,
   },
 }));
 

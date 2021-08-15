@@ -59,7 +59,7 @@ const MealsWidget = props => {
             {meal ? (
               <Text>{meal.label}</Text>
             ) : (
-              <Text>pas de repas prévu aujourd'hui</Text>
+              <Text>Pas de repas prévu aujourd'hui</Text>
             )}
           </TouchableOpacity>
         </Card>
@@ -69,9 +69,7 @@ const MealsWidget = props => {
 };
 
 const useStyles = makeStyles(theme => ({
-  main_container: {
-    flex: 1,
-  },
+  main_container: {},
 }));
 
 export default MealsWidget;
