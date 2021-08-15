@@ -1,28 +1,11 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, View} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import AuthenticatedNav from './AuthenticatedNav';
 import UnauthenticatedNav from './UnauthenticatedNav';
-import {checkIfLoggedIn} from '../../api/authenticationApi';
+import auth from '@react-native-firebase/auth';
 import {useDispatch, useSelector} from 'react-redux';
-import {
-  updateAvatar,
-  updateEmail,
-  updateName,
-  updateUid,
-} from '../../store/slices/userSlice';
-import {getUser} from '../../api/userApi';
-import {
-  updateCalendarId,
-  updateBudgetId,
-  updateHouseholdId,
-  updateListGroupId,
-  updateMealGroupId,
-  updateMembers,
-  updateHouseholdName,
-} from '../../store/slices/householdSlice';
-import {getHousehold} from '../../api/householdApi';
-import {getUserAvatar} from '../../utils/avatar';
+import {updateUid} from '../../store/slices/userSlice';
 
 const Stack = createStackNavigator();
 
@@ -33,59 +16,16 @@ const MainNav = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    checkIfLoggedIn(onAuthStateChanged);
-  }, [onAuthStateChanged]);
-
-  const onAuthStateChanged = useCallback(
-    user => {
+    return auth().onAuthStateChanged(user => {
       if (user) {
         dispatch(updateUid(user.uid));
-        getUser(user.uid)
-          .then(res => {
-            if (res.activeHousehold) {
-              dispatch(updateName(res.name));
-              dispatch(updateEmail(res.email));
-              dispatch(updateHouseholdId(res.activeHousehold));
-              getHousehold(res.activeHousehold).then(household => {
-                household.members.forEach(memberId => {
-                  getUser(memberId)
-                    .then(member => {
-                      dispatch(
-                        updateMembers({id: memberId, name: member.name}),
-                      );
-                    })
-                    .catch(e => {
-                      console.log(e);
-                    });
-                });
-                getUserAvatar(user.uid)
-                  .then(r => {
-                    r
-                      ? dispatch(updateAvatar(r))
-                      : dispatch(updateAvatar('default'));
-                  })
-                  .catch(e => {
-                    console.log(e);
-                  });
-                dispatch(updateHouseholdName(household.name));
-                dispatch(updateCalendarId(household.calendar));
-                dispatch(updateBudgetId(household.budget));
-                dispatch(updateListGroupId(household.listGroup));
-                dispatch(updateMealGroupId(household.mealGroup));
-                setIsLoading(false);
-              });
-            }
-          })
-          .catch(e => {
-            console.log(e);
-          });
+        setIsLoading(false);
       } else {
         dispatch(updateUid(''));
         setIsLoading(false);
       }
-    },
-    [dispatch],
-  );
+    });
+  }, [dispatch]);
 
   if (isLoading) {
     return (

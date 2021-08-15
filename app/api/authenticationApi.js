@@ -38,10 +38,6 @@ export async function signIn(email, password) {
   });
 }
 
-export function checkIfLoggedIn(callback) {
-  return auth().onAuthStateChanged(callback);
-}
-
 export async function signOut() {
   return new Promise((resolve, reject) => {
     auth()

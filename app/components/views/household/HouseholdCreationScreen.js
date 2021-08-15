@@ -5,7 +5,7 @@ import {useSelector} from 'react-redux';
 import {createHousehold} from '../../../api/householdApi';
 import {updateUser} from '../../../api/userApi';
 
-const HouseholdCreationScreen = () => {
+const HouseholdCreationScreen = ({navigation}) => {
   const styles = useStyles();
 
   const [name, setName] = useState('');
@@ -23,7 +23,7 @@ const HouseholdCreationScreen = () => {
             households: [...households].push(newHousehold),
           })
             .then(() => {
-              navigation.navigate('Home');
+              navigation.navigate('Authenticated');
               console.log('household created');
             })
             .catch(e => {

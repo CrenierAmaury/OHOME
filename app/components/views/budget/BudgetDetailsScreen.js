@@ -55,7 +55,7 @@ const BudgetDetailsScreen = ({route, navigation}) => {
           setSelectedButtonIndex(buttonIndex);
         }}
         selectedIndex={selectedButtonIndex}
-        buttons={['graphique', 'historique']}
+        buttons={['Graphiques', 'Historique']}
         selectedButtonStyle={styles.selected_button}
       />
       {selectedButtonIndex === 1 ? (

@@ -68,7 +68,7 @@ const BudgetHistoryScreen = props => {
             setExpenseColor('#8b8b8b');
             setIncomeColor('#8b8b8b');
           }}>
-          tous
+          Tous
         </Text>
         <Text
           style={[styles.options, {color: expenseColor}]}
@@ -78,7 +78,7 @@ const BudgetHistoryScreen = props => {
             setExpenseColor('#FCA311');
             setIncomeColor('#8b8b8b');
           }}>
-          dépenses
+          Dépenses
         </Text>
         <Text
           style={[styles.options, {color: incomeColor}]}
@@ -88,7 +88,7 @@ const BudgetHistoryScreen = props => {
             setExpenseColor('#8b8b8b');
             setIncomeColor('#FCA311');
           }}>
-          rentrées
+          Rentrées
         </Text>
       </View>
       {filteredHistory.map((e, i) => (
