@@ -19,8 +19,7 @@ export async function addUser(uid, user) {
   const invitations = await firestore()
     .collection('invitationGroups')
     .doc(user.email)
-    .collection('invitations')
-    .add({});
+    .set({});
   return new Promise((resolve, reject) => {
     firestore()
       .collection('users')

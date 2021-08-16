@@ -33,54 +33,59 @@ const AuthenticatedNav = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    getUser(uid)
-      .then(res => {
-        if (res.activeHousehold) {
-          dispatch(updateName(res.name));
-          dispatch(updateEmail(res.email));
-          dispatch(updateHouseholdId(res.activeHousehold));
-          res.households.forEach(e => {
-            getHousehold(e)
-              .then(hh => {
-                dispatch(updateHouseholds({id: e, name: hh.name}));
-              })
-              .catch(e => {
-                console.log(e);
-              });
-          });
-          getHousehold(res.activeHousehold).then(household => {
-            household.members.forEach(memberId => {
-              getUser(memberId)
-                .then(member => {
-                  dispatch(updateMembers({id: memberId, name: member.name}));
+    if (uid) {
+      getUser(uid)
+        .then(res => {
+          if (res && res.activeHousehold) {
+            dispatch(updateName(res.name));
+            dispatch(updateEmail(res.email));
+            dispatch(updateHouseholdId(res.activeHousehold));
+            res.households.forEach(e => {
+              getHousehold(e)
+                .then(hh => {
+                  dispatch(updateHouseholds({id: e, name: hh.name}));
                 })
                 .catch(e => {
                   console.log(e);
                 });
             });
-            getUserAvatar(uid)
-              .then(r => {
-                setIsLoading(false);
-                r
-                  ? dispatch(updateAvatar(r))
-                  : dispatch(updateAvatar('default'));
-              })
-              .catch(e => {
-                console.log(e);
+            getHousehold(res.activeHousehold).then(household => {
+              household.members.forEach(memberId => {
+                getUser(memberId)
+                  .then(member => {
+                    dispatch(updateMembers({id: memberId, name: member.name}));
+                  })
+                  .catch(e => {
+                    console.log(e);
+                  });
               });
-            dispatch(updateHouseholdName(household.name));
-            dispatch(updateCalendarId(household.calendar));
-            dispatch(updateBudgetId(household.budget));
-            dispatch(updateListGroupId(household.listGroup));
-            dispatch(updateMealGroupId(household.mealGroup));
-          });
-        } else {
-          console.log('no household yet');
-        }
-      })
-      .catch(e => {
-        console.log(e);
-      });
+              getUserAvatar(uid)
+                .then(r => {
+                  setIsLoading(false);
+                  r
+                    ? dispatch(updateAvatar(r))
+                    : dispatch(updateAvatar('default'));
+                })
+                .catch(e => {
+                  dispatch(updateAvatar('default'));
+                  setIsLoading(false);
+                  console.log(e);
+                });
+              dispatch(updateHouseholdName(household.name));
+              dispatch(updateCalendarId(household.calendar));
+              dispatch(updateBudgetId(household.budget));
+              dispatch(updateListGroupId(household.listGroup));
+              dispatch(updateMealGroupId(household.mealGroup));
+            });
+          } else {
+            console.log('no household yet');
+            setIsLoading(false);
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }
   });
 
   if (isLoading) {

@@ -1,4 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
+import _ from 'lodash';
 
 export const userSlice = createSlice({
   name: 'user',
@@ -23,7 +24,13 @@ export const userSlice = createSlice({
       state.avatar = action.payload;
     },
     updateHouseholds: (state, action) => {
-      state.households.push(action.payload);
+      if (
+        !_.find(state.households, e => {
+          return e.id === action.payload.id;
+        })
+      ) {
+        state.households.push(action.payload);
+      }
     },
   },
 });

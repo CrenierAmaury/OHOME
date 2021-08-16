@@ -13,8 +13,13 @@ import {useDispatch, useSelector} from 'react-redux';
 import {renderHouseholdName} from '../../../utils/households';
 import {removeUser} from '../../../api/userApi';
 import {updateHousehold} from '../../../api/householdApi';
-import {updateUid} from '../../../store/slices/userSlice';
+import {
+  updateEmail,
+  updateHouseholds,
+  updateUid,
+} from '../../../store/slices/userSlice';
 import _ from 'lodash';
+import {updateHouseholdId} from '../../../store/slices/householdSlice';
 
 const SettingsScreen = ({navigation}) => {
   const styles = useStyles();
@@ -66,6 +71,9 @@ const SettingsScreen = ({navigation}) => {
     signOut()
       .then(() => {
         dispatch(updateUid(''));
+        dispatch(updateEmail(''));
+        dispatch(updateHouseholds([]));
+        dispatch(updateHouseholdId(''));
       })
       .catch(e => {
         console.log(e);
@@ -130,15 +138,17 @@ const SettingsScreen = ({navigation}) => {
       <Card>
         <Card.Title>Mes ménages</Card.Title>
         <Card.Divider />
-        {user.households.map((h, i) => (
-          <ListItem key={i} bottomDivider>
-            <ListItem.Content>
-              <ListItem.Title>
-                {renderHouseholdName(households, h)}
-              </ListItem.Title>
-            </ListItem.Content>
-          </ListItem>
-        ))}
+        {user && user.households
+          ? user.households.map((h, i) => (
+              <ListItem key={i} bottomDivider>
+                <ListItem.Content>
+                  <ListItem.Title>
+                    {renderHouseholdName(households, h)}
+                  </ListItem.Title>
+                </ListItem.Content>
+              </ListItem>
+            ))
+          : null}
       </Card>
       <Button
         title="Déconnexion"

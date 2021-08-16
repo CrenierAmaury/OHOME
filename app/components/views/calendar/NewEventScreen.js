@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {Button, Input, ListItem} from 'react-native-elements';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {makeStyles} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {showSuccessSnackbar} from '../../../utils/snackbar';

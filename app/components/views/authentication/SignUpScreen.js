@@ -39,11 +39,13 @@ const SignUpScreen = ({navigation}) => {
               navigation.navigate('NoHouseholdScreen');
             })
             .catch(e => {
+              console.log(e);
               setError(e.message);
               setIsLoading(false);
             });
         })
         .catch(e => {
+          console.log(e);
           setError(e.message);
           setIsLoading(false);
         });

@@ -1,14 +1,17 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, ActivityIndicator} from 'react-native';
+import {View, Text, ActivityIndicator, Alert} from 'react-native';
 import {Button, Card, ListItem, makeStyles} from 'react-native-elements';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import Dialog from 'react-native-dialog';
 import {removeInvitation} from '../../../api/invitationsApi';
 import {updateUser} from '../../../api/userApi';
+import {signOut} from '../../../api/authenticationApi';
+import {updateEmail, updateUid} from '../../../store/slices/userSlice';
 
 const NoHouseholdScreen = ({navigation}) => {
   const styles = useStyles();
+  const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(true);
   const [invitationVisible, setInvitationVisible] = useState(false);
@@ -69,6 +72,26 @@ const NoHouseholdScreen = ({navigation}) => {
       });
   };
 
+  const handleSignOut = () => {
+    signOut()
+      .then(() => {
+        dispatch(updateUid(''));
+        dispatch(updateEmail(''));
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+
+  const openSignOutAlert = () => {
+    Alert.alert(
+      'Déconnexion',
+      'Voulez vous vraiment vous déconnecter ?',
+      [{text: 'ANNULER'}, {text: 'OUI', onPress: handleSignOut}],
+      {cancelable: true},
+    );
+  };
+
   if (isLoading) {
     return (
       <View>
@@ -102,6 +125,14 @@ const NoHouseholdScreen = ({navigation}) => {
         buttonStyle={{
           backgroundColor: '#FCA311',
         }}
+      />
+      <Button
+        title="Déconnexion"
+        type="solid"
+        raised={true}
+        onPress={openSignOutAlert}
+        containerStyle={styles.button_container}
+        buttonStyle={styles.button}
       />
       <Card containerStyle={styles.invitations_container}>
         <Card.Title>Invitations</Card.Title>
@@ -163,6 +194,16 @@ const useStyles = makeStyles(theme => ({
   invitations_container: {
     margin: 10,
     borderWidth: 0,
+  },
+  button_container: {
+    backgroundColor: theme.colors.background,
+    width: '80%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: theme.colors.highlight,
   },
 }));
 

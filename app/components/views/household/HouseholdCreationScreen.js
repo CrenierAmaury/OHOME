@@ -1,34 +1,48 @@
 import React, {useState} from 'react';
 import {View} from 'react-native';
 import {Button, Input, makeStyles} from 'react-native-elements';
-import {useSelector} from 'react-redux';
-import {createHousehold} from '../../../api/householdApi';
+import {firebase} from '@react-native-firebase/firestore';
+import {useDispatch, useSelector} from 'react-redux';
+import {createHousehold, getHousehold} from '../../../api/householdApi';
 import {updateUser} from '../../../api/userApi';
+import {updateHouseholdId} from '../../../store/slices/householdSlice';
 
 const HouseholdCreationScreen = ({navigation}) => {
   const styles = useStyles();
+  const dispatch = useDispatch();
 
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const uid = useSelector(state => state.user.uid);
   const households = useSelector(state => state.user.households);
 
   const createNewHousehold = () => {
+    setIsLoading(true);
     if (name) {
+      console.log('household start: ' + households);
       createHousehold(uid, name)
         .then(newHousehold => {
-          updateUser(uid, {
-            activeHousehold: newHousehold,
-            households: [...households].push(newHousehold),
-          })
-            .then(() => {
-              navigation.navigate('Authenticated');
-              console.log('household created');
+          getHousehold(newHousehold).then(res => {
+            updateUser(uid, {
+              activeHousehold: newHousehold,
+              households:
+                firebase.firestore.FieldValue.arrayUnion(newHousehold),
             })
-            .catch(e => {
-              setError(e);
-            });
+              .then(() => {
+                setIsLoading(false);
+                dispatch(updateHouseholdId(newHousehold));
+                navigation.navigate('Authenticated');
+                console.log('household created');
+              })
+              .catch(e => {
+                setError(e);
+              })
+              .catch(e => {
+                setError(e);
+              });
+          });
         })
         .catch(e => {
           setError(e);
@@ -65,6 +79,7 @@ const HouseholdCreationScreen = ({navigation}) => {
         title="Créer le ménage"
         type="solid"
         raised={true}
+        loading={isLoading}
         onPress={createNewHousehold}
         containerStyle={{
           backgroundColor: '#FBFBFB',
