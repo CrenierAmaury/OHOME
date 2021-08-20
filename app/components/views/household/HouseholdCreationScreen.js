@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View} from 'react-native';
+import { Text, View } from "react-native";
 import {Button, Input, makeStyles} from 'react-native-elements';
 import {firebase} from '@react-native-firebase/firestore';
 import {useDispatch, useSelector} from 'react-redux';
@@ -65,15 +65,17 @@ const HouseholdCreationScreen = ({navigation}) => {
   };
 
   return (
-    <View>
+    <View style={styles.main_container}>
+      <Text style={styles.top_text}>Donnez un nom au nouveau ménage</Text>
       <Input
-        label={setLabel('nom', name)}
-        placeholder={setPlaceholder('nom', name)}
+        label={setLabel('Nom', name)}
+        placeholder={setPlaceholder('Nom', name)}
         errorMessage={error}
         value={name}
         onChangeText={value => {
           setName(value);
         }}
+        containerStyle={styles.input_container}
       />
       <Button
         title="Créer le ménage"
@@ -81,15 +83,8 @@ const HouseholdCreationScreen = ({navigation}) => {
         raised={true}
         loading={isLoading}
         onPress={createNewHousehold}
-        containerStyle={{
-          backgroundColor: '#FBFBFB',
-          width: '75%',
-          marginRight: 'auto',
-          marginLeft: 'auto',
-        }}
-        buttonStyle={{
-          backgroundColor: '#FCA311',
-        }}
+        containerStyle={styles.button_container}
+        buttonStyle={styles.button}
       />
     </View>
   );
@@ -99,6 +94,27 @@ const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
     alignItems: 'center',
+    marginTop: 50,
+  },
+  top_text: {
+    fontSize: 20,
+    margin: 25,
+    justifyContent: 'center',
+  },
+  input_container: {
+    marginTop: 5,
+    width: '75%',
+  },
+  button_container: {
+    backgroundColor: theme.colors.background,
+    width: '75%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  button: {
+    backgroundColor: theme.colors.highlight,
   },
 }));
 

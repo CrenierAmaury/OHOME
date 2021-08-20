@@ -1,6 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, ActivityIndicator, Alert} from 'react-native';
-import {Button, Card, ListItem, makeStyles} from 'react-native-elements';
+import {View, Text, ActivityIndicator, Alert, ScrollView} from 'react-native';
+import {
+  Button,
+  Card,
+  ListItem,
+  makeStyles,
+  useTheme,
+} from 'react-native-elements';
 import {useDispatch, useSelector} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import Dialog from 'react-native-dialog';
@@ -11,6 +17,7 @@ import {updateEmail, updateUid} from '../../../store/slices/userSlice';
 
 const NoHouseholdScreen = ({navigation}) => {
   const styles = useStyles();
+  const {theme} = useTheme();
   const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -92,88 +99,88 @@ const NoHouseholdScreen = ({navigation}) => {
     );
   };
 
-  if (isLoading) {
-    return (
-      <View>
-        <ActivityIndicator
-          style={{marginTop: 300}}
-          size="large"
-          color="#0000ff"
-        />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.main_container}>
-      <Text>
-        Vous pouvez créer un nouveau ménage ou répondre aux invitations reçues
-      </Text>
-      <Button
-        title="Créer un nouveau ménage"
-        type="solid"
-        raised={true}
-        onPress={() => {
-          navigation.navigate('HouseholdCreationScreen');
-        }}
-        containerStyle={{
-          backgroundColor: '#FBFBFB',
-          width: '75%',
-          marginRight: 'auto',
-          marginLeft: 'auto',
-        }}
-        buttonStyle={{
-          backgroundColor: '#FCA311',
-        }}
-      />
-      <Button
-        title="Déconnexion"
-        type="solid"
-        raised={true}
-        onPress={openSignOutAlert}
-        containerStyle={styles.button_container}
-        buttonStyle={styles.button}
-      />
-      <Card containerStyle={styles.invitations_container}>
-        <Card.Title>Invitations</Card.Title>
-        <Card.Divider />
-        {invitations.map((h, i) => (
-          <ListItem
-            key={i}
-            bottomDivider
+      {isLoading ? (
+        <ActivityIndicator
+          style={styles.activity_indicator}
+          size="large"
+          color={theme.colors.activity_indicator}
+        />
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Text style={styles.welcome_text}>Bienvenue</Text>
+          <Text style={styles.info_text}>
+            Vous pouvez créer un nouveau ménage ou répondre aux invitations
+            reçues.
+          </Text>
+          <Button
+            title="Créer un nouveau ménage"
+            type="solid"
+            raised={true}
             onPress={() => {
-              setInvitationVisible(true);
-              setInvitationId(h.id);
-              setInvitationHousehold(h.household.id);
-            }}>
-            <ListItem.Content>
-              <ListItem.Title>
-                Invitation à rejoindre le ménage {h.household.name}
-              </ListItem.Title>
-              <ListItem.Subtitle>de {h.author}</ListItem.Subtitle>
-              <ListItem.Subtitle>
-                le {h.date.toDate().toLocaleDateString()}
-              </ListItem.Subtitle>
-            </ListItem.Content>
-            <ListItem.Chevron />
-          </ListItem>
-        ))}
-      </Card>
+              navigation.navigate('HouseholdCreationScreen');
+            }}
+            containerStyle={styles.button_container}
+            buttonStyle={styles.button}
+          />
+          <Card containerStyle={styles.invitations_container}>
+            <Card.Title>Invitations</Card.Title>
+            <Card.Divider />
+            {invitations.length > 0 ? (
+              invitations.map((h, i) => (
+                <ListItem
+                  key={i}
+                  bottomDivider
+                  onPress={() => {
+                    setInvitationVisible(true);
+                    setInvitationId(h.id);
+                    setInvitationHousehold(h.household.id);
+                  }}>
+                  <ListItem.Content>
+                    <ListItem.Title>
+                      Invitation à rejoindre le ménage {h.household.name}
+                    </ListItem.Title>
+                    <ListItem.Subtitle>de {h.author}</ListItem.Subtitle>
+                    <ListItem.Subtitle>
+                      le {h.date.toDate().toLocaleDateString()}
+                    </ListItem.Subtitle>
+                  </ListItem.Content>
+                  <ListItem.Chevron />
+                </ListItem>
+              ))
+            ) : (
+              <View style={styles.no_invitations_container}>
+                <Text>Aucune invitation reçue</Text>
+              </View>
+            )}
+          </Card>
+          <Button
+            title="Déconnexion"
+            type="solid"
+            raised={true}
+            onPress={openSignOutAlert}
+            containerStyle={styles.signout_button_container}
+            buttonStyle={styles.signout_button}
+            titleStyle={styles.signout_button_title}
+          />
+        </ScrollView>
+      )}
       <Dialog.Container visible={invitationVisible}>
         <Dialog.Title>Modification Email</Dialog.Title>
         <Dialog.Description>
-          veuillez entrer votre mot de passe pour confirmer.
+          Rejoindre le ménage {invitationHousehold.name} ?
         </Dialog.Description>
         <Dialog.Button
-          label="refuser"
+          label="Refuser"
           onPress={() => {
             setInvitationVisible(false);
             refuseInvitation();
           }}
         />
-        <Dialog.Button label="accepter" onPress={acceptInvitation} />
+        <Dialog.Button label="Accepter" onPress={acceptInvitation} />
         <Dialog.Button
-          label="ignorer"
+          label="Ignorer"
           onPress={() => {
             setInvitationVisible(false);
           }}
@@ -187,23 +194,53 @@ const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
     padding: 10,
-    paddingTop: 100,
+    paddingTop: 50,
     alignItems: 'center',
     alignContent: 'center',
   },
+  activity_indicator: {
+    marginTop: 150,
+  },
+  welcome_text: {
+    fontSize: 25,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  info_text: {
+    fontSize: 15,
+  },
   invitations_container: {
-    margin: 10,
-    borderWidth: 0,
+    marginTop: 40,
   },
   button_container: {
     backgroundColor: theme.colors.background,
-    width: '80%',
+    width: '75%',
     marginLeft: 'auto',
     marginRight: 'auto',
     marginTop: 20,
+    marginBottom: 10,
   },
   button: {
     backgroundColor: theme.colors.highlight,
+  },
+  signout_button_container: {
+    backgroundColor: theme.colors.white,
+    width: '75%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 50,
+    marginBottom: 10,
+  },
+  signout_button: {
+    backgroundColor: theme.colors.white,
+  },
+  signout_button_title: {
+    color: theme.colors.highlight,
+  },
+  no_invitations_container: {
+    minHeight: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 }));
 
