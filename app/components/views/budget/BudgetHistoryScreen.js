@@ -133,7 +133,9 @@ const BudgetHistoryScreen = props => {
           }>
           <ListItem.Content>
             <ListItem.Title>{e.label}</ListItem.Title>
-            <ListItem.Subtitle>{e.amount}</ListItem.Subtitle>
+            <ListItem.Subtitle>
+              {e.amount} {'\u20AC'}
+            </ListItem.Subtitle>
             <ListItem.Subtitle>
               {e.date.toDate().toLocaleDateString()}
             </ListItem.Subtitle>

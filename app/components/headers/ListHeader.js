@@ -3,7 +3,7 @@ import {Header, Icon} from 'react-native-elements';
 import {useTheme} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {removeList, updateList} from '../../api/listsApi';
-import {Alert} from 'react-native';
+import {Alert, View} from 'react-native';
 import Menu, {MenuDivider, MenuItem} from 'react-native-material-menu';
 
 const ListHeader = props => {
@@ -92,14 +92,14 @@ const ListHeader = props => {
       <Menu
         ref={menuRef}
         button={<Icon name="more-vert" color="#fff" onPress={showMenu} />}>
-        <MenuItem onPress={handleEdit}>modifier</MenuItem>
+        <MenuItem onPress={handleEdit}>Modifier</MenuItem>
         <MenuDivider />
-        <MenuItem onPress={openDeleteAlert}>supprimer</MenuItem>
+        <MenuItem onPress={openDeleteAlert}>Supprimer</MenuItem>
         <MenuDivider />
         <MenuItem onPress={handleCheckbox}>
-          checkbox{' '}
+          Checkbox{' '}
           {checkboxValidated ? (
-            <Icon name="check" color="green" size={15} />
+            <Icon name="check" color="green" size={20} />
           ) : null}
         </MenuItem>
       </Menu>

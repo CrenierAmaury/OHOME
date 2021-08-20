@@ -1,7 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, View} from 'react-native';
+import {ActivityIndicator, Alert, ScrollView, View} from 'react-native';
 import TitleHeader from '../../headers/TitleHeader';
-import {Button, Card, ListItem, makeStyles} from 'react-native-elements';
+import {
+  Button,
+  Card,
+  ListItem,
+  makeStyles,
+  useTheme,
+} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import Dialog from 'react-native-dialog';
 import {
@@ -23,6 +29,7 @@ import {updateHouseholdId} from '../../../store/slices/householdSlice';
 
 const SettingsScreen = ({navigation}) => {
   const styles = useStyles();
+  const {theme} = useTheme();
 
   const [isLoading, setIsLoading] = useState(true);
   const [password, setPassword] = useState('');
@@ -115,70 +122,67 @@ const SettingsScreen = ({navigation}) => {
           setError(e.message);
         });
     } else {
-      setError('veuillez entrer votre mot de passe');
+      setError('Veuillez entrer votre mot de passe');
     }
   };
-
-  if (isLoading) {
-    return (
-      <View>
-        <TitleHeader {...headerProps} />
-        <ActivityIndicator
-          style={{marginTop: 150}}
-          size="large"
-          color="#0000ff"
-        />
-      </View>
-    );
-  }
 
   return (
     <View style={styles.main_container}>
       <TitleHeader {...headerProps} />
-      <Card>
-        <Card.Title>Mes ménages</Card.Title>
-        <Card.Divider />
-        {user && user.households
-          ? user.households.map((h, i) => (
-              <ListItem key={i} bottomDivider>
-                <ListItem.Content>
-                  <ListItem.Title>
-                    {renderHouseholdName(households, h)}
-                  </ListItem.Title>
-                </ListItem.Content>
-              </ListItem>
-            ))
-          : null}
-      </Card>
-      <Button
-        title="Déconnexion"
-        type="solid"
-        raised={true}
-        onPress={openSignOutAlert}
-        containerStyle={styles.button_container}
-        buttonStyle={styles.button}
-      />
-      <Button
-        title="Suppression du compte"
-        type="solid"
-        raised={true}
-        onPress={() => {
-          setAccountDeleteVisible(true);
-        }}
-        containerStyle={styles.button_container}
-        buttonStyle={styles.button}
-      />
+      {isLoading ? (
+        <ActivityIndicator
+          style={styles.activity_indicator}
+          size="large"
+          color={theme.colors.activity_indicator}
+        />
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Card containerStyle={styles.households_container}>
+            <Card.Title>Mes ménages</Card.Title>
+            <Card.Divider />
+            {user && user.households
+              ? user.households.map((h, i) => (
+                  <ListItem key={i} bottomDivider>
+                    <ListItem.Content>
+                      <ListItem.Title>
+                        {renderHouseholdName(households, h)}
+                      </ListItem.Title>
+                    </ListItem.Content>
+                  </ListItem>
+                ))
+              : null}
+          </Card>
+          <Button
+            title="Déconnexion"
+            type="solid"
+            raised={true}
+            onPress={openSignOutAlert}
+            containerStyle={styles.button_container}
+            buttonStyle={styles.button}
+          />
+          <Button
+            title="Suppression du compte"
+            type="solid"
+            raised={true}
+            onPress={() => {
+              setAccountDeleteVisible(true);
+            }}
+            containerStyle={styles.button_container}
+            buttonStyle={styles.button}
+          />
+        </ScrollView>
+      )}
       <Dialog.Container visible={accountDeleteVisible}>
         <Dialog.Title>Suppression du compte</Dialog.Title>
         <Dialog.Description>
           Veuillez entrer votre mot de passe pour confirmer la suppression.
         </Dialog.Description>
         <Dialog.Description style={{color: 'red'}}>
-          Attention vous ne serez plus lié aux données précdemment enregistrées
-          dans vos ménages.
+          Attention votre compte sera définitivement supprimé et vous ne serez
+          plus lié aux données précédemment enregistrées dans vos ménages.
         </Dialog.Description>
         <Dialog.Input
-          placeholder="mot de passe"
+          placeholder="Mot de passe"
           autoCapitalize="none"
           secureTextEntry={true}
           onChangeText={value => {
@@ -187,7 +191,7 @@ const SettingsScreen = ({navigation}) => {
         />
         <Dialog.Description>{error}</Dialog.Description>
         <Dialog.Button
-          label="annuler"
+          label="Annuler"
           onPress={() => {
             setAccountDeleteVisible(false);
             setPassword('');
@@ -195,7 +199,7 @@ const SettingsScreen = ({navigation}) => {
           }}
         />
         <Dialog.Button
-          label="valider"
+          label="Valider"
           onPress={() => {
             handleDeleteAccount();
           }}
@@ -209,12 +213,20 @@ const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
   },
+  activity_indicator: {
+    marginTop: 150,
+  },
+  households_container: {
+    marginTop: 30,
+    marginBottom: 15,
+  },
   button_container: {
     backgroundColor: theme.colors.background,
-    width: '80%',
+    width: '75%',
     marginLeft: 'auto',
     marginRight: 'auto',
-    marginTop: 20,
+    marginTop: 25,
+    marginBottom: 10,
   },
   button: {
     backgroundColor: theme.colors.highlight,

@@ -34,29 +34,35 @@ const BudgetWidget = props => {
   return (
     <View style={styles.main_container}>
       <Card>
-        {isLoading ? (
-          <ActivityIndicator />
-        ) : (
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.navigate('Budget');
-            }}>
-            <Card.Title>Budget</Card.Title>
-            <Card.Divider />
-            <Text style={styles.balance_title}>Equilibre:</Text>
-            <Text
-              style={{color: budgetOverview.balance >= 0 ? 'green' : 'red'}}>
-              {budgetOverview.balance} {'\u20AC'}
-            </Text>
-          </TouchableOpacity>
-        )}
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.navigate('Budget');
+          }}>
+          <Card.Title>Budget</Card.Title>
+          <Card.Divider />
+          {isLoading ? (
+            <ActivityIndicator color="#0000ff" />
+          ) : (
+            <View>
+              <Text style={styles.balance_title}>Equilibre:</Text>
+              <Text
+                style={{
+                  color: budgetOverview.balance >= 0 ? 'green' : 'red',
+                }}>
+                {budgetOverview.balance} {'\u20AC'}
+              </Text>
+            </View>
+          )}
+        </TouchableOpacity>
       </Card>
     </View>
   );
 };
 
 const useStyles = makeStyles(theme => ({
-  main_container: {},
+  main_container: {
+    flex: 1,
+  },
   balance_title: {
     textDecorationLine: 'underline',
     marginBottom: 5,

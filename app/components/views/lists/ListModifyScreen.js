@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Input, makeStyles} from 'react-native-elements';
-import {Text, View} from 'react-native';
+import {ScrollView, Text, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import TitleHeader from '../../headers/TitleHeader';
 import {updateList} from '../../../api/listsApi';
@@ -41,7 +41,7 @@ const ListModifyScreen = ({route, navigation}) => {
           console.log(e);
         });
     } else {
-      setError('veuillez indiquer un nom');
+      setError('Veuillez indiquer un nom');
     }
   };
 
@@ -60,51 +60,68 @@ const ListModifyScreen = ({route, navigation}) => {
   return (
     <View style={styles.main_container}>
       <TitleHeader {...headerProps} />
-      <Input
-        label={setLabel('nom', name)}
-        placeholder={setPlaceholder('nom', name)}
-        errorMessage={error}
-        value={name}
-        onChangeText={value => {
-          setName(value);
-        }}
-      />
-      <Text>Type</Text>
-      <Picker
-        mode="dropdown"
-        selectedValue={type.label}
-        onValueChange={value => {
-          if (value === 'other') {
-            setType({label: value, checkbox: false});
-          } else {
-            setType({label: value, checkbox: true});
-          }
-        }}>
-        <Picker.Item label="courses" value="shopping" />
-        <Picker.Item label="to do" value="todo" />
-        <Picker.Item label="autre" value="other" />
-      </Picker>
-      <Button
-        title="valider"
-        type="solid"
-        raised={true}
-        onPress={updateCurrentList}
-        containerStyle={{
-          backgroundColor: '#FBFBFB',
-          width: '75%',
-          marginRight: 'auto',
-          marginLeft: 'auto',
-        }}
-        buttonStyle={{
-          backgroundColor: '#FCA311',
-        }}
-      />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Input
+          label={setLabel('Nom', name)}
+          placeholder={setPlaceholder('Nom', name)}
+          errorMessage={error}
+          value={name}
+          onChangeText={value => {
+            setName(value);
+          }}
+          containerStyle={styles.input_container}
+        />
+        <Text style={styles.type_title}>Type</Text>
+        <Picker
+          style={styles.input_container}
+          mode="dropdown"
+          selectedValue={type.label}
+          onValueChange={value => {
+            if (value === 'other') {
+              setType({label: value, checkbox: false});
+            } else {
+              setType({label: value, checkbox: true});
+            }
+          }}>
+          <Picker.Item label="courses" value="shopping" />
+          <Picker.Item label="to do" value="todo" />
+          <Picker.Item label="autre" value="other" />
+        </Picker>
+        <Button
+          title="Valider"
+          type="solid"
+          raised={true}
+          onPress={updateCurrentList}
+          containerStyle={styles.button_container}
+          buttonStyle={styles.button}
+        />
+      </ScrollView>
     </View>
   );
 };
 
 const useStyles = makeStyles(theme => ({
-  main_container: {},
+  main_container: {
+    flex: 1,
+  },
+  input_container: {
+    marginTop: 5,
+  },
+  type_title: {
+    marginTop: 5,
+    marginLeft: 10,
+  },
+  button_container: {
+    marginTop: 20,
+    marginBottom: 50,
+    backgroundColor: theme.colors.white,
+    width: '75%',
+    marginRight: 'auto',
+    marginLeft: 'auto',
+  },
+  button: {
+    backgroundColor: theme.colors.highlight,
+  },
 }));
 
 export default ListModifyScreen;

@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
 import {Text, View} from 'react-native';
-import {makeStyles} from 'react-native-elements';
+import {makeStyles, useTheme, Icon} from 'react-native-elements';
 import {Input, Button} from 'react-native-elements';
 import {sendResetPasswordEmail, signIn} from '../../../api/authenticationApi';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import Dialog from 'react-native-dialog';
 import {showSuccessSnackbar} from '../../../utils/snackbar';
 
 const SignInScreen = ({navigation}) => {
   const styles = useStyles();
+  const {theme} = useTheme();
 
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState('');
@@ -57,15 +57,7 @@ const SignInScreen = ({navigation}) => {
         }}
         autoCapitalize="none"
         keyboardType="email-address"
-        leftIcon={
-          <Icon
-            name="email"
-            size={24}
-            style={{
-              color: '#8b8b8b',
-            }}
-          />
-        }
+        leftIcon={<Icon name="email" size={24} color={theme.colors.grey} />}
       />
       <Input
         placeholder="Mot de passe"
@@ -75,15 +67,7 @@ const SignInScreen = ({navigation}) => {
         }}
         autoCapitalize="none"
         secureTextEntry={true}
-        leftIcon={
-          <Icon
-            name="lock"
-            size={24}
-            style={{
-              color: '#8b8b8b',
-            }}
-          />
-        }
+        leftIcon={<Icon name="lock" size={24} color={theme.colors.grey} />}
       />
       <Button
         title="Connexion"
@@ -99,7 +83,7 @@ const SignInScreen = ({navigation}) => {
         onPress={() => {
           navigation.navigate('SignUp');
         }}>
-        Pas encore de compte? inscrivez vous!
+        Pas encore de compte? Inscrivez vous!
       </Text>
       <Text
         style={styles.link_text}
@@ -122,7 +106,7 @@ const SignInScreen = ({navigation}) => {
             setForgotPasswordEmail(value);
           }}
         />
-        <Dialog.Description style={{color: 'red'}}>
+        <Dialog.Description style={styles.forgot_error}>
           {forgotPasswordError}
         </Dialog.Description>
         <Dialog.Button
@@ -147,16 +131,19 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
   },
   button_container: {
-    backgroundColor: '#FBFBFB',
+    backgroundColor: theme.colors.white,
     width: '50%',
     marginTop: '10%',
   },
   button: {
-    backgroundColor: '#FCA311',
+    backgroundColor: theme.colors.highlight,
   },
   link_text: {
     color: theme.colors.blue,
     padding: '5%',
+  },
+  forgot_error: {
+    color: 'red',
   },
 }));
 

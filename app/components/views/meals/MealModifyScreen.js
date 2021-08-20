@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {Button, Input, makeStyles} from 'react-native-elements';
-import {TouchableOpacity, View} from 'react-native';
+import {ScrollView, TouchableOpacity, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import {updateMeal} from '../../../api/mealsApi';
 import _ from 'lodash';
@@ -77,9 +77,9 @@ const MealModifyScreen = ({route, navigation}) => {
           console.log(e);
         });
     } else if (name) {
-      setError('il y a déjà un repas pour cette date');
+      setError('Il y a déjà un repas pour cette date');
     } else {
-      setError('veuillez indiquer un nom');
+      setError('Veuillez indiquer un nom');
     }
   };
 
@@ -104,63 +104,77 @@ const MealModifyScreen = ({route, navigation}) => {
   return (
     <View style={styles.main_container}>
       <TitleHeader {...headerProps} />
-      <Input
-        label={setLabel('nom', name)}
-        placeholder={setPlaceholder('nom', name)}
-        value={name}
-        onChangeText={value => {
-          setName(value);
-        }}
-      />
-      <Input
-        label={setLabel('description', description)}
-        placeholder={setPlaceholder('description', description)}
-        value={description}
-        multiline={true}
-        onChangeText={value => {
-          setDescription(value);
-        }}
-      />
-      <TouchableOpacity
-        onPress={() => {
-          setDatePickerShow(true);
-        }}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Input
-          label="date"
-          value={date.toLocaleDateString()}
-          errorMessage={error}
-          editable={false}
+          label={setLabel('Nom', name)}
+          placeholder={setPlaceholder('Nom', name)}
+          value={name}
+          onChangeText={value => {
+            setName(value);
+          }}
+          containerStyle={styles.input_container}
         />
-      </TouchableOpacity>
-      {datePickerShow && (
-        <RNDateTimePicker
-          value={date}
-          mode={'date'}
-          display="spinner"
-          onChange={onChangeDate}
+        <Input
+          label={setLabel('Description', description)}
+          placeholder={setPlaceholder('Description', description)}
+          value={description}
+          multiline={true}
+          onChangeText={value => {
+            setDescription(value);
+          }}
+          containerStyle={styles.input_container}
         />
-      )}
-      <Button
-        title="valider"
-        type="solid"
-        raised={true}
-        onPress={updateCurrentMeal}
-        containerStyle={{
-          backgroundColor: '#FBFBFB',
-          width: '75%',
-          marginRight: 'auto',
-          marginLeft: 'auto',
-        }}
-        buttonStyle={{
-          backgroundColor: '#FCA311',
-        }}
-      />
+        <TouchableOpacity
+          onPress={() => {
+            setDatePickerShow(true);
+          }}>
+          <Input
+            label="Date"
+            value={date.toLocaleDateString()}
+            errorMessage={error}
+            editable={false}
+            containerStyle={styles.input_container}
+          />
+        </TouchableOpacity>
+        {datePickerShow && (
+          <RNDateTimePicker
+            value={date}
+            mode={'date'}
+            display="spinner"
+            onChange={onChangeDate}
+          />
+        )}
+        <Button
+          title="Valider"
+          type="solid"
+          raised={true}
+          onPress={updateCurrentMeal}
+          containerStyle={styles.button_container}
+          buttonStyle={styles.button}
+        />
+      </ScrollView>
     </View>
   );
 };
 
 const useStyles = makeStyles(theme => ({
-  main_container: {},
+  main_container: {
+    flex: 1,
+  },
+  input_container: {
+    marginTop: 5,
+  },
+  button_container: {
+    marginTop: 20,
+    marginBottom: 50,
+    backgroundColor: theme.colors.white,
+    width: '75%',
+    marginRight: 'auto',
+    marginLeft: 'auto',
+  },
+  button: {
+    backgroundColor: theme.colors.highlight,
+  },
 }));
 
 export default MealModifyScreen;

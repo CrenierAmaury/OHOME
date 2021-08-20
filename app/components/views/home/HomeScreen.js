@@ -23,7 +23,7 @@ const HomeScreen = ({navigation}) => {
         <Card>
           <Card.Title style={styles.household_name}>{householdName}</Card.Title>
           <Card.Title style={styles.household_date}>
-            le {renderDate(new Date())}
+            Le {renderDate(new Date())}
           </Card.Title>
         </Card>
         <BudgetWidget {...childsProps} />

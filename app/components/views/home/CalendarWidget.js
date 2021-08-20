@@ -4,7 +4,6 @@ import {View, Text, TouchableOpacity, ActivityIndicator} from 'react-native';
 import {makeStyles, Card, ListItem} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import _ from 'lodash';
-import {renderMemberName} from '../../../utils/members';
 
 const CalendarWidget = props => {
   const styles = useStyles();
@@ -47,36 +46,40 @@ const CalendarWidget = props => {
 
   return (
     <View style={styles.main_container}>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <Card>
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.navigate('Calendar');
-            }}>
-            <Card.Title>Agenda</Card.Title>
-            <Card.Divider />
-            {events.length ? (
-              events.map((h, i) => (
-                <ListItem key={i}>
-                  <ListItem.Content>
-                    <ListItem.Title>{h.label}</ListItem.Title>
-                  </ListItem.Content>
-                </ListItem>
-              ))
-            ) : (
-              <Text>Rien de prévu aujourd'hui</Text>
-            )}
-          </TouchableOpacity>
-        </Card>
-      )}
+      <Card>
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.navigate('Calendar');
+          }}>
+          <Card.Title>Agenda</Card.Title>
+          <Card.Divider />
+          {isLoading ? (
+            <ActivityIndicator color="#0000ff" />
+          ) : (
+            <View>
+              {events.length ? (
+                events.map((h, i) => (
+                  <ListItem key={i}>
+                    <ListItem.Content>
+                      <ListItem.Title>{h.label}</ListItem.Title>
+                    </ListItem.Content>
+                  </ListItem>
+                ))
+              ) : (
+                <Text>Rien de prévu aujourd'hui</Text>
+              )}
+            </View>
+          )}
+        </TouchableOpacity>
+      </Card>
     </View>
   );
 };
 
 const useStyles = makeStyles(theme => ({
-  main_container: {},
+  main_container: {
+    flex: 1,
+  },
 }));
 
 export default CalendarWidget;

@@ -68,9 +68,9 @@ const MealHeader = props => {
       <Menu
         ref={menuRef}
         button={<Icon name="more-vert" color="#fff" onPress={showMenu} />}>
-        <MenuItem onPress={handleEdit}>modifier</MenuItem>
+        <MenuItem onPress={handleEdit}>Modifier</MenuItem>
         <MenuDivider />
-        <MenuItem onPress={openDeleteAlert}>supprimer</MenuItem>
+        <MenuItem onPress={openDeleteAlert}>Supprimer</MenuItem>
       </Menu>
     );
   };

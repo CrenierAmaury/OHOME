@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Button, Input, makeStyles} from 'react-native-elements';
 import Dialog from 'react-native-dialog';
-import {View} from 'react-native';
+import {ScrollView, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import TitleHeader from '../../headers/TitleHeader';
 import {updateUser} from '../../../api/userApi';
@@ -63,7 +63,7 @@ const ProfileModifyScreen = ({route, navigation}) => {
           setError(e);
         });
     } else {
-      setError('veuillez donner un nom');
+      setError('Veuillez donner un nom');
     }
   };
 
@@ -90,47 +90,44 @@ const ProfileModifyScreen = ({route, navigation}) => {
   return (
     <View style={styles.main_container}>
       <TitleHeader {...headerProps} />
-      <Input
-        label={setLabel('nom', name)}
-        placeholder={setPlaceholder('nom', name)}
-        value={name}
-        onChangeText={value => {
-          setName(value);
-        }}
-      />
-      <Input
-        label={setLabel('email', email)}
-        placeholder={setPlaceholder('email', email)}
-        errorMessage={error}
-        value={email}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        onChangeText={value => {
-          setEmail(value);
-        }}
-      />
-      <Button
-        title="valider"
-        type="solid"
-        raised={true}
-        onPress={handleUserUpdateValidation}
-        containerStyle={{
-          backgroundColor: '#FBFBFB',
-          width: '75%',
-          marginRight: 'auto',
-          marginLeft: 'auto',
-        }}
-        buttonStyle={{
-          backgroundColor: '#FCA311',
-        }}
-      />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Input
+          label={setLabel('Nom', name)}
+          placeholder={setPlaceholder('Nom', name)}
+          value={name}
+          onChangeText={value => {
+            setName(value);
+          }}
+          style={styles.input_container}
+        />
+        <Input
+          label={setLabel('Email', email)}
+          placeholder={setPlaceholder('Email', email)}
+          errorMessage={error}
+          value={email}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          onChangeText={value => {
+            setEmail(value);
+          }}
+          style={styles.input_container}
+        />
+        <Button
+          title="Valider"
+          type="solid"
+          raised={true}
+          onPress={handleUserUpdateValidation}
+          containerStyle={styles.button_container}
+          buttonStyle={styles.button}
+        />
+      </ScrollView>
       <Dialog.Container visible={emailModifyVisible}>
         <Dialog.Title>Modification Email</Dialog.Title>
         <Dialog.Description>
-          veuillez entrer votre mot de passe pour confirmer.
+          Veuillez entrer votre mot de passe pour confirmer.
         </Dialog.Description>
         <Dialog.Input
-          placeholder="mot de passe"
+          placeholder="Mot de passe"
           autoCapitalize="none"
           secureTextEntry={true}
           onChangeText={value => {
@@ -138,20 +135,36 @@ const ProfileModifyScreen = ({route, navigation}) => {
           }}
         />
         <Dialog.Button
-          label="annuler"
+          label="Annuler"
           onPress={() => {
             setEmailModifyVisible(false);
             setPassword('');
           }}
         />
-        <Dialog.Button label="valider" onPress={updateCurrentUser} />
+        <Dialog.Button label="Valider" onPress={updateCurrentUser} />
       </Dialog.Container>
     </View>
   );
 };
 
 const useStyles = makeStyles(theme => ({
-  main_container: {},
+  main_container: {
+    flex: 1,
+  },
+  input_container: {
+    marginTop: 5,
+  },
+  button_container: {
+    marginTop: 20,
+    marginBottom: 50,
+    backgroundColor: theme.colors.white,
+    width: '75%',
+    marginRight: 'auto',
+    marginLeft: 'auto',
+  },
+  button: {
+    backgroundColor: theme.colors.highlight,
+  },
 }));
 
 export default ProfileModifyScreen;

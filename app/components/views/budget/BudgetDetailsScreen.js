@@ -72,7 +72,7 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
   },
   selected_button: {
-    backgroundColor: '#FCA311',
+    backgroundColor: theme.colors.highlight,
   },
 }));
 

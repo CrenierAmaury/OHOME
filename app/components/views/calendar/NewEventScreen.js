@@ -41,7 +41,7 @@ const NewEventScreen = props => {
         .then(docId => {
           console.log('SCREEN: event added with id: ' + docId);
           props.setIsOverlayVisible(false);
-          showSuccessSnackbar('nouvel évènement ajouté avec succès');
+          showSuccessSnackbar('Nouvel évènement ajouté avec succès');
         })
         .catch(e => {
           console.log(e);

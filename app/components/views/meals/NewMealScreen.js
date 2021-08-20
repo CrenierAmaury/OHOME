@@ -46,15 +46,15 @@ const NewMealScreen = props => {
         .then(docId => {
           console.log('SCREEN: meal added with id: ' + docId);
           props.setIsOverlayVisible(false);
-          showSuccessSnackbar('nouveau repas ajouté avec succès');
+          showSuccessSnackbar('Nouveau repas ajouté avec succès');
         })
         .catch(e => {
           console.log(e);
         });
     } else if (name) {
-      setError('il y a déjà un repas pour cette date');
+      setError('Il y a déjà un repas pour cette date');
     } else {
-      setError('veuillez indiquer un nom');
+      setError('Veuillez indiquer un nom');
     }
   };
 

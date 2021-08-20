@@ -1,13 +1,13 @@
 import React, {useState} from 'react';
 import {View} from 'react-native';
-import {makeStyles} from 'react-native-elements';
+import {makeStyles, useTheme, Icon} from 'react-native-elements';
 import {Input, Button} from 'react-native-elements';
 import {signUp} from '../../../api/authenticationApi';
 import {addUser} from '../../../api/userApi';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const SignUpScreen = ({navigation}) => {
   const styles = useStyles();
+  const {theme} = useTheme();
 
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
@@ -50,7 +50,7 @@ const SignUpScreen = ({navigation}) => {
           setIsLoading(false);
         });
     } else {
-      setError("le mot de passe n'est pas identique");
+      setError("Le mot de passe n'est pas identique");
     }
   };
 
@@ -62,15 +62,7 @@ const SignUpScreen = ({navigation}) => {
           setName(value);
         }}
         autoCapitalize="none"
-        leftIcon={
-          <Icon
-            name="person"
-            size={24}
-            style={{
-              color: '#8b8b8b',
-            }}
-          />
-        }
+        leftIcon={<Icon name="person" size={24} color={theme.colors.grey} />}
       />
       <Input
         placeholder="Email"
@@ -79,15 +71,7 @@ const SignUpScreen = ({navigation}) => {
         }}
         autoCapitalize="none"
         keyboardType="email-address"
-        leftIcon={
-          <Icon
-            name="email"
-            size={24}
-            style={{
-              color: '#8b8b8b',
-            }}
-          />
-        }
+        leftIcon={<Icon name="email" size={24} color={theme.colors.grey} />}
       />
       <Input
         placeholder="Mot de passe"
@@ -96,15 +80,7 @@ const SignUpScreen = ({navigation}) => {
         }}
         autoCapitalize="none"
         secureTextEntry={true}
-        leftIcon={
-          <Icon
-            name="lock"
-            size={24}
-            style={{
-              color: '#8b8b8b',
-            }}
-          />
-        }
+        leftIcon={<Icon name="lock" size={24} color={theme.colors.grey} />}
       />
       <Input
         placeholder="Confirmer le mot de passe"
@@ -114,15 +90,7 @@ const SignUpScreen = ({navigation}) => {
         }}
         autoCapitalize="none"
         secureTextEntry={true}
-        leftIcon={
-          <Icon
-            name="lock"
-            size={24}
-            style={{
-              color: '#8b8b8b',
-            }}
-          />
-        }
+        leftIcon={<Icon name="lock" size={24} color={theme.colors.grey} />}
       />
       <Button
         title="Inscription"
@@ -145,12 +113,12 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
   },
   button_container: {
-    backgroundColor: '#FBFBFB',
+    backgroundColor: theme.colors.white,
     width: '50%',
     marginTop: '10%',
   },
   button: {
-    backgroundColor: '#FCA311',
+    backgroundColor: theme.colors.highlight,
   },
 }));
 

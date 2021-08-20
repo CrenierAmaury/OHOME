@@ -46,23 +46,18 @@ const CalendarScreen = ({navigation}) => {
     };
   }, [calendarId]);
 
-  if (isLoading) {
-    return (
-      <View>
-        <MainHeader {...headerProps} />
-        <ActivityIndicator
-          style={{marginTop: 150}}
-          size="large"
-          color="#0000ff"
-        />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.main_container}>
       <MainHeader {...headerProps} />
-      <AgendaScreen {...agendaProps} />
+      {isLoading ? (
+        <ActivityIndicator
+          style={styles.activity_indicator}
+          size="large"
+          color={theme.colors.activity_indicator}
+        />
+      ) : (
+        <AgendaScreen {...agendaProps} />
+      )}
       <FAB
         color={theme.colors.highlight}
         placement="right"
@@ -87,6 +82,9 @@ const CalendarScreen = ({navigation}) => {
 const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
+  },
+  activity_indicator: {
+    marginTop: 150,
   },
   overlay: {
     width: '80%',

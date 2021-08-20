@@ -139,70 +139,83 @@ const MealsScreen = ({navigation}) => {
   return (
     <View style={styles.main_container}>
       <MainHeader {...headerProps} />
-      <View style={styles.week_change_container}>
-        <Icon
-          name="keyboard-arrow-left"
-          color={theme.colors.highlight}
-          size={37}
-          onPress={handlePreviousWeek}
-          disabled={previousDisable}
+      {isLoading ? (
+        <ActivityIndicator
+          style={styles.activity_indicator}
+          size="large"
+          color={theme.colors.activity_indicator}
         />
-        <Text style={styles.week_change_center}>{week}</Text>
-        <Icon
-          name="keyboard-arrow-right"
-          color={theme.colors.highlight}
-          size={37}
-          onPress={handleNextWeek}
-          disabled={nextDisable}
-        />
-      </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {weekMeals.map((e, i) => (
-          <Card key={i}>
-            <TouchableOpacity
+      ) : (
+        <View style={styles.main_container}>
+          <View style={styles.week_change_container}>
+            <Icon
+              name="keyboard-arrow-left"
+              color={theme.colors.highlight}
+              size={37}
+              onPress={handlePreviousWeek}
+              disabled={previousDisable}
+            />
+            <Text style={styles.week_change_center}>{week}</Text>
+            <Icon
+              name="keyboard-arrow-right"
+              color={theme.colors.highlight}
+              size={37}
+              onPress={handleNextWeek}
+              disabled={nextDisable}
+            />
+          </View>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {weekMeals.map((e, i) => (
+              <Card key={i}>
+                <TouchableOpacity
+                  onPress={() => {
+                    if (e.meal) {
+                      navigation.navigate('MealDetailsScreen', {
+                        mealGroupId: mealGroupId,
+                        meal: e.meal,
+                        meals: meals,
+                      });
+                    } else {
+                      setIsOverlayVisible(true);
+                    }
+                  }}>
+                  <Card.Title>{e.day}</Card.Title>
+                  <Card.Divider
+                    color={e.meal ? theme.colors.highlight : theme.colors.grey}
+                  />
+                  <Text style={styles.meal_text}>
+                    {e.meal ? (
+                      e.meal.label
+                    ) : (
+                      <View style={styles.no_meal_container}>
+                        <Icon name="add" color={theme.colors.grey} />
+                        <Text style={styles.no_meal_text}>
+                          {' '}
+                          Ajouter un repas
+                        </Text>
+                      </View>
+                    )}
+                  </Text>
+                </TouchableOpacity>
+              </Card>
+            ))}
+            <Button
+              title="Historique complet"
+              type="solid"
+              raised={true}
               onPress={() => {
-                if (e.meal) {
-                  navigation.navigate('MealDetailsScreen', {
-                    mealGroupId: mealGroupId,
-                    meal: e.meal,
-                    meals: meals,
-                  });
-                } else {
-                  setIsOverlayVisible(true);
-                }
-              }}>
-              <Card.Title>{e.day}</Card.Title>
-              <Card.Divider
-                color={e.meal ? theme.colors.highlight : theme.colors.grey}
-              />
-              <Text style={styles.meal_text}>
-                {e.meal ? (
-                  e.meal.label
-                ) : (
-                  <View style={styles.no_meal_container}>
-                    <Icon name="add" color={theme.colors.grey} />
-                    <Text style={styles.no_meal_text}> Ajouter un repas</Text>
-                  </View>
-                )}
-              </Text>
-            </TouchableOpacity>
-          </Card>
-        ))}
-        <Button
-          title="historique complet"
-          type="solid"
-          raised={true}
-          onPress={() => {
-            navigation.navigate('MealsHistoryScreen', {
-              mealGroupId: mealGroupId,
-              meals: meals,
-            });
-          }}
-          titleStyle={styles.button_title}
-          containerStyle={styles.button_container}
-          buttonStyle={styles.button}
-        />
-      </ScrollView>
+                navigation.navigate('MealsHistoryScreen', {
+                  mealGroupId: mealGroupId,
+                  meals: meals,
+                });
+              }}
+              titleStyle={styles.button_title}
+              containerStyle={styles.button_container}
+              buttonStyle={styles.button}
+            />
+          </ScrollView>
+        </View>
+      )}
       <FAB
         color={theme.colors.highlight}
         placement="right"
@@ -228,9 +241,17 @@ const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
   },
+  activity_indicator: {
+    marginTop: 150,
+  },
   week_change_container: {
+    backgroundColor: theme.colors.white,
+    shadowRadius: 2,
+    shadowOpacity: 0.9,
+    shadowColor: theme.colors.grey,
     margin: 15,
     flexDirection: 'row',
+    padding: 5,
   },
   meal_text: {
     color: theme.colors.blue,

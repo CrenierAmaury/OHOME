@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 import {Button, Input, ListItem, makeStyles} from 'react-native-elements';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {ScrollView, Text, TouchableOpacity, View} from 'react-native';
 import {useSelector} from 'react-redux';
 import TitleHeader from '../../headers/TitleHeader';
 import {updateEvent} from '../../../api/calendarApi';
@@ -53,7 +53,7 @@ const EventModifyScreen = ({route, navigation}) => {
           console.log(e);
         });
     } else {
-      setError('veuillez indiquer un nom');
+      setError('Veuillez indiquer un nom');
     }
   };
 
@@ -92,86 +92,106 @@ const EventModifyScreen = ({route, navigation}) => {
   return (
     <View style={styles.main_container}>
       <TitleHeader {...headerProps} />
-      <Input
-        label={setLabel('nom', name)}
-        placeholder={setPlaceholder('nom', name)}
-        value={name}
-        onChangeText={value => {
-          setName(value);
-        }}
-      />
-      <Input
-        label={setLabel('description', description)}
-        placeholder={setPlaceholder('description', description)}
-        value={description}
-        multiline={true}
-        onChangeText={value => {
-          setDescription(value);
-        }}
-      />
-      <Input
-        label={setLabel('adresse', address)}
-        placeholder={setPlaceholder('adresse', address)}
-        value={address}
-        multiline={true}
-        onChangeText={value => {
-          setAddress(value);
-        }}
-      />
-      <TouchableOpacity
-        onPress={() => {
-          setDatePickerShow(true);
-        }}>
+      <ScrollView showsVerticalScrollIndicator={false}>
         <Input
-          label="date"
-          value={date.toLocaleDateString()}
-          errorMessage={error}
-          editable={false}
+          label={setLabel('Nom', name)}
+          placeholder={setPlaceholder('Nom', name)}
+          value={name}
+          onChangeText={value => {
+            setName(value);
+          }}
+          containerStyle={styles.input_container}
         />
-      </TouchableOpacity>
-      {datePickerShow && (
-        <RNDateTimePicker
-          value={date}
-          mode={'date'}
-          display="spinner"
-          onChange={onChangeDate}
+        <Input
+          label={setLabel('Description', description)}
+          placeholder={setPlaceholder('Description', description)}
+          value={description}
+          multiline={true}
+          onChangeText={value => {
+            setDescription(value);
+          }}
+          containerStyle={styles.input_container}
         />
-      )}
-      <Text>Participants</Text>
-      {members.map((h, i) => (
-        <ListItem key={i}>
-          <ListItem.Content>
-            <ListItem.Title>{renderMemberName(members, h.id)}</ListItem.Title>
-          </ListItem.Content>
-          <ListItem.CheckBox
-            checked={checkParticipant(h.id)}
-            onPress={() => {
-              handleParticipants(h.id);
-            }}
+        <Input
+          label={setLabel('Adresse', address)}
+          placeholder={setPlaceholder('Adresse', address)}
+          value={address}
+          multiline={true}
+          onChangeText={value => {
+            setAddress(value);
+          }}
+          containerStyle={styles.input_container}
+        />
+        <TouchableOpacity
+          onPress={() => {
+            setDatePickerShow(true);
+          }}>
+          <Input
+            label="Date"
+            value={date.toLocaleDateString()}
+            errorMessage={error}
+            editable={false}
+            containerStyle={styles.input_container}
           />
-        </ListItem>
-      ))}
-      <Button
-        title="valider"
-        type="solid"
-        raised={true}
-        onPress={updateCurrentEvent}
-        containerStyle={{
-          backgroundColor: '#FBFBFB',
-          width: '75%',
-          marginRight: 'auto',
-          marginLeft: 'auto',
-        }}
-        buttonStyle={{
-          backgroundColor: '#FCA311',
-        }}
-      />
+        </TouchableOpacity>
+        {datePickerShow && (
+          <RNDateTimePicker
+            value={date}
+            mode={'date'}
+            display="spinner"
+            onChange={onChangeDate}
+          />
+        )}
+        <Text style={styles.participants_title}>Participants</Text>
+        {members.map((h, i) => (
+          <ListItem key={i}>
+            <ListItem.Content>
+              <ListItem.Title>{renderMemberName(members, h.id)}</ListItem.Title>
+            </ListItem.Content>
+            <ListItem.CheckBox
+              checked={checkParticipant(h.id)}
+              onPress={() => {
+                handleParticipants(h.id);
+              }}
+            />
+          </ListItem>
+        ))}
+        <Button
+          title="Valider"
+          type="solid"
+          raised={true}
+          onPress={updateCurrentEvent}
+          containerStyle={styles.button_container}
+          buttonStyle={styles.button}
+        />
+      </ScrollView>
     </View>
   );
 };
 
 const useStyles = makeStyles(theme => ({
-  main_container: {},
+  main_container: {
+    flex: 1,
+  },
+  input_container: {
+    marginTop: 5,
+  },
+  participants_title: {
+    marginTop: 5,
+    marginBottom: 5,
+    marginLeft: 10,
+  },
+  button_container: {
+    marginTop: 20,
+    marginBottom: 50,
+    backgroundColor: theme.colors.white,
+    width: '75%',
+    marginRight: 'auto',
+    marginLeft: 'auto',
+  },
+  button: {
+    backgroundColor: theme.colors.highlight,
+  },
 }));
 
 export default EventModifyScreen;

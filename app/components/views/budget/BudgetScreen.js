@@ -56,74 +56,77 @@ const BudgetScreen = ({navigation}) => {
     };
   }, [budgetId]);
 
-  if (isLoading) {
-    return (
-      <View>
-        <MainHeader {...headerProps} />
-        <ActivityIndicator
-          style={{marginTop: 150}}
-          size="large"
-          color="#0000ff"
-        />
-      </View>
-    );
-  }
-
   return (
     <View style={styles.main_container}>
       <MainHeader {...headerProps} />
-      <Card containerStyle={styles.balance}>
-        <Card.Title>Equilibre</Card.Title>
-        <Text>
-          {budgetOverview.balance} {'\u20AC'}
-        </Text>
-      </Card>
-      <View style={styles.income_expense}>
-        <Card containerStyle={styles.income}>
-          <Card.Title>Revenu</Card.Title>
-          <Text>
-            {budgetOverview.income} {'\u20AC'}
-          </Text>
-        </Card>
-        <Card containerStyle={styles.expense}>
-          <Card.Title>Dépense</Card.Title>
-          <Text>
-            {budgetOverview.expense * -1} {'\u20AC'}
-          </Text>
-        </Card>
-      </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <Card containerStyle={styles.last_five_container}>
-          <Card.Title>Dernier ajout</Card.Title>
-          <Card.Divider />
-          {lastHistory.map((h, i) => (
-            <ListItem key={i} bottomDivider>
-              <ListItem.Content>
-                <ListItem.Title style={styles.data_title}>
-                  {h.label}
-                </ListItem.Title>
-                <ListItem.Subtitle>
-                  {h.amount} {'\u20AC'}
-                </ListItem.Subtitle>
-                <ListItem.Subtitle>
-                  {h.date.toDate().toLocaleDateString()}
-                </ListItem.Subtitle>
-              </ListItem.Content>
-            </ListItem>
-          ))}
-        </Card>
-        <Button
-          title="détails"
-          type="solid"
-          raised={true}
-          onPress={() => {
-            navigation.navigate('BudgetDetailsScreen', {...navProps});
-          }}
-          titleStyle={styles.button_title}
-          containerStyle={styles.button_container}
-          buttonStyle={styles.button}
+      {isLoading ? (
+        <ActivityIndicator
+          style={styles.activity_indicator}
+          size="large"
+          color={theme.colors.activity_indicator}
         />
-      </ScrollView>
+      ) : (
+        <View style={styles.main_container}>
+          <Card containerStyle={styles.balance}>
+            <Card.Title>Equilibre</Card.Title>
+            <Text>
+              {budgetOverview.balance} {'\u20AC'}
+            </Text>
+          </Card>
+          <View style={styles.income_expense}>
+            <Card containerStyle={styles.income}>
+              <Card.Title>Revenu</Card.Title>
+              <Text>
+                {budgetOverview.income} {'\u20AC'}
+              </Text>
+            </Card>
+            <Card containerStyle={styles.expense}>
+              <Card.Title>Dépense</Card.Title>
+              <Text>
+                {budgetOverview.expense * -1} {'\u20AC'}
+              </Text>
+            </Card>
+          </View>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Card containerStyle={styles.last_five_container}>
+              <Card.Title>Dernier ajout</Card.Title>
+              <Card.Divider />
+              {lastHistory.length > 0 ? (
+                lastHistory.map((h, i) => (
+                  <ListItem key={i} bottomDivider>
+                    <ListItem.Content>
+                      <ListItem.Title style={styles.data_title}>
+                        {h.label}
+                      </ListItem.Title>
+                      <ListItem.Subtitle>
+                        {h.amount} {'\u20AC'}
+                      </ListItem.Subtitle>
+                      <ListItem.Subtitle>
+                        {h.date.toDate().toLocaleDateString()}
+                      </ListItem.Subtitle>
+                    </ListItem.Content>
+                  </ListItem>
+                ))
+              ) : (
+                <View style={styles.no_data_yet_container}>
+                  <Text>Pas encore de données</Text>
+                </View>
+              )}
+            </Card>
+            <Button
+              title="détails"
+              type="solid"
+              raised={true}
+              onPress={() => {
+                navigation.navigate('BudgetDetailsScreen', {...navProps});
+              }}
+              titleStyle={styles.button_title}
+              containerStyle={styles.button_container}
+              buttonStyle={styles.button}
+            />
+          </ScrollView>
+        </View>
+      )}
       <FAB
         color={theme.colors.highlight}
         placement="right"
@@ -148,6 +151,9 @@ const BudgetScreen = ({navigation}) => {
 const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
+  },
+  activity_indicator: {
+    marginTop: 150,
   },
   balance: {
     backgroundColor: '#d8e7f4',
@@ -194,6 +200,11 @@ const useStyles = makeStyles(theme => ({
   overlay_back: {
     backgroundColor: theme.colors.grey,
     opacity: 0.7,
+  },
+  no_data_yet_container: {
+    minHeight: 300,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 }));
 

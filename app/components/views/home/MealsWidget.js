@@ -46,30 +46,34 @@ const MealsWidget = props => {
 
   return (
     <View style={styles.main_container}>
-      {isLoading ? (
-        <ActivityIndicator />
-      ) : (
-        <Card>
-          <TouchableOpacity
-            onPress={() => {
-              props.navigation.navigate('Meals');
-            }}>
-            <Card.Title>Repas du jour</Card.Title>
-            <Card.Divider />
-            {meal ? (
-              <Text>{meal.label}</Text>
-            ) : (
-              <Text>Pas de repas prévu aujourd'hui</Text>
-            )}
-          </TouchableOpacity>
-        </Card>
-      )}
+      <Card>
+        <TouchableOpacity
+          onPress={() => {
+            props.navigation.navigate('Meals');
+          }}>
+          <Card.Title>Repas du jour</Card.Title>
+          <Card.Divider />
+          {isLoading ? (
+            <ActivityIndicator color="#0000ff" />
+          ) : (
+            <View>
+              {meal ? (
+                <Text>{meal.label}</Text>
+              ) : (
+                <Text>Pas de repas prévu aujourd'hui</Text>
+              )}
+            </View>
+          )}
+        </TouchableOpacity>
+      </Card>
     </View>
   );
 };
 
 const useStyles = makeStyles(theme => ({
-  main_container: {},
+  main_container: {
+    flex: 1,
+  },
 }));
 
 export default MealsWidget;

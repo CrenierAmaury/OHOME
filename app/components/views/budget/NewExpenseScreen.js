@@ -60,17 +60,17 @@ const NewExpenseScreen = props => {
         .then(docId => {
           console.log('SCREEN: expense added with id: ' + docId);
           props.setIsOverlayVisible(false);
-          showSuccessSnackbar('nouveau montant ajouté avec succès');
+          showSuccessSnackbar('Nouveau montant ajouté avec succès');
         })
         .catch(e => {
           console.log(e);
         });
     } else if (name) {
-      setError('veuillez indiquer un montant');
+      setError('Veuillez indiquer un montant');
     } else if (amount) {
-      setError('veuillez indiquer un nom');
+      setError('Veuillez indiquer un nom');
     } else {
-      setError('veuillez compléter les champs');
+      setError('Veuillez compléter les champs');
     }
   };
 
@@ -89,7 +89,7 @@ const NewExpenseScreen = props => {
           console.log(e);
         });
     } else {
-      setNewCategoryError('veuillez donner un nom et une couleur');
+      setNewCategoryError('Veuillez donner un nom et une couleur');
     }
   };
 
@@ -218,6 +218,7 @@ const NewExpenseScreen = props => {
             onChangeText={value => {
               setNewCategoryName(value);
             }}
+            containerStyle={styles.input_container}
           />
           <Text style={styles.categories_title}>Couleur</Text>
           <View style={styles.colors_container}>
@@ -294,6 +295,9 @@ const useStyles = makeStyles(theme => ({
   },
   categories_title: {
     marginLeft: 10,
+  },
+  input_container: {
+    marginTop: 5,
   },
   add_button_container: {
     backgroundColor: theme.colors.white,

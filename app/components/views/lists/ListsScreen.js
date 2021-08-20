@@ -138,50 +138,58 @@ const ListsScreen = ({navigation}) => {
           Autres
         </Text>
       </View>
-      <ScrollView>
-        {filteredLists.map((h, i) => (
-          <ListItem.Swipeable
-            key={i}
-            bottomDivider
-            onPress={() => {
-              navigation.navigate('ListDetailsScreen', {
-                listGroupId: listGroupId,
-                list: h,
-              });
-            }}
-            leftContent={
-              <Button
-                title="détails"
-                icon={{name: 'info', color: 'white'}}
-                buttonStyle={{minHeight: '100%'}}
-                onPress={() => {
-                  navigation.navigate('ListDetailsScreen', {
-                    listGroupId: listGroupId,
-                    list: h,
-                  });
-                }}
-              />
-            }
-            rightContent={
-              <Button
-                onPress={() => {
-                  deleteList(listGroupId, h.id);
-                }}
-                title="supprimer"
-                icon={{name: 'delete', color: 'white'}}
-                buttonStyle={{minHeight: '100%', backgroundColor: 'red'}}
-              />
-            }>
-            <ListItem.Content>
-              <ListItem.Title>{h.label}</ListItem.Title>
-              <ListItem.Subtitle>
-                {h.creation.toDate().toLocaleDateString()}
-              </ListItem.Subtitle>
-            </ListItem.Content>
-            <ListItem.Chevron />
-          </ListItem.Swipeable>
-        ))}
-      </ScrollView>
+      {isLoading ? (
+        <ActivityIndicator
+          style={styles.activity_indicator}
+          size="large"
+          color={theme.colors.activity_indicator}
+        />
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {filteredLists.map((h, i) => (
+            <ListItem.Swipeable
+              key={i}
+              bottomDivider
+              onPress={() => {
+                navigation.navigate('ListDetailsScreen', {
+                  listGroupId: listGroupId,
+                  list: h,
+                });
+              }}
+              leftContent={
+                <Button
+                  title="détails"
+                  icon={{name: 'info', color: 'white'}}
+                  buttonStyle={{minHeight: '100%'}}
+                  onPress={() => {
+                    navigation.navigate('ListDetailsScreen', {
+                      listGroupId: listGroupId,
+                      list: h,
+                    });
+                  }}
+                />
+              }
+              rightContent={
+                <Button
+                  onPress={() => {
+                    deleteList(listGroupId, h.id);
+                  }}
+                  title="supprimer"
+                  icon={{name: 'delete', color: 'white'}}
+                  buttonStyle={{minHeight: '100%', backgroundColor: 'red'}}
+                />
+              }>
+              <ListItem.Content>
+                <ListItem.Title>{h.label}</ListItem.Title>
+                <ListItem.Subtitle>
+                  {h.creation.toDate().toLocaleDateString()}
+                </ListItem.Subtitle>
+              </ListItem.Content>
+              <ListItem.Chevron />
+            </ListItem.Swipeable>
+          ))}
+        </ScrollView>
+      )}
       <FAB
         color={theme.colors.highlight}
         placement="right"
@@ -206,6 +214,9 @@ const ListsScreen = ({navigation}) => {
 const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
+  },
+  activity_indicator: {
+    marginTop: 150,
   },
   options_container: {
     margin: 10,

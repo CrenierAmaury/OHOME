@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View} from 'react-native';
-import {Button, makeStyles, Avatar} from 'react-native-elements';
+import {ScrollView, ActivityIndicator, Text, View} from 'react-native';
+import {Button, makeStyles, useTheme} from 'react-native-elements';
 import {useDispatch, useSelector} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
@@ -16,15 +16,16 @@ import ProfilAvatar from './ProfilAvatar';
 
 const ProfileScreen = ({navigation}) => {
   const styles = useStyles();
+  const {theme} = useTheme();
+  const dispatch = useDispatch();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState({});
   const [password, setPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newPasswordCheck, setNewPasswordCheck] = useState('');
   const [error, setError] = useState('');
   const [passwordModifyVisible, setPasswordModifyVisible] = useState(false);
-
-  const dispatch = useDispatch();
 
   const headerProps = {title: 'Profil', navigation};
 
@@ -39,9 +40,10 @@ const ProfileScreen = ({navigation}) => {
       .onSnapshot(
         documentSnapshot => {
           setUser(documentSnapshot.data());
+          setIsLoading(false);
         },
-        error => {
-          console.log(error);
+        e => {
+          console.log(e);
         },
       );
     return () => {
@@ -99,35 +101,47 @@ const ProfileScreen = ({navigation}) => {
   return (
     <View style={styles.main_container}>
       <TitleHeader {...headerProps} />
-      <ProfilAvatar {...avatarProps} />
-      <View style={styles.user_info}>
-        <Text>{name}</Text>
-        <Text>{email}</Text>
-      </View>
-      <Button
-        title="Modifier les informations"
-        type="solid"
-        raised={true}
-        onPress={() => {
-          navigation.navigate('ProfileModifyScreen', {user});
-        }}
-        containerStyle={styles.button_container}
-        buttonStyle={styles.button}
-      />
-      <Button
-        title="Modifier le mot de passe"
-        type="solid"
-        raised={true}
-        onPress={() => {
-          setPasswordModifyVisible(true);
-        }}
-        containerStyle={styles.button_container}
-        buttonStyle={styles.button}
-      />
+      {isLoading ? (
+        <ActivityIndicator
+          style={styles.activity_indicator}
+          size="large"
+          color={theme.colors.activity_indicator}
+        />
+      ) : (
+        <ScrollView
+          contentContainerStyle={styles.content_container}
+          showsVerticalScrollIndicator={false}>
+          <ProfilAvatar {...avatarProps} />
+          <View style={styles.user_info}>
+            <Text style={styles.info_name}>{name}</Text>
+            <Text style={styles.info_email}>{email}</Text>
+          </View>
+          <Button
+            title="Modifier les informations"
+            type="solid"
+            raised={true}
+            onPress={() => {
+              navigation.navigate('ProfileModifyScreen', {user});
+            }}
+            containerStyle={styles.button_container}
+            buttonStyle={styles.button}
+          />
+          <Button
+            title="Modifier le mot de passe"
+            type="solid"
+            raised={true}
+            onPress={() => {
+              setPasswordModifyVisible(true);
+            }}
+            containerStyle={styles.button_container}
+            buttonStyle={styles.button}
+          />
+        </ScrollView>
+      )}
       <Dialog.Container visible={passwordModifyVisible}>
-        <Dialog.Title>Modification Mot de passe</Dialog.Title>
+        <Dialog.Title>Modification du mot de passe</Dialog.Title>
         <Dialog.Input
-          placeholder="mot de passe actuel"
+          placeholder="Mot de passe actuel"
           autoCapitalize="none"
           secureTextEntry={true}
           onChangeText={value => {
@@ -135,7 +149,7 @@ const ProfileScreen = ({navigation}) => {
           }}
         />
         <Dialog.Input
-          placeholder="nouveau mot de passe"
+          placeholder="Nouveau mot de passe"
           autoCapitalize="none"
           secureTextEntry={true}
           onChangeText={value => {
@@ -143,7 +157,7 @@ const ProfileScreen = ({navigation}) => {
           }}
         />
         <Dialog.Input
-          placeholder="confirmer le nouveau mot de passe"
+          placeholder="Confirmer le nouveau mot de passe"
           autoCapitalize="none"
           secureTextEntry={true}
           onChangeText={value => {
@@ -151,13 +165,13 @@ const ProfileScreen = ({navigation}) => {
           }}
         />
         <Dialog.Button
-          label="annuler"
+          label="Annuler"
           onPress={() => {
             setPasswordModifyVisible(false);
             setPassword('');
           }}
         />
-        <Dialog.Button label="valider" onPress={handlePasswordModification} />
+        <Dialog.Button label="Valider" onPress={handlePasswordModification} />
       </Dialog.Container>
     </View>
   );
@@ -166,7 +180,19 @@ const ProfileScreen = ({navigation}) => {
 const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
+  },
+  content_container: {
     alignItems: 'center',
+  },
+  activity_indicator: {
+    marginTop: 150,
+  },
+  info_name: {
+    fontSize: 20,
+  },
+  info_email: {
+    marginTop: 5,
+    fontSize: 15,
   },
   user_info: {
     margin: 25,
@@ -174,10 +200,11 @@ const useStyles = makeStyles(theme => ({
   },
   button_container: {
     backgroundColor: theme.colors.background,
-    width: '80%',
+    width: '75%',
     marginLeft: 'auto',
     marginRight: 'auto',
     marginTop: 25,
+    marginBottom: 10,
   },
   button: {
     backgroundColor: theme.colors.highlight,

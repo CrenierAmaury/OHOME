@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {ScrollView, Text, View} from 'react-native';
-import {Button, makeStyles} from 'react-native-elements';
+import {Button, makeStyles, useTheme} from 'react-native-elements';
 import {ListItem} from 'react-native-elements';
 import _ from 'lodash';
 import TitleHeader from '../../headers/TitleHeader';
@@ -8,10 +8,11 @@ import {removeMeal} from '../../../api/mealsApi';
 
 const MealsHistoryScreen = ({route, navigation}) => {
   const styles = useStyles();
+  const {theme} = useTheme();
 
   const [filteredHistory, setFilteredHistory] = useState([]);
-  const [dateDescColor, setDateDescColor] = useState('#FCA311');
-  const [dateAscColor, setDateAscColor] = useState('#8b8b8b');
+  const [dateDescColor, setDateDescColor] = useState(theme.colors.highlight);
+  const [dateAscColor, setDateAscColor] = useState(theme.colors.grey);
 
   const headerProps = {title: 'Historique des repas', navigation};
 
@@ -62,19 +63,19 @@ const MealsHistoryScreen = ({route, navigation}) => {
             style={[styles.options, {color: dateDescColor}]}
             onPress={() => {
               sortLists('dateDesc');
-              setDateAscColor('#8b8b8b');
-              setDateDescColor('#FCA311');
+              setDateAscColor(theme.colors.grey);
+              setDateDescColor(theme.colors.highlight);
             }}>
-            plus récent
+            Plus récent
           </Text>
           <Text
             style={[styles.options, {color: dateAscColor}]}
             onPress={() => {
               sortLists('dateAsc');
-              setDateAscColor('#FCA311');
-              setDateDescColor('#8b8b8b');
+              setDateAscColor(theme.colors.highlight);
+              setDateDescColor(theme.colors.grey);
             }}>
-            plus ancien
+            Plus ancien
           </Text>
         </View>
         {filteredHistory.map((e, i) => (
@@ -114,7 +115,12 @@ const MealsHistoryScreen = ({route, navigation}) => {
             }>
             <ListItem.Content>
               <ListItem.Title>{e.label}</ListItem.Title>
-              <ListItem.Subtitle>{e.description}</ListItem.Subtitle>
+              <ListItem.Subtitle>
+                {_.truncate(e.description, {
+                  length: 50,
+                  separator: ' ',
+                })}
+              </ListItem.Subtitle>
               <ListItem.Subtitle>
                 {e.date.toDate().toLocaleDateString()}
               </ListItem.Subtitle>
@@ -139,7 +145,7 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     padding: 5,
     textAlign: 'center',
-    color: '#8b8b8b',
+    color: theme.colors.grey,
   },
 }));
 

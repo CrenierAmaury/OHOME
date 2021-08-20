@@ -1,6 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {View, ScrollView, Keyboard, Text} from 'react-native';
-import {Button, Input, ListItem} from 'react-native-elements';
+import {
+  View,
+  ScrollView,
+  Keyboard,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
+import {Button, Input, ListItem, useTheme} from 'react-native-elements';
 import {makeStyles} from 'react-native-elements';
 import firestore from '@react-native-firebase/firestore';
 import {updateList} from '../../../api/listsApi';
@@ -13,7 +19,9 @@ import {useSelector} from 'react-redux';
 
 const ListDetailsScreen = ({route, navigation}) => {
   const styles = useStyles();
+  const {theme} = useTheme();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [list, setList] = useState({});
   const [newItem, setNewItem] = useState('');
 
@@ -32,6 +40,7 @@ const ListDetailsScreen = ({route, navigation}) => {
           const {...currentList} = documentSnapshot.data();
           currentList.id = documentSnapshot.id;
           setList(currentList);
+          setIsLoading(false);
         },
         error => {
           console.log(error);
@@ -96,69 +105,89 @@ const ListDetailsScreen = ({route, navigation}) => {
   return (
     <View style={styles.main_container}>
       <ListHeader {...headerProps} />
-      <Input
-        placeholder="nouvel élement"
-        onChangeText={value => {
-          setNewItem(value);
-        }}
-        rightIcon={
-          <Icon
-            name="add"
-            size={30}
-            onPress={addElement}
-            style={{
-              color: '#FCA311',
+      {isLoading ? (
+        <ActivityIndicator
+          style={styles.activity_indicator}
+          size="large"
+          color={theme.colors.activity_indicator}
+        />
+      ) : (
+        <View style={styles.swipe_content}>
+          <Input
+            placeholder="Nouvel élement"
+            onChangeText={value => {
+              setNewItem(value);
             }}
+            containerStyle={styles.input_container}
+            rightIcon={
+              <Icon
+                name="add"
+                size={30}
+                onPress={addElement}
+                color={theme.colors.highlight}
+              />
+            }
           />
-        }
-      />
-      <ScrollView>
-        {list.elements
-          ? list.elements.map((h, i) => (
-              <ListItem.Swipeable
-                key={i}
-                bottomDivider
-                leftStyle={{width: 0}}
-                rightContent={
-                  <Button
-                    onPress={() => {
-                      deleteElement(i);
-                    }}
-                    title="supprimer"
-                    icon={{name: 'delete', color: 'white'}}
-                    buttonStyle={{minHeight: '100%', backgroundColor: 'red'}}
-                  />
-                }>
-                <ListItem.Content>
-                  <ListItem.Title
-                    style={{textDecorationLine: strikeOutLabel(h.checked)}}>
-                    {h.label}
-                  </ListItem.Title>
-                </ListItem.Content>
-                {list.type.checkbox ? (
-                  <ListItem.CheckBox
-                    checked={h.checked}
-                    onPress={() => {
-                      changeChecked(i);
-                    }}
-                  />
-                ) : null}
-              </ListItem.Swipeable>
-            ))
-          : null}
-        {list.creation ? (
-          <Text>
-            créé par {renderMemberName(members, list.author)} le{' '}
-            {renderDate(list.creation.toDate())}
-          </Text>
-        ) : null}
-        {list.modified ? (
-          <Text>
-            modifié par {renderMemberName(members, list.modified.by)} le{' '}
-            {renderDate(list.modified.when.toDate())}
-          </Text>
-        ) : null}
-      </ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {list.elements
+              ? list.elements.map((h, i) => (
+                  <ListItem.Swipeable
+                    key={i}
+                    bottomDivider
+                    leftStyle={{width: 0}}
+                    rightContent={
+                      <Button
+                        onPress={() => {
+                          deleteElement(i);
+                        }}
+                        title="supprimer"
+                        icon={{name: 'delete', color: 'white'}}
+                        buttonStyle={{
+                          minHeight: '100%',
+                          backgroundColor: 'red',
+                        }}
+                      />
+                    }>
+                    <ListItem.Content>
+                      <ListItem.Title
+                        style={{textDecorationLine: strikeOutLabel(h.checked)}}>
+                        {h.label}
+                      </ListItem.Title>
+                    </ListItem.Content>
+                    {list.type.checkbox ? (
+                      <ListItem.CheckBox
+                        checked={h.checked}
+                        onPress={() => {
+                          changeChecked(i);
+                        }}
+                      />
+                    ) : null}
+                  </ListItem.Swipeable>
+                ))
+              : null}
+            <View style={styles.info_section}>
+              {list.creation ? (
+                <Text style={styles.info_section_text}>
+                  Créé par{' '}
+                  <Text style={styles.member_name}>
+                    {renderMemberName(members, list.author)}
+                  </Text>{' '}
+                  le {renderDate(list.creation.toDate())}
+                </Text>
+              ) : null}
+              {list.modified ? (
+                <Text style={styles.info_section_text}>
+                  Modifié par{' '}
+                  <Text style={styles.member_name}>
+                    {renderMemberName(members, list.modified.by)}
+                  </Text>{' '}
+                  le {renderDate(list.modified.when.toDate())}
+                </Text>
+              ) : null}
+            </View>
+          </ScrollView>
+        </View>
+      )}
     </View>
   );
 };
@@ -167,8 +196,25 @@ const useStyles = makeStyles(theme => ({
   main_container: {
     flex: 1,
   },
-  title: {
-    borderBottomWidth: 0,
+  swipe_content: {
+    flex: 1,
+  },
+  input_container: {
+    marginTop: 20,
+  },
+  activity_indicator: {
+    marginTop: 150,
+  },
+  info_section: {
+    marginTop: 25,
+    alignItems: 'center',
+  },
+  info_section_text: {
+    margin: 5,
+    color: theme.colors.grey,
+  },
+  member_name: {
+    fontWeight: 'bold',
   },
 }));
 

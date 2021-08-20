@@ -13,6 +13,7 @@ const theme = {
     grey: palette.grey,
     header: palette.header,
     blue: palette.blue,
+    activity_indicator: '#0000ff',
   },
 };
 
