@@ -17,13 +17,13 @@ const TabNav = () => {
     <Tab.Navigator
       initialRouteName="Home"
       tabBarOptions={{
-        activeTintColor: '#FCA311',
-        inactiveTintColor: '#8b8b8b',
+        activeTintColor: theme.colors.highlight,
+        inactiveTintColor: theme.colors.grey,
         showIcon: true,
         style: {
           borderTopWidth: 0,
           borderRadius: 0,
-          backgroundColor: '#FBFBFB',
+          backgroundColor: theme.colors.white,
           // shadow
           shadowColor: 'rgba(0,0,0, .7)',
           shadowOffset: {height: 0, width: 0},

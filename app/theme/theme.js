@@ -3,7 +3,7 @@ const palette = {
   grey: '#8b8b8b',
   white: '#FBFBFB',
   header: '#FAFAFA',
-  blue: '#000080',
+  blue: '#0044cc',
 };
 
 const theme = {
@@ -13,7 +13,7 @@ const theme = {
     grey: palette.grey,
     header: palette.header,
     blue: palette.blue,
-    activity_indicator: '#0000ff',
+    activity_indicator: palette.blue,
   },
 };
 

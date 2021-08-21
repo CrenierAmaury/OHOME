@@ -95,7 +95,7 @@ const BudgetScreen = ({navigation}) => {
                 lastHistory.map((h, i) => (
                   <ListItem key={i} bottomDivider>
                     <ListItem.Content>
-                      <ListItem.Title style={styles.data_title}>
+                      <ListItem.Title>
                         {h.label}
                       </ListItem.Title>
                       <ListItem.Subtitle>
@@ -180,9 +180,6 @@ const useStyles = makeStyles(theme => ({
   last_five_container: {
     borderWidth: 0,
     margin: 10,
-  },
-  data_title: {
-    color: theme.colors.blue,
   },
   button_container: {
     width: '100%',
