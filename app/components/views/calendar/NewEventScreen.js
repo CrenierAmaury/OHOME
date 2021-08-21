@@ -97,8 +97,8 @@ const NewEventScreen = props => {
     <View style={styles.main_container}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <Input
-          label={setLabel('Nom', name)}
-          placeholder={setPlaceholder('Nom', name)}
+          label={setLabel('Titre', name)}
+          placeholder={setPlaceholder('Titre', name)}
           value={name}
           onChangeText={value => {
             setName(value);

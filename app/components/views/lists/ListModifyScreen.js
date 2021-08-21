@@ -62,8 +62,8 @@ const ListModifyScreen = ({route, navigation}) => {
       <TitleHeader {...headerProps} />
       <ScrollView showsVerticalScrollIndicator={false}>
         <Input
-          label={setLabel('Nom', name)}
-          placeholder={setPlaceholder('Nom', name)}
+          label={setLabel('Titre', name)}
+          placeholder={setPlaceholder('Titre', name)}
           errorMessage={error}
           value={name}
           onChangeText={value => {

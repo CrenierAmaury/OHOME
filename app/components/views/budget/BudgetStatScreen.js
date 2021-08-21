@@ -69,7 +69,7 @@ const BudgetStatScreen = props => {
       ) : (
         <ScrollView showsVerticalScrollIndicator={false}>
           <Card>
-            <Card.Title>Dépenses par catégories</Card.Title>
+            <Card.Title>Dépenses par catégorie</Card.Title>
             <Card.Divider />
             <VictoryPie
               data={expenseData}
@@ -92,7 +92,7 @@ const BudgetStatScreen = props => {
             ))}
           </Card>
           <Card>
-            <Card.Title>Revenus par catégories</Card.Title>
+            <Card.Title>Revenus par catégorie</Card.Title>
             <Card.Divider />
             <VictoryPie
               data={incomeData}

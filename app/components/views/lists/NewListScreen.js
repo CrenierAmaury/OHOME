@@ -78,8 +78,8 @@ const NewListScreen = props => {
           <Picker.Item label="autre" value="other" />
         </Picker>
         <Input
-          label={setLabel('Nom', name)}
-          placeholder={setPlaceholder('Nom', name)}
+          label={setLabel('Titre', name)}
+          placeholder={setPlaceholder('Titre', name)}
           value={name}
           errorMessage={error}
           onChangeText={value => {

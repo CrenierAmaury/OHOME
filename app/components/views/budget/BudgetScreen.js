@@ -114,7 +114,7 @@ const BudgetScreen = ({navigation}) => {
               )}
             </Card>
             <Button
-              title="détails"
+              title="Détails"
               type="solid"
               raised={true}
               onPress={() => {
