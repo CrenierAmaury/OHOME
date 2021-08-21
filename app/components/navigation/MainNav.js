@@ -5,7 +5,8 @@ import AuthenticatedNav from './AuthenticatedNav';
 import UnauthenticatedNav from './UnauthenticatedNav';
 import auth from '@react-native-firebase/auth';
 import {useDispatch, useSelector} from 'react-redux';
-import {updateUid} from '../../store/slices/userSlice';
+import {cleanAllUser, updateUid} from '../../store/slices/userSlice';
+import {cleanAllHousehold} from '../../store/slices/householdSlice';
 
 const Stack = createStackNavigator();
 
@@ -21,11 +22,12 @@ const MainNav = () => {
         dispatch(updateUid(user.uid));
         setIsLoading(false);
       } else {
-        dispatch(updateUid(''));
+        dispatch(cleanAllHousehold());
+        dispatch(cleanAllUser());
         setIsLoading(false);
       }
     });
-  }, [dispatch]);
+  }, []);
 
   if (isLoading) {
     return (

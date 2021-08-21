@@ -4,10 +4,13 @@ import {makeStyles, useTheme, Icon} from 'react-native-elements';
 import {Input, Button} from 'react-native-elements';
 import {signUp} from '../../../api/authenticationApi';
 import {addUser} from '../../../api/userApi';
+import {useDispatch} from 'react-redux';
+import {updateUid} from '../../../store/slices/userSlice';
 
 const SignUpScreen = ({navigation}) => {
   const styles = useStyles();
   const {theme} = useTheme();
+  const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState('');
@@ -25,7 +28,9 @@ const SignUpScreen = ({navigation}) => {
       setIsLoading(true);
       signUp(email.trim(), password, name.trim())
         .then(r => {
+          console.log('firebase account created');
           setError('');
+          setIsLoading(false);
           const user = {
             name: name.trim(),
             email: email.trim(),
@@ -35,13 +40,11 @@ const SignUpScreen = ({navigation}) => {
           };
           addUser(r.user.uid, user)
             .then(() => {
-              setIsLoading(false);
-              navigation.navigate('NoHouseholdScreen');
+              dispatch(updateUid(r.user.uid));
+              console.log('firestore account created');
             })
             .catch(e => {
               console.log(e);
-              setError(e.message);
-              setIsLoading(false);
             });
         })
         .catch(e => {

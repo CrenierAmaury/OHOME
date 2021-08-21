@@ -8,12 +8,17 @@ import {
   useTheme,
 } from 'react-native-elements';
 import {useDispatch, useSelector} from 'react-redux';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 import Dialog from 'react-native-dialog';
 import {removeInvitation} from '../../../api/invitationsApi';
+import {updateHousehold} from '../../../api/householdApi';
 import {updateUser} from '../../../api/userApi';
 import {signOut} from '../../../api/authenticationApi';
-import {updateEmail, updateUid} from '../../../store/slices/userSlice';
+import {cleanAllUser} from '../../../store/slices/userSlice';
+import {
+  cleanAllHousehold,
+  updateHouseholdId,
+} from '../../../store/slices/householdSlice';
 
 const NoHouseholdScreen = ({navigation}) => {
   const styles = useStyles();
@@ -32,7 +37,7 @@ const NoHouseholdScreen = ({navigation}) => {
 
   useEffect(() => {
     const unsubscribe = firestore()
-      .collection('invitationGroup')
+      .collection('invitationGroups')
       .doc(email)
       .collection('invitations')
       .onSnapshot(
@@ -56,13 +61,34 @@ const NoHouseholdScreen = ({navigation}) => {
   }, [email]);
 
   const acceptInvitation = () => {
+    const householdsTab = [];
+    households.forEach(e => {
+      householdsTab.push(e.id);
+    });
+    householdsTab.push(invitationHousehold);
     updateUser(uid, {
       activeHousehold: invitationHousehold,
-      households: [...households].push(invitationHousehold),
+      households: householdsTab,
     })
       .then(() => {
-        navigation.navigate('Authenticated');
-        console.log('household created');
+        removeInvitation(email, invitationId)
+          .then(() => {
+            updateHousehold(invitationHousehold, {
+              members: firebase.firestore.FieldValue.arrayUnion(uid),
+            })
+              .then(() => {
+                setInvitationVisible(false);
+                dispatch(updateHouseholdId(invitationHousehold));
+              })
+              .catch(e => {
+                console.log(e);
+              });
+          })
+          .catch(e => {
+            console.log(e);
+          });
+
+        console.log('household joined');
       })
       .catch(e => {
         console.log(e);
@@ -72,6 +98,7 @@ const NoHouseholdScreen = ({navigation}) => {
   const refuseInvitation = () => {
     removeInvitation(email, invitationId)
       .then(() => {
+        setInvitationVisible(false);
         console.log('invitation refused and deleted');
       })
       .catch(e => {
@@ -82,8 +109,8 @@ const NoHouseholdScreen = ({navigation}) => {
   const handleSignOut = () => {
     signOut()
       .then(() => {
-        dispatch(updateUid(''));
-        dispatch(updateEmail(''));
+        dispatch(cleanAllHousehold());
+        dispatch(cleanAllUser());
       })
       .catch(e => {
         console.log(e);
@@ -139,7 +166,10 @@ const NoHouseholdScreen = ({navigation}) => {
                   }}>
                   <ListItem.Content>
                     <ListItem.Title>
-                      Invitation à rejoindre le ménage {h.household.name}
+                      Invitation à rejoindre le ménage{' '}
+                      <Text style={styles.household_name}>
+                        {h.household.name}
+                      </Text>
                     </ListItem.Title>
                     <ListItem.Subtitle>de {h.author}</ListItem.Subtitle>
                     <ListItem.Subtitle>
@@ -167,10 +197,8 @@ const NoHouseholdScreen = ({navigation}) => {
         </ScrollView>
       )}
       <Dialog.Container visible={invitationVisible}>
-        <Dialog.Title>Modification Email</Dialog.Title>
-        <Dialog.Description>
-          Rejoindre le ménage {invitationHousehold.name} ?
-        </Dialog.Description>
+        <Dialog.Title>Réponse invitation</Dialog.Title>
+        <Dialog.Description>Rejoindre le ménage ?</Dialog.Description>
         <Dialog.Button
           label="Refuser"
           onPress={() => {
@@ -229,7 +257,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 'auto',
     marginRight: 'auto',
     marginTop: 50,
-    marginBottom: 10,
+    marginBottom: 50,
   },
   signout_button: {
     backgroundColor: theme.colors.white,
@@ -241,6 +269,9 @@ const useStyles = makeStyles(theme => ({
     minHeight: 50,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  household_name: {
+    fontWeight: 'bold',
   },
 }));
 

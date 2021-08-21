@@ -1,18 +1,29 @@
 import firestore from '@react-native-firebase/firestore';
 
 export async function addInvitation(email, invitation) {
+  const checkInscription = await firestore()
+    .collection('invitationGroups')
+    .doc(email)
+    .get();
   return new Promise((resolve, reject) => {
-    firestore()
-      .collection('invitationGroups')
-      .doc(email)
-      .collection('invitations')
-      .add(invitation)
-      .then(docRef => {
-        resolve(docRef.id);
-      })
-      .catch(error => {
-        reject(error);
+    if (checkInscription.exists) {
+      firestore()
+        .collection('invitationGroups')
+        .doc(email)
+        .collection('invitations')
+        .add(invitation)
+        .then(docRef => {
+          resolve(docRef.id);
+        })
+        .catch(error => {
+          reject(error);
+        });
+    } else {
+      reject({
+        code: 'no user',
+        message: 'Aucun utilisateur inscrit avec cet email',
       });
+    }
   });
 }
 

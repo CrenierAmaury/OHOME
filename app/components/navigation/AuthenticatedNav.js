@@ -6,6 +6,7 @@ import {
   updateEmail,
   updateHouseholds,
   updateName,
+  updateUid,
 } from '../../store/slices/userSlice';
 import {
   updateBudgetId,
@@ -36,7 +37,9 @@ const AuthenticatedNav = () => {
     if (uid) {
       getUser(uid)
         .then(res => {
-          if (res && res.activeHousehold) {
+          if ((res && res.activeHousehold) || activeHousehold) {
+            console.log('ACTIVE');
+            console.log(activeHousehold);
             dispatch(updateName(res.name));
             dispatch(updateEmail(res.email));
             dispatch(updateHouseholdId(res.activeHousehold));
@@ -77,16 +80,32 @@ const AuthenticatedNav = () => {
               dispatch(updateListGroupId(household.listGroup));
               dispatch(updateMealGroupId(household.mealGroup));
             });
-          } else {
-            console.log('no household yet');
+          } else if (res) {
+            console.log('NON ACTIVE');
+            console.log(res);
+            console.log(res.activeHousehold);
+            dispatch(updateName(res.name));
+            dispatch(updateEmail(res.email));
+            res.households.forEach(e => {
+              getHousehold(e)
+                .then(hh => {
+                  dispatch(updateHouseholds({id: e, name: hh.name}));
+                })
+                .catch(e => {
+                  console.log(e);
+                });
+            });
             setIsLoading(false);
+          } else {
+            console.log('NOTHING');
+            dispatch(updateUid(''));
           }
         })
         .catch(e => {
           console.log(e);
         });
     }
-  });
+  }, [activeHousehold, uid]);
 
   if (isLoading) {
     return (

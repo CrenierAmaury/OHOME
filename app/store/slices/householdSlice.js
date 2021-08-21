@@ -40,6 +40,15 @@ export const householdSlice = createSlice({
         state.members.push(action.payload);
       }
     },
+    cleanAllHousehold: state => {
+      state.id = '';
+      state.name = '';
+      state.calendarId = '';
+      state.budgetId = '';
+      state.listGroupId = '';
+      state.mealGroupId = '';
+      state.members.length = 0;
+    },
   },
 });
 
@@ -51,6 +60,7 @@ export const {
   updateListGroupId,
   updateMealGroupId,
   updateMembers,
+  cleanAllHousehold,
 } = householdSlice.actions;
 
 export default householdSlice.reducer;

@@ -19,30 +19,30 @@ import {useDispatch, useSelector} from 'react-redux';
 import {renderHouseholdName} from '../../../utils/households';
 import {removeUser} from '../../../api/userApi';
 import {updateHousehold} from '../../../api/householdApi';
-import {
-  updateEmail,
-  updateHouseholds,
-  updateUid,
-} from '../../../store/slices/userSlice';
+import {updateUid} from '../../../store/slices/userSlice';
 import _ from 'lodash';
-import {updateHouseholdId} from '../../../store/slices/householdSlice';
+import {addInvitation} from '../../../api/invitationsApi';
 
 const SettingsScreen = ({navigation}) => {
   const styles = useStyles();
   const {theme} = useTheme();
+  const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(true);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [invitationError, setInvitationError] = useState('');
+  const [invitationEmail, setInvitationEmail] = useState('');
   const [accountDeleteVisible, setAccountDeleteVisible] = useState(false);
+  const [invitationVisible, setInvitationVisible] = useState(false);
   const [user, setUser] = useState(true);
 
-  const dispatch = useDispatch();
-
   const email = useSelector(state => state.user.email);
+  const name = useSelector(state => state.user.name);
   const uid = useSelector(state => state.user.uid);
   const households = useSelector(state => state.user.households);
   const householdId = useSelector(state => state.household.id);
+  const householdName = useSelector(state => state.household.name);
   const members = useSelector(state => state.household.members);
 
   const headerProps = {title: 'Paramètres', navigation};
@@ -78,9 +78,6 @@ const SettingsScreen = ({navigation}) => {
     signOut()
       .then(() => {
         dispatch(updateUid(''));
-        dispatch(updateEmail(''));
-        dispatch(updateHouseholds([]));
-        dispatch(updateHouseholdId(''));
       })
       .catch(e => {
         console.log(e);
@@ -126,6 +123,26 @@ const SettingsScreen = ({navigation}) => {
     }
   };
 
+  const handleSendInvitation = () => {
+    if (invitationEmail) {
+      addInvitation(invitationEmail, {
+        author: name,
+        date: new Date(),
+        household: {id: householdId, name: householdName},
+      })
+        .then(() => {
+          setInvitationError('');
+          setInvitationEmail('');
+          setInvitationVisible(false);
+        })
+        .catch(e => {
+          setInvitationError(e.message);
+        });
+    } else {
+      setInvitationError('Veuilez indiquer une adresse email');
+    }
+  };
+
   return (
     <View style={styles.main_container}>
       <TitleHeader {...headerProps} />
@@ -153,12 +170,23 @@ const SettingsScreen = ({navigation}) => {
               : null}
           </Card>
           <Button
+            title="Envoyer une invitation"
+            type="solid"
+            raised={true}
+            onPress={() => {
+              setInvitationVisible(true);
+            }}
+            containerStyle={styles.highlight_button_container}
+            buttonStyle={styles.highlight_button}
+          />
+          <Button
             title="Déconnexion"
             type="solid"
             raised={true}
             onPress={openSignOutAlert}
             containerStyle={styles.button_container}
             buttonStyle={styles.button}
+            titleStyle={styles.button_title}
           />
           <Button
             title="Suppression du compte"
@@ -169,6 +197,7 @@ const SettingsScreen = ({navigation}) => {
             }}
             containerStyle={styles.button_container}
             buttonStyle={styles.button}
+            titleStyle={styles.button_title}
           />
         </ScrollView>
       )}
@@ -189,7 +218,7 @@ const SettingsScreen = ({navigation}) => {
             setPassword(value);
           }}
         />
-        <Dialog.Description>{error}</Dialog.Description>
+        <Dialog.Description style={{color: 'red'}}>{error}</Dialog.Description>
         <Dialog.Button
           label="Annuler"
           onPress={() => {
@@ -202,6 +231,38 @@ const SettingsScreen = ({navigation}) => {
           label="Valider"
           onPress={() => {
             handleDeleteAccount();
+          }}
+        />
+      </Dialog.Container>
+      <Dialog.Container visible={invitationVisible}>
+        <Dialog.Title>Invitation</Dialog.Title>
+        <Dialog.Description>
+          Veuillez entrer l'email de la personne que vous désirez inviter à
+          rejoindre le ménage
+        </Dialog.Description>
+        <Dialog.Input
+          placeholder="Email"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          onChangeText={value => {
+            setInvitationEmail(value);
+          }}
+        />
+        <Dialog.Description style={{color: 'red'}}>
+          {invitationError}
+        </Dialog.Description>
+        <Dialog.Button
+          label="Annuler"
+          onPress={() => {
+            setInvitationVisible(false);
+            setInvitationEmail('');
+            setInvitationError('');
+          }}
+        />
+        <Dialog.Button
+          label="Envoyer"
+          onPress={() => {
+            handleSendInvitation();
           }}
         />
       </Dialog.Container>
@@ -220,8 +281,19 @@ const useStyles = makeStyles(theme => ({
     marginTop: 30,
     marginBottom: 15,
   },
+  highlight_button_container: {
+    backgroundColor: theme.colors.white,
+    width: '75%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+    marginTop: 25,
+    marginBottom: 10,
+  },
+  highlight_button: {
+    backgroundColor: theme.colors.highlight,
+  },
   button_container: {
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.white,
     width: '75%',
     marginLeft: 'auto',
     marginRight: 'auto',
@@ -229,7 +301,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: 10,
   },
   button: {
-    backgroundColor: theme.colors.highlight,
+    backgroundColor: theme.colors.white,
+  },
+  button_title: {
+    color: theme.colors.highlight,
   },
 }));
 

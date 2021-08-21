@@ -32,6 +32,13 @@ export const userSlice = createSlice({
         state.households.push(action.payload);
       }
     },
+    cleanAllUser: state => {
+      state.uid = '';
+      state.name = '';
+      state.email = '';
+      state.avatar = 'default';
+      state.households.length = 0;
+    },
   },
 });
 
@@ -41,6 +48,7 @@ export const {
   updateEmail,
   updateAvatar,
   updateHouseholds,
+  cleanAllUser,
 } = userSlice.actions;
 
 export default userSlice.reducer;

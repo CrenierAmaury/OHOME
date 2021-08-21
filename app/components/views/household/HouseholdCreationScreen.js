@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { Text, View } from "react-native";
+import {Text, View} from 'react-native';
 import {Button, Input, makeStyles} from 'react-native-elements';
 import {firebase} from '@react-native-firebase/firestore';
 import {useDispatch, useSelector} from 'react-redux';
@@ -16,12 +16,10 @@ const HouseholdCreationScreen = ({navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const uid = useSelector(state => state.user.uid);
-  const households = useSelector(state => state.user.households);
 
   const createNewHousehold = () => {
     setIsLoading(true);
     if (name) {
-      console.log('household start: ' + households);
       createHousehold(uid, name)
         .then(newHousehold => {
           getHousehold(newHousehold).then(res => {
@@ -33,7 +31,6 @@ const HouseholdCreationScreen = ({navigation}) => {
               .then(() => {
                 setIsLoading(false);
                 dispatch(updateHouseholdId(newHousehold));
-                navigation.navigate('Authenticated');
                 console.log('household created');
               })
               .catch(e => {

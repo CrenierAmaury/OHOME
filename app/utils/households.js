@@ -1,7 +1,10 @@
 import _ from 'lodash';
 
 export function renderHouseholdName(households, householdId) {
-  return _.find(households, e => {
-    return e.id === householdId;
-  }).name;
+  return (
+    households.length > 0 &&
+    _.find(households, e => {
+      return e.id === householdId;
+    }).name
+  );
 }
