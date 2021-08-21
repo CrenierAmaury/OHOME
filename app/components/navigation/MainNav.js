@@ -5,12 +5,15 @@ import AuthenticatedNav from './AuthenticatedNav';
 import UnauthenticatedNav from './UnauthenticatedNav';
 import auth from '@react-native-firebase/auth';
 import {useDispatch, useSelector} from 'react-redux';
+import {useTheme} from 'react-native-elements';
 import {cleanAllUser, updateUid} from '../../store/slices/userSlice';
 import {cleanAllHousehold} from '../../store/slices/householdSlice';
 
 const Stack = createStackNavigator();
 
 const MainNav = () => {
+  const {theme} = useTheme();
+
   const [isLoading, setIsLoading] = useState(true);
 
   const uid = useSelector(state => state.user.uid);
@@ -33,9 +36,9 @@ const MainNav = () => {
     return (
       <View>
         <ActivityIndicator
-          style={{marginTop: 150}}
+          style={{marginTop: 300}}
           size="large"
-          color="#0000ff"
+          color={theme.colors.blue}
         />
       </View>
     );

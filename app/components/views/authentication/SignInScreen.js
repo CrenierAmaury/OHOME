@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {Text, View} from 'react-native';
+import {Image, Text, View} from 'react-native';
 import {makeStyles, useTheme, Icon} from 'react-native-elements';
 import {Input, Button} from 'react-native-elements';
 import {sendResetPasswordEmail, signIn} from '../../../api/authenticationApi';
@@ -50,6 +50,11 @@ const SignInScreen = ({navigation}) => {
 
   return (
     <View style={styles.main_container}>
+      <Image
+        source={require('../../../../assets/icon_full.png')}
+        resizeMode="cover"
+        style={styles.image}
+      />
       <Input
         placeholder="Email"
         onChangeText={value => {
@@ -128,7 +133,12 @@ const useStyles = makeStyles(theme => ({
     flex: 1,
     padding: '5%',
     alignItems: 'center',
-    justifyContent: 'center',
+  },
+  image: {
+    width: 250,
+    height: 110,
+    marginTop: 35,
+    marginBottom: 50,
   },
   button_container: {
     backgroundColor: theme.colors.white,
