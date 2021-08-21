@@ -63,19 +63,21 @@ const MealDetailsScreen = ({route, navigation}) => {
   }, [navigation, route.params.meal.id, route.params.mealGroupId]);
 
   const addIngredient = () => {
-    Keyboard.dismiss();
-    const newIngredients = [...meal.ingredients];
-    newIngredients.push(newIngredient);
-    updateMeal(route.params.mealGroupId, route.params.meal.id, {
-      ingredients: newIngredients,
-    })
-      .then(() => {
-        setNewIngredient('');
-        console.log('new ingredient added');
+    if (newIngredient) {
+      Keyboard.dismiss();
+      const newIngredients = [...meal.ingredients];
+      newIngredients.push(newIngredient);
+      updateMeal(route.params.mealGroupId, route.params.meal.id, {
+        ingredients: newIngredients,
       })
-      .catch(e => {
-        console.log(e);
-      });
+        .then(() => {
+          setNewIngredient('');
+          console.log('new ingredient added');
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }
   };
 
   const deleteIngredient = index => {

@@ -69,7 +69,6 @@ const SignUpScreen = ({navigation}) => {
         onChangeText={value => {
           setName(value);
         }}
-        autoCapitalize="none"
         leftIcon={<Icon name="person" size={24} color={theme.colors.grey} />}
       />
       <Input

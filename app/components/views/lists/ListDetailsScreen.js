@@ -80,18 +80,21 @@ const ListDetailsScreen = ({route, navigation}) => {
   };
 
   const addElement = () => {
-    Keyboard.dismiss();
-    const newElements = [...list.elements];
-    newElements.push({label: newItem, checked: false});
-    updateList(route.params.listGroupId, route.params.list.id, {
-      elements: newElements,
-    })
-      .then(() => {
-        console.log('new element added');
+    if (newItem) {
+      Keyboard.dismiss();
+      const newElements = [...list.elements];
+      newElements.push({label: newItem, checked: false});
+      updateList(route.params.listGroupId, route.params.list.id, {
+        elements: newElements,
       })
-      .catch(e => {
-        console.log(e);
-      });
+        .then(() => {
+          console.log('new element added');
+          setNewItem('');
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    }
   };
 
   const strikeOutLabel = checked => {
@@ -118,6 +121,8 @@ const ListDetailsScreen = ({route, navigation}) => {
             onChangeText={value => {
               setNewItem(value);
             }}
+            value={newItem}
+            onSubmitEditing={addElement}
             containerStyle={styles.input_container}
             rightIcon={
               <Icon
