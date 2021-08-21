@@ -167,8 +167,9 @@ const ExpenseModifyScreen = ({route, navigation}) => {
           label={setLabel('Montant', amount)}
           placeholder={setPlaceholder('Montant', amount)}
           value={amount}
+          keyboardType="numeric"
           onChangeText={value => {
-            setAmount(value);
+            setAmount(value.replace(/[^0-9.]+/g, ''));
           }}
           containerStyle={styles.input_container}
         />

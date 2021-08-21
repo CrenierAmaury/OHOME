@@ -98,6 +98,7 @@ const NewMealScreen = props => {
           label={setLabel('Description', description)}
           placeholder={setPlaceholder('Description', description)}
           value={description}
+          multiline={true}
           onChangeText={value => {
             setDescription(value);
           }}
