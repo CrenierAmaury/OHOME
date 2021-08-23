@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import _ from 'lodash';
-import {ScrollView, View, Text, ActivityIndicator} from 'react-native';
+import {ScrollView, View, Text, ActivityIndicator, Alert} from 'react-native';
 import {makeStyles, useTheme} from 'react-native-elements';
 import {useSelector} from 'react-redux';
 import {FAB, ListItem, Overlay, Button, Icon} from 'react-native-elements';
@@ -57,11 +57,28 @@ const ListsScreen = ({navigation}) => {
   const deleteList = (listGroupID, listID) => {
     removeList(listGroupID, listID)
       .then(() => {
-        showSuccessSnackbar('liste supprimée avec succès');
+        showSuccessSnackbar('Liste supprimée avec succès');
       })
       .catch(e => {
         console.log(e);
       });
+  };
+
+  const openDeleteAlert = listId => {
+    Alert.alert(
+      '',
+      'Confirmer la suppression ?',
+      [
+        {text: 'ANNULER', onPress: () => {}},
+        {
+          text: 'OUI',
+          onPress: () => {
+            deleteList(listGroupId, listId);
+          },
+        },
+      ],
+      {cancelable: true},
+    );
   };
 
   const sortLists = filter => {
@@ -172,7 +189,7 @@ const ListsScreen = ({navigation}) => {
               rightContent={
                 <Button
                   onPress={() => {
-                    deleteList(listGroupId, h.id);
+                    openDeleteAlert(h.id);
                   }}
                   title="supprimer"
                   icon={{name: 'delete', color: 'white'}}

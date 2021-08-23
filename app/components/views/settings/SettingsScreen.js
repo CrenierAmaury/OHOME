@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, ScrollView, View} from 'react-native';
+import {ActivityIndicator, Alert, ScrollView, Text, View} from 'react-native';
 import TitleHeader from '../../headers/TitleHeader';
 import {
   Button,
@@ -8,7 +8,7 @@ import {
   makeStyles,
   useTheme,
 } from 'react-native-elements';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 import Dialog from 'react-native-dialog';
 import {
   deleteAuthAccount,
@@ -17,11 +17,20 @@ import {
 } from '../../../api/authenticationApi';
 import {useDispatch, useSelector} from 'react-redux';
 import {renderHouseholdName} from '../../../utils/households';
-import {removeUser} from '../../../api/userApi';
+import {removeUser, updateUser} from '../../../api/userApi';
 import {updateHousehold} from '../../../api/householdApi';
-import {updateUid} from '../../../store/slices/userSlice';
+import {
+  cleanAllUser,
+  updateHouseholds,
+  updateUid,
+} from '../../../store/slices/userSlice';
 import _ from 'lodash';
-import {addInvitation} from '../../../api/invitationsApi';
+import {addInvitation, removeInvitation} from '../../../api/invitationsApi';
+import {
+  cleanAllHousehold,
+  updateHouseholdId,
+} from '../../../store/slices/householdSlice';
+import {showSuccessSnackbar} from '../../../utils/snackbar';
 
 const SettingsScreen = ({navigation}) => {
   const styles = useStyles();
@@ -35,6 +44,12 @@ const SettingsScreen = ({navigation}) => {
   const [invitationEmail, setInvitationEmail] = useState('');
   const [accountDeleteVisible, setAccountDeleteVisible] = useState(false);
   const [invitationVisible, setInvitationVisible] = useState(false);
+  const [invitationReceptionVisible, setInvitationReceptionVisible] =
+    useState(false);
+  const [invitationId, setInvitationId] = useState('');
+  const [invitationHousehold, setInvitationHousehold] = useState('');
+  const [invitationHouseholdName, setInvitationHouseholdName] = useState('');
+  const [invitations, setInvitations] = useState([]);
   const [user, setUser] = useState(true);
 
   const email = useSelector(state => state.user.email);
@@ -48,7 +63,7 @@ const SettingsScreen = ({navigation}) => {
   const headerProps = {title: 'Paramètres', navigation};
 
   useEffect(() => {
-    const unsubscribe = firestore()
+    const unsubscribeU = firestore()
       .collection('users')
       .doc(uid)
       .onSnapshot(
@@ -60,10 +75,30 @@ const SettingsScreen = ({navigation}) => {
           console.log(e);
         },
       );
+    const unsubscribeI = firestore()
+      .collection('invitationGroups')
+      .doc(email)
+      .collection('invitations')
+      .onSnapshot(
+        querySnapshot => {
+          const invitationsTab = [];
+          querySnapshot.docs.forEach(doc => {
+            const {...invitation} = doc.data();
+            invitation.id = doc.id;
+            invitationsTab.push(invitation);
+          });
+          setInvitations(invitationsTab);
+          setIsLoading(false);
+        },
+        e => {
+          console.log(e);
+        },
+      );
     return () => {
-      unsubscribe();
+      unsubscribeI();
+      unsubscribeU();
     };
-  }, [uid]);
+  }, [email, uid]);
 
   const openSignOutAlert = () => {
     Alert.alert(
@@ -101,7 +136,8 @@ const SettingsScreen = ({navigation}) => {
                     .then(() => {
                       console.log('account deleted');
                       setAccountDeleteVisible(false);
-                      dispatch(updateUid(''));
+                      dispatch(cleanAllUser());
+                      dispatch(cleanAllHousehold());
                     })
                     .catch(e => {
                       setError(e.message);
@@ -134,6 +170,7 @@ const SettingsScreen = ({navigation}) => {
           setInvitationError('');
           setInvitationEmail('');
           setInvitationVisible(false);
+          showSuccessSnackbar('Invitation envoyée');
         })
         .catch(e => {
           setInvitationError(e.message);
@@ -141,6 +178,66 @@ const SettingsScreen = ({navigation}) => {
     } else {
       setInvitationError('Veuilez indiquer une adresse email');
     }
+  };
+
+  const acceptInvitation = () => {
+    const householdsTab = [];
+    households.forEach(e => {
+      householdsTab.push(e.id);
+    });
+    householdsTab.push(invitationHousehold);
+    updateUser(uid, {
+      households: householdsTab,
+    })
+      .then(() => {
+        removeInvitation(email, invitationId)
+          .then(() => {
+            updateHousehold(invitationHousehold, {
+              members: firebase.firestore.FieldValue.arrayUnion(uid),
+            })
+              .then(() => {
+                updateHouseholds({
+                  id: invitationHousehold,
+                  name: invitationHouseholdName,
+                });
+                setInvitationReceptionVisible(false);
+                dispatch(updateHouseholdId(invitationHousehold));
+              })
+              .catch(e => {
+                console.log(e);
+              });
+          })
+          .catch(e => {
+            console.log(e);
+          });
+        console.log('household joined');
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+
+  const refuseInvitation = () => {
+    removeInvitation(email, invitationId)
+      .then(() => {
+        setInvitationReceptionVisible(false);
+        console.log('invitation refused and deleted');
+      })
+      .catch(e => {
+        console.log(e);
+      });
+  };
+
+  const changeHousehold = newActiveHousehold => {
+    updateUser(uid, {
+      activeHousehold: newActiveHousehold,
+    })
+      .then(() => {
+        dispatch(updateHouseholdId(newActiveHousehold));
+      })
+      .catch(e => {
+        console.log(e);
+      });
   };
 
   return (
@@ -159,7 +256,18 @@ const SettingsScreen = ({navigation}) => {
             <Card.Divider />
             {user && user.households
               ? user.households.map((h, i) => (
-                  <ListItem key={i} bottomDivider>
+                  <ListItem
+                    key={i}
+                    bottomDivider
+                    containerStyle={{
+                      backgroundColor:
+                        h === householdId
+                          ? theme.colors.highlight
+                          : theme.colors.white,
+                    }}
+                    onPress={() => {
+                      changeHousehold(h);
+                    }}>
                     <ListItem.Content>
                       <ListItem.Title>
                         {renderHouseholdName(households, h)}
@@ -168,6 +276,41 @@ const SettingsScreen = ({navigation}) => {
                   </ListItem>
                 ))
               : null}
+          </Card>
+          <Card>
+            <Card.Title>Mes invitations</Card.Title>
+            <Card.Divider />
+            {invitations.length > 0 ? (
+              invitations.map((h, i) => (
+                <ListItem
+                  key={i}
+                  bottomDivider
+                  onPress={() => {
+                    setInvitationReceptionVisible(true);
+                    setInvitationId(h.id);
+                    setInvitationHousehold(h.household.id);
+                    setInvitationHouseholdName(h.household.name);
+                  }}>
+                  <ListItem.Content>
+                    <ListItem.Title>
+                      Invitation à rejoindre le ménage{' '}
+                      <Text style={styles.household_name}>
+                        {h.household.name}
+                      </Text>
+                    </ListItem.Title>
+                    <ListItem.Subtitle>de {h.author}</ListItem.Subtitle>
+                    <ListItem.Subtitle>
+                      le {h.date.toDate().toLocaleDateString()}
+                    </ListItem.Subtitle>
+                  </ListItem.Content>
+                  <ListItem.Chevron />
+                </ListItem>
+              ))
+            ) : (
+              <View style={styles.no_invitations_container}>
+                <Text>Aucune invitation reçue</Text>
+              </View>
+            )}
           </Card>
           <Button
             title="Envoyer une invitation"
@@ -266,6 +409,24 @@ const SettingsScreen = ({navigation}) => {
           }}
         />
       </Dialog.Container>
+      <Dialog.Container visible={invitationReceptionVisible}>
+        <Dialog.Title>Réponse invitation</Dialog.Title>
+        <Dialog.Description>Rejoindre le ménage ?</Dialog.Description>
+        <Dialog.Button
+          label="Refuser"
+          onPress={() => {
+            setInvitationReceptionVisible(false);
+            refuseInvitation();
+          }}
+        />
+        <Dialog.Button label="Accepter" onPress={acceptInvitation} />
+        <Dialog.Button
+          label="Ignorer"
+          onPress={() => {
+            setInvitationReceptionVisible(false);
+          }}
+        />
+      </Dialog.Container>
     </View>
   );
 };
@@ -305,6 +466,14 @@ const useStyles = makeStyles(theme => ({
   },
   button_title: {
     color: theme.colors.highlight,
+  },
+  no_invitations_container: {
+    minHeight: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  household_name: {
+    fontWeight: 'bold',
   },
 }));
 

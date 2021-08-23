@@ -1,10 +1,12 @@
 import _ from 'lodash';
 
 export function renderHouseholdName(households, householdId) {
-  return (
+  const householdCheck =
     households.length > 0 &&
     _.find(households, e => {
       return e.id === householdId;
-    }).name
-  );
+    });
+  if (householdCheck) {
+    return householdCheck.name;
+  }
 }

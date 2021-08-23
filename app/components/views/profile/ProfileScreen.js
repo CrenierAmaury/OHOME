@@ -77,6 +77,7 @@ const ProfileScreen = ({navigation}) => {
         updateAuthPassword(newPassword)
           .then(() => {
             setPasswordModifyVisible(false);
+            setError('');
             console.log('password updated');
           })
           .catch(e => {
@@ -89,10 +90,14 @@ const ProfileScreen = ({navigation}) => {
   };
 
   const handlePasswordModification = () => {
-    if (password && newPassword !== newPasswordCheck) {
-      setError('Veuillez rentrer deux nouveaux mots de passe identiques');
+    if (password) {
+      if (newPassword !== newPasswordCheck) {
+        setError('Veuillez rentrer deux nouveaux mots de passe identiques');
+      } else {
+        updatePassword();
+      }
     } else {
-      updatePassword();
+      setError('Veuillez remplir tous les champs');
     }
   };
 
@@ -164,11 +169,13 @@ const ProfileScreen = ({navigation}) => {
             setNewPasswordCheck(value);
           }}
         />
+        <Dialog.Description style={{color: 'red'}}>{error}</Dialog.Description>
         <Dialog.Button
           label="Annuler"
           onPress={() => {
             setPasswordModifyVisible(false);
             setPassword('');
+            setError('');
           }}
         />
         <Dialog.Button label="Valider" onPress={handlePasswordModification} />

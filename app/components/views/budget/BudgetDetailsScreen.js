@@ -27,6 +27,7 @@ const BudgetDetailsScreen = ({route, navigation}) => {
       .collection('budgets')
       .doc(route.params.budgetId)
       .collection('expenses')
+      .orderBy('date', 'desc')
       .onSnapshot(
         querySnapshot => {
           const expensesTab = [];

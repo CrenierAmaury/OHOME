@@ -86,7 +86,7 @@ const TabNav = () => {
               }}
             />
           ),
-          tabBarLabel: 'Acceuil',
+          tabBarLabel: 'Accueil',
         }}
       />
       <Tab.Screen
